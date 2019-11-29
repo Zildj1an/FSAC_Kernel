@@ -28,15 +28,16 @@ struct fsac_plugin {
 	task_wake_up_t		task_wake_up;
 	task_exit_t 		task_exit;
 	
-	
 } __attribute__ ((__aligned__(SMP_CACHE_BYTES)));
 
+/* Pointer to current scheduling plugin */
 extern struct sched_plugin *fsac;
 
 int register_sched_plugin(struct sched_plugin* plugin);
 struct sched_plugin* find_sched_plugin(const char* name);
 void print_sched_plugins(struct seq_file *m);
 
+/* Plugin to the dummy default plugin */
 extern struct sched_plugin fsac_sched_plugin;
 
 #endif
