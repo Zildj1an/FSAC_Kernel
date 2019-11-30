@@ -6,6 +6,9 @@
 #ifndef _LINUX_FSAC_PLUGIN_H_
 #define _LINUX_FSAC_PLUGIN_H_
 
+#include <linux/printk.h>
+#include <linux/uacces.h>    /* copy_from_user */
+
 typedef long (*activate_plugin_t) (void);
 typedef long (*deactivate_plugin_t) (void);
 typedef struct task_struct* (*schedule_t)(struct task_struct * prev);
