@@ -1,4 +1,5 @@
-/*	Change active FSAC plugin.
+/*
+	Change active FSAC plugin.
 	View list of registered FSAC plugins.
 	View active FSAC plugins.
 
@@ -12,12 +13,21 @@
 */
 
 #include <fsac/fsac_proc.h>
-#include <fsac/fsac_plugin.h>
+
+static DEFINE_RAW_SPINLOCK(proc_plugins_lock);
+static LIST_HEAD(proc_loaded_plugins);
 
 static struct proc_dir_entry *fsac_dir = NULL,
 	*loaded  = NULL,
 	*active_plugin = NULL,
 	*stats_active = NULL;
+
+struct list_item {
+	char* plugin_name;
+	struct list_head links;
+};
+
+struct list_head ghost_node;
 
 /* PROC FUNCTIONS */
 
@@ -31,7 +41,6 @@ static ssize_t active_read(struct file *filp,
 
 static ssize_t active_write(struct file *filp,
       const char __user *buf, size_t len, loff_t *off) {
-
 }
 
 static ssize_t stats_read(struct file *filp,
@@ -79,9 +88,26 @@ void remove_fsac_proc(void) {
 	if(fsac_dir)      remove_proc_entry("fsac",NULL);
 }
 
-int add_plugin_proc(char *name) {}
+void add_plugin_proc(char *name) {
 
-int remove_plugin_proc(char *name) {}
+	struct list_item *new_item = NULL;
+
+	new_item = vmalloc(sizeof(struct list_item));
+	new_item->data = vmalloc(strlen(name) + 1);
+	strcpy(new_item->data,name);
+
+	raw_spin_lock(&proc_plugins_lock);
+        list_add_tail(&new_item->links, &proc_loaded_plugins);
+	raw_spin_unlock(&proc_plugins_lock);
+}
+
+int remove_plugin_proc(char *name) {
+
+		//TODO
+		raw_spin_lock(&proc_plugins_lock);
+                list_del(&);
+                raw_spin_unlock(&proc_plugins_lock);
+}
 
 /* Safely copying contents to user array*/
 int fsac_copy_safe(char *kbuf, unsigned long ksize,

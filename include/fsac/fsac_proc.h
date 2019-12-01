@@ -8,13 +8,14 @@
 
 #include <linux/proc_fs.h>
 #include <fsac/fsac_plugin.h>
+#include <fsac/fsac_list.h>
 
 /* My /proc file entry */
 static struct proc_dir_entry *my_proc_entry;
 
 int __init start_fsac_proc(void);
 void remove_fsac_proc(void);
-int add_plugin_proc(char *name);
+void add_plugin_proc(char *name);
 int remove_plugin_proc(char *name);
 
 /* Safely copying contents to user array*/

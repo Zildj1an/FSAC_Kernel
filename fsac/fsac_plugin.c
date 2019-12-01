@@ -1,4 +1,5 @@
-/* Dummy plugin, first registered (1)
+/*
+   Dummy plugin, first registered (1)
    and list of plugins managed (2)
 */
 
@@ -68,6 +69,7 @@ out_unlock:
 	raw_spin_unlock(&sched_plugins_lock);
 	return plugin;
 }
+EXPORT_SYMBOL(find_sched_plugin);
 
 int register_sched_plugin(struct sched_plugin* plugin){
 
@@ -132,4 +134,5 @@ void print_sched_plugins(struct seq_file *m){
 	}
 	raw_spin_unlock(&sched_plugins_lock);
 }
+EXPORT_SYMBOL(print_sched_plugins);
 
