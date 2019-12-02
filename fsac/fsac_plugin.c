@@ -1,6 +1,8 @@
 /*
    Dummy plugin, first registered (1)
    and list of plugins managed (2)
+   @author Carlos Bilbao Muñoz
+   cbilbao@ucm.es
 */
 
 #include <fsac/fsac_plugin.h>
@@ -17,13 +19,14 @@ static struct task_struct* fsac_dummy_schedule(struct task_struct * prev){
 }
 
 static long fsac_dummy_admit_task(struct task_struct* tsk){
-	printk(KERN_INFO "FSAC plugin rejects %s/%d.\n",tsk->comm, tsk->pid);
+	printk(KERN_INFO "Dummy FSAC plugin rejects %s/%d.\n",tsk->comm, tsk->pid);
 	return -EINVAL;
 }
 
-static void fsac_dummy_task_new(struct task_struct *t, int on_rq, int running){}
+static void fsac_dummy_task_new(struct task_struct *t,int on_rq,int running){}
 static void fsac_dummy_task_wake_up(struct task_struct *task){}
 static void fsac_dummy_task_exit(struct task_struct *task){}
+static ssize_t fsac_dummy_read(char *buf);
 
 struct fsac_plugin fsac_sched_plugin = {
 	.plugin_name = "FSAC",
@@ -34,6 +37,7 @@ struct fsac_plugin fsac_sched_plugin = {
 	.task_new = fsac_dummy_task_new,
 	.task_wake_up = fsac_dummy_task_wake_up,
 	.task_exit = fsac_dummy_task_exit,
+	.plugin_read = fsac_dummy_read,
 };
 
 /* The current plugin */
@@ -53,20 +57,12 @@ static DEFINE_RAW_SPINLOCK(sched_plugins_lock);
 
 struct sched_plugin* find_sched_plugin(const char* name) {
 
-	struct list_head *pos;
-	struct sched_plugin *plugin;
+	struct sched_plugin *plugin = NULL;
 
 	raw_spin_lock(&sched_plugins_lock);
-
-	list_for_each(pos, &sched_plugins) {
-		plugin = list_entry(pos, struct sched_plugin, list);
-		if (!strcmp(plugin->plugin_name, name))
-		    goto out_unlock;
-	}
-	plugin = NULL;
-
-out_unlock:
+	plugin = fsac_find_node(0,name,sched_plugins);
 	raw_spin_unlock(&sched_plugins_lock);
+
 	return plugin;
 }
 EXPORT_SYMBOL(find_sched_plugin);
@@ -95,6 +91,7 @@ int register_sched_plugin(struct sched_plugin* plugin){
 	CHECK(task_new);
 	CHECK(task_wake_up);
 	CHECK(task_exit);
+	CHECK(plugin_read);
 
 	raw_spin_lock(&sched_plugins_lock);
 	list_add(&plugin->list, &sched_plugins);

@@ -8,11 +8,13 @@
 
 #include <linux/printk.h>
 #include <linux/uacces.h>    /* copy_from_user */
+#include <fsac/fsac_list.h>
 
 typedef long (*activate_plugin_t) (void);
 typedef long (*deactivate_plugin_t) (void);
 typedef struct task_struct* (*schedule_t)(struct task_struct * prev);
 typedef long (*admit_task_t)(struct task_struct* tsk);
+typedef ssize_t (*plugin_read_t) (char *buf);
 
 struct fsac_plugin {
 
@@ -27,6 +29,7 @@ struct fsac_plugin {
 	task_new_t 		task_new;
 	task_wake_up_t		task_wake_up;
 	task_exit_t 		task_exit;
+	plugin_read_t		plugin_read;
 
 } __attribute__ ((__aligned__(SMP_CACHE_BYTES)));
 

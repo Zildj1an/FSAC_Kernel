@@ -7,6 +7,7 @@
 #define _LINUX_FSAC_PROC_H_
 
 #include <linux/proc_fs.h>
+#include <linux/uacces.h>    /* copy_from_user */
 #include <fsac/fsac_plugin.h>
 #include <fsac/fsac_list.h>
 
@@ -18,9 +19,6 @@ void remove_fsac_proc(void);
 void add_plugin_proc(char *name);
 int remove_plugin_proc(char *name);
 
-/* Safely copying contents to user array*/
-int fsac_copy_safe(char *kbuf, unsigned long ksize,
-		   __user const char* ubuf, unsigned long ulength);
 
 
 #endif

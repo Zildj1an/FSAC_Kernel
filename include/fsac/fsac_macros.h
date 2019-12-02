@@ -1,0 +1,7 @@
+#ifndef _LINUX_FSAC_MACROS_H_
+#define _LINUX_FSAC_MACROS_H_
+
+#define MAX_SIZE_LOADED 1000
+#define MAX_PLUGIN_READ 1000
+
+#endif
