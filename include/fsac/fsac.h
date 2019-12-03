@@ -22,4 +22,7 @@ static inline lt_t fsac_clock(void) {
 long fsac_admit_task(struct task_struct *tsk);
 void fsac_exit_task(struct task_struct* tsk);
 
+//TODO switch_sched_plugin y demas
+
+
 #endif

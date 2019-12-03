@@ -1,6 +1,8 @@
 /*
 	Header of /fsac/fsac_proc.c
         More details about this file in it.
+	@author Carlos Bilbao Muñoz
+	cbilbao@ucm.es
 */
 
 #ifndef _LINUX_FSAC_PROC_H_
@@ -10,6 +12,7 @@
 #include <linux/uacces.h>    /* copy_from_user */
 #include <fsac/fsac_plugin.h>
 #include <fsac/fsac_list.h>
+#include <fsac/fsac.h>
 
 /* My /proc file entry */
 static struct proc_dir_entry *my_proc_entry;

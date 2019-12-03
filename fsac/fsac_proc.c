@@ -5,11 +5,11 @@
 
 	+- /proc/fsac
 	   |
-      	   +- loaded
+      	   +- loaded (read operation)
 	   |
-	   +- active_plugin
+	   +- active_plugin (read/write operations)
 	   |
-	   +- stats_active
+	   +- stats_active (read, from module)
 
 	 @author Carlos Bilbao Muñoz
 	 cbilbao@ucm.es
@@ -66,11 +66,29 @@ static ssize_t active_read(struct file *filp,
  return read;
 }
 
-static ssize_t active_write(struct file *filp,
-      const char __user *buf, size_t len, loff_t *off) {
+static ssize_t active_write(struct file *filp, const char __user *buf,
+		size_t len, loff_t *off) {
 
-	//TODO
-	printk(KERN_INFO "La función para cambiar el plugin no esta echa\n");
+	char name[60];
+	struct sched_plugin* found;
+	ssize ret = -EINVAL;
+	int err;
+
+	if((ret = fsac_copy_safe(name,sizeof(name),buf,len) < 0)
+		return ret;
+
+	found = fsac_find_node(0,name,&proc_loaded_plugins);
+
+	if (found){
+		if(err = switch_sched_plugin(found)) {
+			printk(KERN_INFO "Could not switch plugin: %d.\n",err);
+			ret = err;
+		}
+	} else {
+		printk(KERN_INFO "Plugin '%s' is unknown.\n", name);
+		ret = -ESRCH;
+	}
+
 	return 0;
 }
 
@@ -82,6 +100,7 @@ static ssize_t stats_read(struct file *filp,
 
 	if ((*off) > 0) return 0; /* Previously invoked */
 	read = fsac->plugin_read(kbuf);
+	if (copy_to_user(buf,kbuf,read) > 0) return -EFAULT;
 	(*off) += read;
 
  return read;
@@ -113,7 +132,7 @@ int __init start_fsac_proc(void) {
 
 	if (!fsac_dir || !loaded || !stats_active) goto mem_err;
 
-	add_plugin_proc(&fsac_name);
+//	add_plugin_proc(&fsac_name); TODO no va aqui?
 
   return 0;
 

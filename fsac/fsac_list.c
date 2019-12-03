@@ -1,5 +1,10 @@
 #include <fsac/fsac_list.h>
 
+/*   Some aid for managing linked lists
+     @author Carlos Bilbao Muñoz
+     cbilbao@ucm.es
+*/
+
 void fsac_remove_list(struct list_head* ghost_node){
 
         struct list_head* cur_node = NULL;
@@ -11,7 +16,7 @@ void fsac_remove_list(struct list_head* ghost_node){
 
                 item = list_entry(cur_node, struct list_item, links);
                 list_del(&item->links);
-		if(__builtin_types_compatible_p(typeof(item->data), char*))
+		if (safe_char(item->data))
 			vfree(item->data);
 		vfree(item);
         }
@@ -30,8 +35,7 @@ int fsac_print_list(struct list_head* list, char members*){
 		item = list_entry(cur_node, struct list_item, links);
 
 		if(read < sizeof(members) - 1){
-			if(__builtin_types_compatible_p(typeof(item->data),
-					char*)){
+			if (safe_char(item->data)){
 				aux = item->data;
 				while((members[read++] = *aux) != '\n' &&
 						read < sizeof(members) - 1){
@@ -58,8 +62,7 @@ struct list_head* fsac_find_node(int n, char *c, struct list_head* head){
 	for (pos = (head)->next; pos != (head) && find == 0; pos = pos->next) {
 
 		item = list_entry(pos, struct list_item, links);
-
-		if(__builtin_types_compatible_p(typeof(item->data), char*)){
+		 if (safe_char(item->data)){
 			find = (strcmp(c,item->data) == 0);
 		} else {
 			find = (item->data == n);

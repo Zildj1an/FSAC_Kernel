@@ -45,7 +45,6 @@ long fsac_admit_task(struct task_struct *tsk) {
   return ret;
 }
 
-
 /* called from sched_setscheduler() */
 void fsac_exit_task(struct task_struct* tsk){
 	if (is_fsac(tsk)) {

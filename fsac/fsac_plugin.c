@@ -10,8 +10,11 @@
 /* (1) Dummy plugin functions */
 
 static long fsac_dummy_activate_plugin(void){ return 0;}
-
 static long fsac_dummy_deactivate_plugin(void){ return 0;}
+static void fsac_dummy_task_new(struct task_struct *t,int on_rq,int running){}
+static void fsac_dummy_task_wake_up(struct task_struct *task){}
+static void fsac_dummy_task_exit(struct task_struct *task){}
+static ssize_t fsac_dummy_read(char *buf);
 
 static struct task_struct* fsac_dummy_schedule(struct task_struct * prev){
 	sched_state_task_picked(); //TODO
@@ -22,11 +25,6 @@ static long fsac_dummy_admit_task(struct task_struct* tsk){
 	printk(KERN_INFO "Dummy FSAC plugin rejects %s/%d.\n",tsk->comm, tsk->pid);
 	return -EINVAL;
 }
-
-static void fsac_dummy_task_new(struct task_struct *t,int on_rq,int running){}
-static void fsac_dummy_task_wake_up(struct task_struct *task){}
-static void fsac_dummy_task_exit(struct task_struct *task){}
-static ssize_t fsac_dummy_read(char *buf);
 
 struct fsac_plugin fsac_sched_plugin = {
 	.plugin_name = "FSAC",

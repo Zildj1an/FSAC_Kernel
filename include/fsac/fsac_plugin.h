@@ -1,6 +1,8 @@
 /*
 	Header of any FSAC plugin.
 	For example of /fsac/fsac_plugin.c
+	@author Carlos Bilbao Muñoz
+	cbilbao@ucm.es
 */
 
 #ifndef _LINUX_FSAC_PLUGIN_H_

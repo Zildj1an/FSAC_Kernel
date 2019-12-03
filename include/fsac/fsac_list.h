@@ -1,12 +1,19 @@
 /*
 	Header of /fsac/fsac_list.c
 	Auxiliar functions for managing linked list
+	@author Carlos Bilbao Muñoz
+	cbilbao@ucm.es
 */
 
 #ifndef _LINUX_FSAC_LIST_H_
 #define _LINUX_FSAC_LIST_H_
 
 #include <linux/list.h>
+#include <linux/compiler.h>
+
+static inline int safe_char(void *val){
+    return (__builtin_types_compatible_p(typeof(val), char*) && val != NULL);
+}
 
 void fsac_remove_list(struct list_head* ghost_node);
 /* Return value is number of elems copied into members[] */
