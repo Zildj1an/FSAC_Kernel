@@ -1,9 +1,17 @@
-// SPDX-License-Identifier: GPL-2.0
 /*
  * mt8173-max98090.c  --  MT8173 MAX98090 ALSA SoC machine driver
  *
  * Copyright (c) 2015 MediaTek Inc.
  * Author: Koro Chen <koro.chen@mediatek.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 and
+ * only version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  */
 
 #include <linux/module.h>
@@ -59,7 +67,7 @@ static int mt8173_max98090_hw_params(struct snd_pcm_substream *substream,
 				      SND_SOC_CLOCK_IN);
 }
 
-static const struct snd_soc_ops mt8173_max98090_ops = {
+static struct snd_soc_ops mt8173_max98090_ops = {
 	.hw_params = mt8173_max98090_hw_params,
 };
 
@@ -67,19 +75,25 @@ static int mt8173_max98090_init(struct snd_soc_pcm_runtime *runtime)
 {
 	int ret;
 	struct snd_soc_card *card = runtime->card;
-	struct snd_soc_component *component = runtime->codec_dai->component;
+	struct snd_soc_codec *codec = runtime->codec;
 
 	/* enable jack detection */
 	ret = snd_soc_card_jack_new(card, "Headphone", SND_JACK_HEADPHONE,
-				    &mt8173_max98090_jack,
-				    mt8173_max98090_jack_pins,
-				    ARRAY_SIZE(mt8173_max98090_jack_pins));
+				    &mt8173_max98090_jack, NULL, 0);
 	if (ret) {
-		dev_err(card->dev, "Can't create a new Jack %d\n", ret);
+		dev_err(card->dev, "Can't snd_soc_jack_new %d\n", ret);
 		return ret;
 	}
 
-	return max98090_mic_detect(component, &mt8173_max98090_jack);
+	ret = snd_soc_jack_add_pins(&mt8173_max98090_jack,
+				    ARRAY_SIZE(mt8173_max98090_jack_pins),
+				    mt8173_max98090_jack_pins);
+	if (ret) {
+		dev_err(card->dev, "Can't snd_soc_jack_add_pins %d\n", ret);
+		return ret;
+	}
+
+	return max98090_mic_detect(codec, &mt8173_max98090_jack);
 }
 
 /* Digital audio interface glue - connects codec <---> CPU */
@@ -137,7 +151,6 @@ static int mt8173_max98090_dev_probe(struct platform_device *pdev)
 {
 	struct snd_soc_card *card = &mt8173_max98090_card;
 	struct device_node *codec_node, *platform_node;
-	struct snd_soc_dai_link *dai_link;
 	int ret, i;
 
 	platform_node = of_parse_phandle(pdev->dev.of_node,
@@ -146,10 +159,10 @@ static int mt8173_max98090_dev_probe(struct platform_device *pdev)
 		dev_err(&pdev->dev, "Property 'platform' missing or invalid\n");
 		return -EINVAL;
 	}
-	for_each_card_prelinks(card, i, dai_link) {
-		if (dai_link->platform_name)
+	for (i = 0; i < card->num_links; i++) {
+		if (mt8173_max98090_dais[i].platform_name)
 			continue;
-		dai_link->platform_of_node = platform_node;
+		mt8173_max98090_dais[i].platform_of_node = platform_node;
 	}
 
 	codec_node = of_parse_phandle(pdev->dev.of_node,
@@ -159,10 +172,10 @@ static int mt8173_max98090_dev_probe(struct platform_device *pdev)
 			"Property 'audio-codec' missing or invalid\n");
 		return -EINVAL;
 	}
-	for_each_card_prelinks(card, i, dai_link) {
-		if (dai_link->codec_name)
+	for (i = 0; i < card->num_links; i++) {
+		if (mt8173_max98090_dais[i].codec_name)
 			continue;
-		dai_link->codec_of_node = codec_node;
+		mt8173_max98090_dais[i].codec_of_node = codec_node;
 	}
 	card->dev = &pdev->dev;
 

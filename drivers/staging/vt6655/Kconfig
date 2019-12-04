@@ -1,4 +1,3 @@
-# SPDX-License-Identifier: GPL-2.0
 config VT6655
    tristate "VIA Technologies VT6655 support"
    depends on PCI && MAC80211 && m

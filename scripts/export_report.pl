@@ -1,13 +1,12 @@
-#!/usr/bin/env perl
-# SPDX-License-Identifier: GPL-2.0-only
+#!/usr/bin/perl -w
 #
 # (C) Copyright IBM Corporation 2006.
+#	Released under GPL v2.
 #	Author : Ram Pai (linuxram@us.ibm.com)
 #
 # Usage: export_report.pl -k Module.symvers [-o report_file ] -f *.mod.c
 #
 
-use warnings;
 use Getopt::Std;
 use strict;
 

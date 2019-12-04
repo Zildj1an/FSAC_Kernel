@@ -1,10 +1,24 @@
-// SPDX-License-Identifier: GPL-2.0-only
 /*
  * Ultra Wide Band
  * Neighborhood Management Daemon
  *
  * Copyright (C) 2005-2006 Intel Corporation
  * Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License version
+ * 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301, USA.
+ *
  *
  * This daemon takes care of maintaing information that describes the
  * UWB neighborhood that the radios in this machine can see. It also
@@ -288,22 +302,18 @@ static int uwbd(void *param)
 /** Start the UWB daemon */
 void uwbd_start(struct uwb_rc *rc)
 {
-	struct task_struct *task = kthread_run(uwbd, rc, "uwbd");
-	if (IS_ERR(task)) {
-		rc->uwbd.task = NULL;
+	rc->uwbd.task = kthread_run(uwbd, rc, "uwbd");
+	if (rc->uwbd.task == NULL)
 		printk(KERN_ERR "UWB: Cannot start management daemon; "
 		       "UWB won't work\n");
-	} else {
-		rc->uwbd.task = task;
+	else
 		rc->uwbd.pid = rc->uwbd.task->pid;
-	}
 }
 
 /* Stop the UWB daemon and free any unprocessed events */
 void uwbd_stop(struct uwb_rc *rc)
 {
-	if (rc->uwbd.task)
-		kthread_stop(rc->uwbd.task);
+	kthread_stop(rc->uwbd.task);
 	uwbd_flush(rc);
 }
 

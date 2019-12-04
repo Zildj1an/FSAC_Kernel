@@ -11,7 +11,6 @@
 #ifndef _IIO_INKERN_H_
 #define _IIO_INKERN_H_
 
-struct iio_dev;
 struct iio_map;
 
 /**

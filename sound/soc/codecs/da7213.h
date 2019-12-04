@@ -181,16 +181,13 @@
 #define DA7213_DAI_BCLKS_PER_WCLK_256				(0x3 << 0)
 #define DA7213_DAI_BCLKS_PER_WCLK_MASK				(0x3 << 0)
 #define DA7213_DAI_CLK_POL_INV					(0x1 << 2)
-#define DA7213_DAI_CLK_POL_MASK					(0x1 << 2)
 #define DA7213_DAI_WCLK_POL_INV					(0x1 << 3)
-#define DA7213_DAI_WCLK_POL_MASK				(0x1 << 3)
 #define DA7213_DAI_CLK_EN_MASK					(0x1 << 7)
 
 /* DA7213_DAI_CTRL = 0x29 */
 #define DA7213_DAI_FORMAT_I2S_MODE				(0x0 << 0)
 #define DA7213_DAI_FORMAT_LEFT_J				(0x1 << 0)
 #define DA7213_DAI_FORMAT_RIGHT_J				(0x2 << 0)
-#define DA7213_DAI_FORMAT_DSP					(0x3 << 0)
 #define DA7213_DAI_FORMAT_MASK					(0x3 << 0)
 #define DA7213_DAI_WORD_LENGTH_S16_LE				(0x0 << 2)
 #define DA7213_DAI_WORD_LENGTH_S20_LE				(0x1 << 2)

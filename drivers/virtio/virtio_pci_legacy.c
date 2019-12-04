@@ -1,4 +1,3 @@
-// SPDX-License-Identifier: GPL-2.0-or-later
 /*
  * Virtio PCI driver - legacy device support
  *
@@ -12,6 +11,10 @@
  *  Anthony Liguori  <aliguori@us.ibm.com>
  *  Rusty Russell <rusty@rustcorp.com.au>
  *  Michael S. Tsirkin <mst@redhat.com>
+ *
+ * This work is licensed under the terms of the GNU GPL, version 2 or later.
+ * See the COPYING file in the top-level directory.
+ *
  */
 
 #include "virtio_pci_common.h"
@@ -49,8 +52,7 @@ static void vp_get(struct virtio_device *vdev, unsigned offset,
 {
 	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
 	void __iomem *ioaddr = vp_dev->ioaddr +
-			VIRTIO_PCI_CONFIG_OFF(vp_dev->msix_enabled) +
-			offset;
+				VIRTIO_PCI_CONFIG(vp_dev) + offset;
 	u8 *ptr = buf;
 	int i;
 
@@ -65,8 +67,7 @@ static void vp_set(struct virtio_device *vdev, unsigned offset,
 {
 	struct virtio_pci_device *vp_dev = to_vp_device(vdev);
 	void __iomem *ioaddr = vp_dev->ioaddr +
-			VIRTIO_PCI_CONFIG_OFF(vp_dev->msix_enabled) +
-			offset;
+				VIRTIO_PCI_CONFIG(vp_dev) + offset;
 	const u8 *ptr = buf;
 	int i;
 
@@ -115,13 +116,11 @@ static struct virtqueue *setup_vq(struct virtio_pci_device *vp_dev,
 				  unsigned index,
 				  void (*callback)(struct virtqueue *vq),
 				  const char *name,
-				  bool ctx,
 				  u16 msix_vec)
 {
 	struct virtqueue *vq;
 	u16 num;
 	int err;
-	u64 q_pfn;
 
 	/* Select the queue we're interested in */
 	iowrite16(index, vp_dev->ioaddr + VIRTIO_PCI_QUEUE_SEL);
@@ -136,22 +135,13 @@ static struct virtqueue *setup_vq(struct virtio_pci_device *vp_dev,
 	/* create the vring */
 	vq = vring_create_virtqueue(index, num,
 				    VIRTIO_PCI_VRING_ALIGN, &vp_dev->vdev,
-				    true, false, ctx,
-				    vp_notify, callback, name);
+				    true, false, vp_notify, callback, name);
 	if (!vq)
 		return ERR_PTR(-ENOMEM);
 
-	q_pfn = virtqueue_get_desc_addr(vq) >> VIRTIO_PCI_QUEUE_ADDR_SHIFT;
-	if (q_pfn >> 32) {
-		dev_err(&vp_dev->pci_dev->dev,
-			"platform bug: legacy virtio-mmio must not be used with RAM above 0x%llxGB\n",
-			0x1ULL << (32 + PAGE_SHIFT - 30));
-		err = -E2BIG;
-		goto out_del_vq;
-	}
-
 	/* activate the queue */
-	iowrite32(q_pfn, vp_dev->ioaddr + VIRTIO_PCI_QUEUE_PFN);
+	iowrite32(virtqueue_get_desc_addr(vq) >> VIRTIO_PCI_QUEUE_ADDR_SHIFT,
+		  vp_dev->ioaddr + VIRTIO_PCI_QUEUE_PFN);
 
 	vq->priv = (void __force *)vp_dev->ioaddr + VIRTIO_PCI_QUEUE_NOTIFY;
 
@@ -168,7 +158,6 @@ static struct virtqueue *setup_vq(struct virtio_pci_device *vp_dev,
 
 out_deactivate:
 	iowrite32(0, vp_dev->ioaddr + VIRTIO_PCI_QUEUE_PFN);
-out_del_vq:
 	vring_del_virtqueue(vq);
 	return ERR_PTR(err);
 }
@@ -205,7 +194,6 @@ static const struct virtio_config_ops virtio_pci_config_ops = {
 	.finalize_features = vp_finalize_features,
 	.bus_name	= vp_bus_name,
 	.set_vq_affinity = vp_set_vq_affinity,
-	.get_vq_affinity = vp_get_vq_affinity,
 };
 
 /* the PCI probing function */

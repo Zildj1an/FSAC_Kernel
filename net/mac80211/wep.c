@@ -30,13 +30,13 @@ int ieee80211_wep_init(struct ieee80211_local *local)
 	/* start WEP IV from a random value */
 	get_random_bytes(&local->wep_iv, IEEE80211_WEP_IV_LEN);
 
-	local->wep_tx_tfm = crypto_alloc_cipher("arc4", 0, 0);
+	local->wep_tx_tfm = crypto_alloc_cipher("arc4", 0, CRYPTO_ALG_ASYNC);
 	if (IS_ERR(local->wep_tx_tfm)) {
 		local->wep_rx_tfm = ERR_PTR(-EINVAL);
 		return PTR_ERR(local->wep_tx_tfm);
 	}
 
-	local->wep_rx_tfm = crypto_alloc_cipher("arc4", 0, 0);
+	local->wep_rx_tfm = crypto_alloc_cipher("arc4", 0, CRYPTO_ALG_ASYNC);
 	if (IS_ERR(local->wep_rx_tfm)) {
 		crypto_free_cipher(local->wep_tx_tfm);
 		local->wep_tx_tfm = ERR_PTR(-EINVAL);
@@ -293,8 +293,7 @@ ieee80211_crypto_wep_decrypt(struct ieee80211_rx_data *rx)
 			return RX_DROP_UNUSABLE;
 		ieee80211_wep_remove_iv(rx->local, rx->skb, rx->key);
 		/* remove ICV */
-		if (!(status->flag & RX_FLAG_ICV_STRIPPED) &&
-		    pskb_trim(rx->skb, rx->skb->len - IEEE80211_WEP_ICV_LEN))
+		if (pskb_trim(rx->skb, rx->skb->len - IEEE80211_WEP_ICV_LEN))
 			return RX_DROP_UNUSABLE;
 	}
 

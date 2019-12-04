@@ -1,7 +1,14 @@
-// SPDX-License-Identifier: GPL-2.0+
-//
-// Copyright 2012 Freescale Semiconductor, Inc.
-// Copyright 2012 Linaro Ltd.
+/*
+ * Copyright 2012 Freescale Semiconductor, Inc.
+ * Copyright 2012 Linaro Ltd.
+ *
+ * The code contained herein is licensed under the GNU General Public
+ * License. You may obtain a copy of the GNU General Public License
+ * Version 2 or later at the following locations:
+ *
+ * http://www.opensource.org/licenses/gpl-license.html
+ * http://www.gnu.org/copyleft/gpl.html
+ */
 
 #include <linux/gpio.h>
 #include <linux/module.h>
@@ -195,6 +202,9 @@ fail:
 static int imx_es8328_remove(struct platform_device *pdev)
 {
 	struct imx_es8328_data *data = platform_get_drvdata(pdev);
+
+	snd_soc_jack_free_gpios(&headset_jack, ARRAY_SIZE(headset_jack_gpios),
+				headset_jack_gpios);
 
 	snd_soc_unregister_card(&data->card);
 

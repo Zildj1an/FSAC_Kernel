@@ -1,4 +1,3 @@
-// SPDX-License-Identifier: GPL-2.0-or-later
 /*
  * IPVS         An implementation of the IP virtual server support for the
  *              LINUX operating system.  IPVS is now implemented as a module
@@ -10,6 +9,11 @@
  *              Peter Kese <peter.kese@ijs.si>
  *              Julian Anastasov <ja@ssi.bg>
  *
+ *              This program is free software; you can redistribute it and/or
+ *              modify it under the terms of the GNU General Public License
+ *              as published by the Free Software Foundation; either version
+ *              2 of the License, or (at your option) any later version.
+ *
  * The IPVS code for kernel 2.2 was done by Wensong Zhang and Peter Kese,
  * with changes/fixes from Julian Anastasov, Lars Marowsky-Bree, Horms
  * and others.
@@ -17,6 +21,7 @@
  * Changes:
  *	Paul `Rusty' Russell		properly handle non-linear skbs
  *	Harald Welte			don't use nfcache
+ *
  */
 
 #define KMSG_COMPONENT "IPVS"
@@ -48,7 +53,6 @@
 #endif
 
 #include <net/ip_vs.h>
-#include <linux/indirect_call_wrapper.h>
 
 
 EXPORT_SYMBOL(register_ip_vs_scheduler);
@@ -66,30 +70,7 @@ EXPORT_SYMBOL(ip_vs_get_debug_level);
 #endif
 EXPORT_SYMBOL(ip_vs_new_conn_out);
 
-#ifdef CONFIG_IP_VS_PROTO_TCP
-INDIRECT_CALLABLE_DECLARE(int
-	tcp_snat_handler(struct sk_buff *skb, struct ip_vs_protocol *pp,
-			 struct ip_vs_conn *cp, struct ip_vs_iphdr *iph));
-#endif
-
-#ifdef CONFIG_IP_VS_PROTO_UDP
-INDIRECT_CALLABLE_DECLARE(int
-	udp_snat_handler(struct sk_buff *skb, struct ip_vs_protocol *pp,
-			 struct ip_vs_conn *cp, struct ip_vs_iphdr *iph));
-#endif
-
-#if defined(CONFIG_IP_VS_PROTO_TCP) && defined(CONFIG_IP_VS_PROTO_UDP)
-#define SNAT_CALL(f, ...) \
-	INDIRECT_CALL_2(f, tcp_snat_handler, udp_snat_handler, __VA_ARGS__)
-#elif defined(CONFIG_IP_VS_PROTO_TCP)
-#define SNAT_CALL(f, ...) INDIRECT_CALL_1(f, tcp_snat_handler, __VA_ARGS__)
-#elif defined(CONFIG_IP_VS_PROTO_UDP)
-#define SNAT_CALL(f, ...) INDIRECT_CALL_1(f, udp_snat_handler, __VA_ARGS__)
-#else
-#define SNAT_CALL(f, ...) f(__VA_ARGS__)
-#endif
-
-static unsigned int ip_vs_net_id __read_mostly;
+static int ip_vs_net_id __read_mostly;
 /* netns cnt used for uniqueness */
 static atomic_t ipvs_netns_cnt = ATOMIC_INIT(0);
 
@@ -138,28 +119,26 @@ ip_vs_in_stats(struct ip_vs_conn *cp, struct sk_buff *skb)
 		struct ip_vs_cpu_stats *s;
 		struct ip_vs_service *svc;
 
-		local_bh_disable();
-
 		s = this_cpu_ptr(dest->stats.cpustats);
 		u64_stats_update_begin(&s->syncp);
 		s->cnt.inpkts++;
 		s->cnt.inbytes += skb->len;
 		u64_stats_update_end(&s->syncp);
 
+		rcu_read_lock();
 		svc = rcu_dereference(dest->svc);
 		s = this_cpu_ptr(svc->stats.cpustats);
 		u64_stats_update_begin(&s->syncp);
 		s->cnt.inpkts++;
 		s->cnt.inbytes += skb->len;
 		u64_stats_update_end(&s->syncp);
+		rcu_read_unlock();
 
 		s = this_cpu_ptr(ipvs->tot_stats.cpustats);
 		u64_stats_update_begin(&s->syncp);
 		s->cnt.inpkts++;
 		s->cnt.inbytes += skb->len;
 		u64_stats_update_end(&s->syncp);
-
-		local_bh_enable();
 	}
 }
 
@@ -174,28 +153,26 @@ ip_vs_out_stats(struct ip_vs_conn *cp, struct sk_buff *skb)
 		struct ip_vs_cpu_stats *s;
 		struct ip_vs_service *svc;
 
-		local_bh_disable();
-
 		s = this_cpu_ptr(dest->stats.cpustats);
 		u64_stats_update_begin(&s->syncp);
 		s->cnt.outpkts++;
 		s->cnt.outbytes += skb->len;
 		u64_stats_update_end(&s->syncp);
 
+		rcu_read_lock();
 		svc = rcu_dereference(dest->svc);
 		s = this_cpu_ptr(svc->stats.cpustats);
 		u64_stats_update_begin(&s->syncp);
 		s->cnt.outpkts++;
 		s->cnt.outbytes += skb->len;
 		u64_stats_update_end(&s->syncp);
+		rcu_read_unlock();
 
 		s = this_cpu_ptr(ipvs->tot_stats.cpustats);
 		u64_stats_update_begin(&s->syncp);
 		s->cnt.outpkts++;
 		s->cnt.outbytes += skb->len;
 		u64_stats_update_end(&s->syncp);
-
-		local_bh_enable();
 	}
 }
 
@@ -205,8 +182,6 @@ ip_vs_conn_stats(struct ip_vs_conn *cp, struct ip_vs_service *svc)
 {
 	struct netns_ipvs *ipvs = svc->ipvs;
 	struct ip_vs_cpu_stats *s;
-
-	local_bh_disable();
 
 	s = this_cpu_ptr(cp->dest->stats.cpustats);
 	u64_stats_update_begin(&s->syncp);
@@ -222,8 +197,6 @@ ip_vs_conn_stats(struct ip_vs_conn *cp, struct ip_vs_service *svc)
 	u64_stats_update_begin(&s->syncp);
 	s->cnt.conns++;
 	u64_stats_update_end(&s->syncp);
-
-	local_bh_enable();
 }
 
 
@@ -464,7 +437,7 @@ ip_vs_schedule(struct ip_vs_service *svc, struct sk_buff *skb,
 	/*
 	 * IPv6 frags, only the first hit here.
 	 */
-	pptr = frag_safe_skb_hp(skb, iph->len, sizeof(_ports), _ports);
+	pptr = frag_safe_skb_hp(skb, iph->len, sizeof(_ports), _ports, iph);
 	if (pptr == NULL)
 		return NULL;
 
@@ -497,9 +470,7 @@ ip_vs_schedule(struct ip_vs_service *svc, struct sk_buff *skb,
 	 */
 	if ((!skb->dev || skb->dev->flags & IFF_LOOPBACK)) {
 		iph->hdr_flags ^= IP_VS_HDR_INVERSE;
-		cp = INDIRECT_CALL_1(pp->conn_in_get,
-				     ip_vs_conn_in_get_proto, svc->ipvs,
-				     svc->af, skb, iph);
+		cp = pp->conn_in_get(svc->ipvs, svc->af, skb, iph);
 		iph->hdr_flags ^= IP_VS_HDR_INVERSE;
 
 		if (cp) {
@@ -571,7 +542,7 @@ ip_vs_schedule(struct ip_vs_service *svc, struct sk_buff *skb,
 		      IP_VS_DBG_ADDR(cp->af, &cp->caddr), ntohs(cp->cport),
 		      IP_VS_DBG_ADDR(cp->af, &cp->vaddr), ntohs(cp->vport),
 		      IP_VS_DBG_ADDR(cp->daf, &cp->daddr), ntohs(cp->dport),
-		      cp->flags, refcount_read(&cp->refcnt));
+		      cp->flags, atomic_read(&cp->refcnt));
 
 	ip_vs_conn_stats(cp, svc);
 	return cp;
@@ -599,7 +570,7 @@ int ip_vs_leave(struct ip_vs_service *svc, struct sk_buff *skb,
 	struct netns_ipvs *ipvs = svc->ipvs;
 	struct net *net = ipvs->net;
 
-	pptr = frag_safe_skb_hp(skb, iph->len, sizeof(_ports), _ports);
+	pptr = frag_safe_skb_hp(skb, iph->len, sizeof(_ports), _ports, iph);
 	if (!pptr)
 		return NF_DROP;
 	dport = likely(!ip_vs_iph_inverse(iph)) ? pptr[1] : pptr[0];
@@ -878,8 +849,10 @@ static int handle_response_icmp(int af, struct sk_buff *skb,
 {
 	unsigned int verdict = NF_DROP;
 
-	if (IP_VS_FWD_METHOD(cp) != IP_VS_CONN_F_MASQ)
-		goto ignore_cp;
+	if (IP_VS_FWD_METHOD(cp) != 0) {
+		pr_err("shouldn't reach here, because the box is on the "
+		       "half connection in the tun/dr module.\n");
+	}
 
 	/* Ensure the checksum is correct */
 	if (!skb_csum_unnecessary(skb) && ip_vs_checksum_complete(skb, ihl)) {
@@ -913,8 +886,6 @@ static int handle_response_icmp(int af, struct sk_buff *skb,
 		ip_vs_notrack(skb);
 	else
 		ip_vs_update_conntrack(skb, cp, 0);
-
-ignore_cp:
 	verdict = NF_ACCEPT;
 
 out:
@@ -993,8 +964,7 @@ static int ip_vs_out_icmp(struct netns_ipvs *ipvs, struct sk_buff *skb,
 	ip_vs_fill_iph_skb_icmp(AF_INET, skb, offset, true, &ciph);
 
 	/* The embedded headers contain source and dest in reverse order */
-	cp = INDIRECT_CALL_1(pp->conn_out_get, ip_vs_conn_out_get_proto,
-			     ipvs, AF_INET, skb, &ciph);
+	cp = pp->conn_out_get(ipvs, AF_INET, skb, &ciph);
 	if (!cp)
 		return NF_ACCEPT;
 
@@ -1016,7 +986,7 @@ static int ip_vs_out_icmp_v6(struct netns_ipvs *ipvs, struct sk_buff *skb,
 	unsigned int offset;
 
 	*related = 1;
-	ic = frag_safe_skb_hp(skb, ipvsh->len, sizeof(_icmph), &_icmph);
+	ic = frag_safe_skb_hp(skb, ipvsh->len, sizeof(_icmph), &_icmph, ipvsh);
 	if (ic == NULL)
 		return NF_DROP;
 
@@ -1050,8 +1020,7 @@ static int ip_vs_out_icmp_v6(struct netns_ipvs *ipvs, struct sk_buff *skb,
 		return NF_ACCEPT;
 
 	/* The embedded headers contain source and dest in reverse order */
-	cp = INDIRECT_CALL_1(pp->conn_out_get, ip_vs_conn_out_get_proto,
-			     ipvs, AF_INET6, skb, &ciph);
+	cp = pp->conn_out_get(ipvs, AF_INET6, skb, &ciph);
 	if (!cp)
 		return NF_ACCEPT;
 
@@ -1068,9 +1037,9 @@ static int ip_vs_out_icmp_v6(struct netns_ipvs *ipvs, struct sk_buff *skb,
  */
 static inline int is_sctp_abort(const struct sk_buff *skb, int nh_len)
 {
-	struct sctp_chunkhdr *sch, schunk;
-	sch = skb_header_pointer(skb, nh_len + sizeof(struct sctphdr),
-				 sizeof(schunk), &schunk);
+	sctp_chunkhdr_t *sch, schunk;
+	sch = skb_header_pointer(skb, nh_len + sizeof(sctp_sctphdr_t),
+			sizeof(schunk), &schunk);
 	if (sch == NULL)
 		return 0;
 	if (sch->type == SCTP_CID_ABORT)
@@ -1101,9 +1070,9 @@ static inline bool is_new_conn(const struct sk_buff *skb,
 		return th->syn;
 	}
 	case IPPROTO_SCTP: {
-		struct sctp_chunkhdr *sch, schunk;
+		sctp_chunkhdr_t *sch, schunk;
 
-		sch = skb_header_pointer(skb, iph->len + sizeof(struct sctphdr),
+		sch = skb_header_pointer(skb, iph->len + sizeof(sctp_sctphdr_t),
 					 sizeof(schunk), &schunk);
 		if (sch == NULL)
 			return false;
@@ -1224,7 +1193,7 @@ struct ip_vs_conn *ip_vs_new_conn_out(struct ip_vs_service *svc,
 		      IP_VS_DBG_ADDR(cp->af, &cp->caddr), ntohs(cp->cport),
 		      IP_VS_DBG_ADDR(cp->af, &cp->vaddr), ntohs(cp->vport),
 		      IP_VS_DBG_ADDR(cp->af, &cp->daddr), ntohs(cp->dport),
-		      cp->flags, refcount_read(&cp->refcnt));
+		      cp->flags, atomic_read(&cp->refcnt));
 	LeaveFunction(12);
 	return cp;
 }
@@ -1249,10 +1218,11 @@ static struct ip_vs_conn *__ip_vs_rs_conn_out(unsigned int hooknum,
 		return NULL;
 
 	pptr = frag_safe_skb_hp(skb, iph->len,
-				sizeof(_ports), _ports);
+				sizeof(_ports), _ports, iph);
 	if (!pptr)
 		return NULL;
 
+	rcu_read_lock();
 	dest = ip_vs_find_real_service(ipvs, af, iph->protocol,
 				       &iph->saddr, pptr[0]);
 	if (dest) {
@@ -1267,6 +1237,7 @@ static struct ip_vs_conn *__ip_vs_rs_conn_out(unsigned int hooknum,
 						  pptr[0], pptr[1]);
 		}
 	}
+	rcu_read_unlock();
 
 	return cp;
 }
@@ -1286,8 +1257,7 @@ handle_response(int af, struct sk_buff *skb, struct ip_vs_proto_data *pd,
 		goto drop;
 
 	/* mangle the packet */
-	if (pp->snat_handler &&
-	    !SNAT_CALL(pp->snat_handler, skb, pp, cp, iph))
+	if (pp->snat_handler && !pp->snat_handler(skb, pp, cp, iph))
 		goto drop;
 
 #ifdef CONFIG_IP_VS_IPV6
@@ -1413,14 +1383,10 @@ ip_vs_out(struct netns_ipvs *ipvs, unsigned int hooknum, struct sk_buff *skb, in
 	/*
 	 * Check if the packet belongs to an existing entry
 	 */
-	cp = INDIRECT_CALL_1(pp->conn_out_get, ip_vs_conn_out_get_proto,
-			     ipvs, af, skb, &iph);
+	cp = pp->conn_out_get(ipvs, af, skb, &iph);
 
-	if (likely(cp)) {
-		if (IP_VS_FWD_METHOD(cp) != IP_VS_CONN_F_MASQ)
-			goto ignore_cp;
+	if (likely(cp))
 		return handle_response(af, skb, pd, cp, &iph, hooknum);
-	}
 
 	/* Check for real-server-started requests */
 	if (atomic_read(&ipvs->conn_out_counter)) {
@@ -1444,7 +1410,7 @@ ip_vs_out(struct netns_ipvs *ipvs, unsigned int hooknum, struct sk_buff *skb, in
 		__be16 _ports[2], *pptr;
 
 		pptr = frag_safe_skb_hp(skb, iph.len,
-					 sizeof(_ports), _ports);
+					 sizeof(_ports), _ports, &iph);
 		if (pptr == NULL)
 			return NF_ACCEPT;	/* Not for me */
 		if (ip_vs_has_real_service(ipvs, af, iph.protocol, &iph.saddr,
@@ -1478,15 +1444,9 @@ ip_vs_out(struct netns_ipvs *ipvs, unsigned int hooknum, struct sk_buff *skb, in
 			}
 		}
 	}
-
-out:
 	IP_VS_DBG_PKT(12, af, pp, skb, iph.off,
 		      "ip_vs_out: packet continues traversal as normal");
 	return NF_ACCEPT;
-
-ignore_cp:
-	__ip_vs_conn_put(cp);
-	goto out;
 }
 
 /*
@@ -1561,12 +1521,14 @@ ip_vs_try_to_schedule(struct netns_ipvs *ipvs, int af, struct sk_buff *skb,
 		/* sorry, all this trouble for a no-hit :) */
 		IP_VS_DBG_PKT(12, af, pp, skb, iph->off,
 			      "ip_vs_in: packet continues traversal as normal");
-
-		/* Fragment couldn't be mapped to a conn entry */
-		if (iph->fragoffs)
+		if (iph->fragoffs) {
+			/* Fragment that couldn't be mapped to a conn entry
+			 * is missing module nf_defrag_ipv6
+			 */
+			IP_VS_DBG_RL("Unhandled frag, load nf_defrag_ipv6\n");
 			IP_VS_DBG_PKT(7, af, pp, skb, iph->off,
 				      "unhandled fragment");
-
+		}
 		*verdict = NF_ACCEPT;
 		return 0;
 	}
@@ -1667,13 +1629,12 @@ ip_vs_in_icmp(struct netns_ipvs *ipvs, struct sk_buff *skb, int *related,
 	/* The embedded headers contain source and dest in reverse order.
 	 * For IPIP this is error for request, not for reply.
 	 */
-	cp = INDIRECT_CALL_1(pp->conn_in_get, ip_vs_conn_in_get_proto,
-			     ipvs, AF_INET, skb, &ciph);
+	cp = pp->conn_in_get(ipvs, AF_INET, skb, &ciph);
 
 	if (!cp) {
 		int v;
 
-		if (ipip || !sysctl_schedule_icmp(ipvs))
+		if (!sysctl_schedule_icmp(ipvs))
 			return NF_ACCEPT;
 
 		if (!ip_vs_try_to_schedule(ipvs, AF_INET, skb, pd, &v, &cp, &ciph))
@@ -1710,7 +1671,8 @@ ip_vs_in_icmp(struct netns_ipvs *ipvs, struct sk_buff *skb, int *related,
 			skb_reset_network_header(skb);
 			IP_VS_DBG(12, "ICMP for IPIP %pI4->%pI4: mtu=%u\n",
 				&ip_hdr(skb)->saddr, &ip_hdr(skb)->daddr, mtu);
-			ipv4_update_pmtu(skb, ipvs->net, mtu, 0, 0);
+			ipv4_update_pmtu(skb, ipvs->net,
+					 mtu, 0, 0, 0, 0);
 			/* Client uses PMTUD? */
 			if (!(frag_off & htons(IP_DF)))
 				goto ignore_ipip;
@@ -1718,9 +1680,11 @@ ip_vs_in_icmp(struct netns_ipvs *ipvs, struct sk_buff *skb, int *related,
 			if (dest) {
 				struct ip_vs_dest_dst *dest_dst;
 
+				rcu_read_lock();
 				dest_dst = rcu_dereference(dest->dest_dst);
 				if (dest_dst)
 					mtu = dst_mtu(dest_dst->dst_cache);
+				rcu_read_unlock();
 			}
 			if (mtu > 68 + sizeof(struct iphdr))
 				mtu -= sizeof(struct iphdr);
@@ -1776,7 +1740,7 @@ static int ip_vs_in_icmp_v6(struct netns_ipvs *ipvs, struct sk_buff *skb,
 
 	*related = 1;
 
-	ic = frag_safe_skb_hp(skb, iph->len, sizeof(_icmph), &_icmph);
+	ic = frag_safe_skb_hp(skb, iph->len, sizeof(_icmph), &_icmph, iph);
 	if (ic == NULL)
 		return NF_DROP;
 
@@ -1820,8 +1784,7 @@ static int ip_vs_in_icmp_v6(struct netns_ipvs *ipvs, struct sk_buff *skb,
 	/* The embedded headers contain source and dest in reverse order
 	 * if not from localhost
 	 */
-	cp = INDIRECT_CALL_1(pp->conn_in_get, ip_vs_conn_in_get_proto,
-			     ipvs, AF_INET6, skb, &ciph);
+	cp = pp->conn_in_get(ipvs, AF_INET6, skb, &ciph);
 
 	if (!cp) {
 		int v;
@@ -1950,8 +1913,7 @@ ip_vs_in(struct netns_ipvs *ipvs, unsigned int hooknum, struct sk_buff *skb, int
 	/*
 	 * Check if the packet belongs to an existing connection entry
 	 */
-	cp = INDIRECT_CALL_1(pp->conn_in_get, ip_vs_conn_in_get_proto,
-			     ipvs, af, skb, &iph);
+	cp = pp->conn_in_get(ipvs, af, skb, &iph);
 
 	conn_reuse_mode = sysctl_conn_reuse_mode(ipvs);
 	if (conn_reuse_mode && !iph.fragoffs && is_new_conn(skb, &iph) && cp) {
@@ -1997,20 +1959,13 @@ ip_vs_in(struct netns_ipvs *ipvs, unsigned int hooknum, struct sk_buff *skb, int
 	if (cp->dest && !(cp->dest->flags & IP_VS_DEST_F_AVAILABLE)) {
 		/* the destination server is not available */
 
-		__u32 flags = cp->flags;
-
-		/* when timer already started, silently drop the packet.*/
-		if (timer_pending(&cp->timer))
-			__ip_vs_conn_put(cp);
-		else
-			ip_vs_conn_put(cp);
-
-		if (sysctl_expire_nodest_conn(ipvs) &&
-		    !(flags & IP_VS_CONN_F_ONE_PACKET)) {
+		if (sysctl_expire_nodest_conn(ipvs)) {
 			/* try to expire the connection immediately */
 			ip_vs_conn_expire_now(cp);
 		}
-
+		/* don't restart its timer, and silently
+		   drop the packet. */
+		__ip_vs_conn_put(cp);
 		return NF_DROP;
 	}
 
@@ -2145,7 +2100,7 @@ ip_vs_forward_icmp_v6(void *priv, struct sk_buff *skb,
 #endif
 
 
-static const struct nf_hook_ops ip_vs_ops[] = {
+static struct nf_hook_ops ip_vs_ops[] __read_mostly = {
 	/* After packet filtering, change source only for VS/NAT */
 	{
 		.hook		= ip_vs_reply4,
@@ -2245,7 +2200,6 @@ static const struct nf_hook_ops ip_vs_ops[] = {
 static int __net_init __ip_vs_init(struct net *net)
 {
 	struct netns_ipvs *ipvs;
-	int ret;
 
 	ipvs = net_generic(net, ip_vs_net_id);
 	if (ipvs == NULL)
@@ -2277,17 +2231,13 @@ static int __net_init __ip_vs_init(struct net *net)
 	if (ip_vs_sync_net_init(ipvs) < 0)
 		goto sync_fail;
 
-	ret = nf_register_net_hooks(net, ip_vs_ops, ARRAY_SIZE(ip_vs_ops));
-	if (ret < 0)
-		goto hook_fail;
-
+	printk(KERN_INFO "IPVS: Creating netns size=%zu id=%d\n",
+			 sizeof(struct netns_ipvs), ipvs->gen);
 	return 0;
 /*
  * Error handling
  */
 
-hook_fail:
-	ip_vs_sync_net_cleanup(ipvs);
 sync_fail:
 	ip_vs_conn_net_cleanup(ipvs);
 conn_fail:
@@ -2321,7 +2271,6 @@ static void __net_exit __ip_vs_dev_cleanup(struct net *net)
 {
 	struct netns_ipvs *ipvs = net_ipvs(net);
 	EnterFunction(2);
-	nf_unregister_net_hooks(net, ip_vs_ops, ARRAY_SIZE(ip_vs_ops));
 	ipvs->enable = 0;	/* Disable packet reception */
 	smp_wmb();
 	ip_vs_sync_net_cleanup(ipvs);
@@ -2368,16 +2317,24 @@ static int __init ip_vs_init(void)
 	if (ret < 0)
 		goto cleanup_sub;
 
+	ret = nf_register_hooks(ip_vs_ops, ARRAY_SIZE(ip_vs_ops));
+	if (ret < 0) {
+		pr_err("can't register hooks.\n");
+		goto cleanup_dev;
+	}
+
 	ret = ip_vs_register_nl_ioctl();
 	if (ret < 0) {
 		pr_err("can't register netlink/ioctl.\n");
-		goto cleanup_dev;
+		goto cleanup_hooks;
 	}
 
 	pr_info("ipvs loaded.\n");
 
 	return ret;
 
+cleanup_hooks:
+	nf_unregister_hooks(ip_vs_ops, ARRAY_SIZE(ip_vs_ops));
 cleanup_dev:
 	unregister_pernet_device(&ipvs_core_dev_ops);
 cleanup_sub:
@@ -2394,6 +2351,7 @@ exit:
 static void __exit ip_vs_cleanup(void)
 {
 	ip_vs_unregister_nl_ioctl();
+	nf_unregister_hooks(ip_vs_ops, ARRAY_SIZE(ip_vs_ops));
 	unregister_pernet_device(&ipvs_core_dev_ops);
 	unregister_pernet_subsys(&ipvs_core_ops);	/* free ip_vs struct */
 	ip_vs_conn_cleanup();

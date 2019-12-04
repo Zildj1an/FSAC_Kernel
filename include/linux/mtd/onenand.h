@@ -94,7 +94,6 @@ struct onenand_chip {
 	unsigned int		technology;
 	unsigned int		density_mask;
 	unsigned int		options;
-	unsigned int		badblockpos;
 
 	unsigned int		erase_shift;
 	unsigned int		page_shift;
@@ -188,8 +187,6 @@ struct onenand_chip {
 
 /* Check byte access in OneNAND */
 #define ONENAND_CHECK_BYTE_ACCESS(addr)		(addr & 0x1)
-
-#define ONENAND_BADBLOCK_POS		0
 
 /*
  * Options bits

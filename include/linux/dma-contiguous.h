@@ -1,4 +1,3 @@
-/* SPDX-License-Identifier: GPL-2.0-or-later */
 #ifndef __LINUX_CMA_H
 #define __LINUX_CMA_H
 
@@ -8,6 +7,11 @@
  * Written by:
  *	Marek Szyprowski <m.szyprowski@samsung.com>
  *	Michal Nazarewicz <mina86@mina86.com>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the
+ * License or (at your optional) any later version of the license.
  */
 
 /*
@@ -44,7 +48,7 @@
  *   CMA should not be used by the device drivers directly. It is
  *   only a helper framework for dma-mapping subsystem.
  *
- *   For more information, see kernel-docs in kernel/dma/contiguous.c
+ *   For more information, see kernel-docs in drivers/base/dma-contiguous.c
  */
 
 #ifdef __KERNEL__
@@ -108,7 +112,7 @@ static inline int dma_declare_contiguous(struct device *dev, phys_addr_t size,
 }
 
 struct page *dma_alloc_from_contiguous(struct device *dev, size_t count,
-				       unsigned int order, bool no_warn);
+				       unsigned int order);
 bool dma_release_from_contiguous(struct device *dev, struct page *pages,
 				 int count);
 
@@ -141,7 +145,7 @@ int dma_declare_contiguous(struct device *dev, phys_addr_t size,
 
 static inline
 struct page *dma_alloc_from_contiguous(struct device *dev, size_t count,
-				       unsigned int order, bool no_warn)
+				       unsigned int order)
 {
 	return NULL;
 }

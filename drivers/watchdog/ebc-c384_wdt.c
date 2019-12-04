@@ -1,4 +1,3 @@
-// SPDX-License-Identifier: GPL-2.0
 /*
  * Watchdog timer driver for the WinSystems EBC-C384
  * Copyright (C) 2016 William Breathitt Gray
@@ -117,9 +116,23 @@ static int ebc_c384_wdt_probe(struct device *dev, unsigned int id)
 	wdd->max_timeout = WATCHDOG_MAX_TIMEOUT;
 
 	watchdog_set_nowayout(wdd, nowayout);
-	watchdog_init_timeout(wdd, timeout, dev);
 
-	return devm_watchdog_register_device(dev, wdd);
+	if (watchdog_init_timeout(wdd, timeout, dev))
+		dev_warn(dev, "Invalid timeout (%u seconds), using default (%u seconds)\n",
+			timeout, WATCHDOG_TIMEOUT);
+
+	dev_set_drvdata(dev, wdd);
+
+	return watchdog_register_device(wdd);
+}
+
+static int ebc_c384_wdt_remove(struct device *dev, unsigned int id)
+{
+	struct watchdog_device *wdd = dev_get_drvdata(dev);
+
+	watchdog_unregister_device(wdd);
+
+	return 0;
 }
 
 static struct isa_driver ebc_c384_wdt_driver = {
@@ -127,6 +140,7 @@ static struct isa_driver ebc_c384_wdt_driver = {
 	.driver = {
 		.name = MODULE_NAME
 	},
+	.remove = ebc_c384_wdt_remove
 };
 
 static int __init ebc_c384_wdt_init(void)

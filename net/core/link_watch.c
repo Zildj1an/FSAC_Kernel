@@ -1,9 +1,14 @@
-// SPDX-License-Identifier: GPL-2.0-or-later
 /*
  * Linux network device link state notification
  *
  * Author:
  *     Stefan Rompf <sux@loplof.de>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version
+ * 2 of the License, or (at your option) any later version.
+ *
  */
 
 #include <linux/module.h>
@@ -87,7 +92,7 @@ static bool linkwatch_urgent_event(struct net_device *dev)
 	if (dev->ifindex != dev_get_iflink(dev))
 		return true;
 
-	if (netif_is_lag_port(dev) || netif_is_lag_master(dev))
+	if (dev->priv_flags & IFF_TEAM_PORT)
 		return true;
 
 	return netif_carrier_ok(dev) &&	qdisc_tx_changing(dev);
@@ -150,7 +155,7 @@ static void linkwatch_do_dev(struct net_device *dev)
 	clear_bit(__LINK_STATE_LINKWATCH_PENDING, &dev->state);
 
 	rfc2863_policy(dev);
-	if (dev->flags & IFF_UP && netif_device_present(dev)) {
+	if (dev->flags & IFF_UP) {
 		if (netif_carrier_ok(dev))
 			dev_activate(dev);
 		else

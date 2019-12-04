@@ -1,4 +1,3 @@
-// SPDX-License-Identifier: GPL-2.0-only
 /*
  * DB1000/DB1500/DB1100 ASoC audio fabric support code.
  *

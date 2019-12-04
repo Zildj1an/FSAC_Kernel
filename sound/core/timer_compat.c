@@ -1,7 +1,21 @@
-// SPDX-License-Identifier: GPL-2.0-or-later
 /*
  *   32bit -> 64bit ioctl wrapper for timer API
  *   Copyright (c) by Takashi Iwai <tiwai@suse.de>
+ *
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 2 of the License, or
+ *   (at your option) any later version.
+ *
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
+ *
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program; if not, write to the Free Software
+ *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
+ *
  */
 
 /* This file included from timer.c */
@@ -52,11 +66,11 @@ static int snd_timer_user_info_compat(struct file *file,
 	struct snd_timer *t;
 
 	tu = file->private_data;
-	if (!tu->timeri)
-		return -EBADFD;
+	if (snd_BUG_ON(!tu->timeri))
+		return -ENXIO;
 	t = tu->timeri->timer;
-	if (!t)
-		return -EBADFD;
+	if (snd_BUG_ON(!t))
+		return -ENXIO;
 	memset(&info, 0, sizeof(info));
 	info.card = t->card ? t->card->number : -1;
 	if (t->hw.flags & SNDRV_TIMER_HW_SLAVE)
@@ -85,8 +99,8 @@ static int snd_timer_user_status_compat(struct file *file,
 	struct snd_timer_status32 status;
 	
 	tu = file->private_data;
-	if (!tu->timeri)
-		return -EBADFD;
+	if (snd_BUG_ON(!tu->timeri))
+		return -ENXIO;
 	memset(&status, 0, sizeof(status));
 	status.tstamp.tv_sec = tu->tstamp.tv_sec;
 	status.tstamp.tv_nsec = tu->tstamp.tv_nsec;
@@ -119,8 +133,7 @@ enum {
 #endif /* CONFIG_X86_X32 */
 };
 
-static long __snd_timer_user_ioctl_compat(struct file *file, unsigned int cmd,
-					  unsigned long arg)
+static long snd_timer_user_ioctl_compat(struct file *file, unsigned int cmd, unsigned long arg)
 {
 	void __user *argp = compat_ptr(arg);
 
@@ -140,7 +153,7 @@ static long __snd_timer_user_ioctl_compat(struct file *file, unsigned int cmd,
 	case SNDRV_TIMER_IOCTL_PAUSE:
 	case SNDRV_TIMER_IOCTL_PAUSE_OLD:
 	case SNDRV_TIMER_IOCTL_NEXT_DEVICE:
-		return __snd_timer_user_ioctl(file, cmd, (unsigned long)argp);
+		return snd_timer_user_ioctl(file, cmd, (unsigned long)argp);
 	case SNDRV_TIMER_IOCTL_GPARAMS32:
 		return snd_timer_user_gparams_compat(file, argp);
 	case SNDRV_TIMER_IOCTL_INFO32:
@@ -153,16 +166,4 @@ static long __snd_timer_user_ioctl_compat(struct file *file, unsigned int cmd,
 #endif /* CONFIG_X86_X32 */
 	}
 	return -ENOIOCTLCMD;
-}
-
-static long snd_timer_user_ioctl_compat(struct file *file, unsigned int cmd,
-					unsigned long arg)
-{
-	struct snd_timer_user *tu = file->private_data;
-	long ret;
-
-	mutex_lock(&tu->ioctl_lock);
-	ret = __snd_timer_user_ioctl_compat(file, cmd, arg);
-	mutex_unlock(&tu->ioctl_lock);
-	return ret;
 }

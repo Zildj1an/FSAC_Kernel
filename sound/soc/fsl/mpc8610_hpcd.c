@@ -1,10 +1,14 @@
-// SPDX-License-Identifier: GPL-2.0
-//
-// Freescale MPC8610HPCD ALSA SoC Machine driver
-//
-// Author: Timur Tabi <timur@freescale.com>
-//
-// Copyright 2007-2010 Freescale Semiconductor, Inc.
+/**
+ * Freescale MPC8610HPCD ALSA SoC Machine driver
+ *
+ * Author: Timur Tabi <timur@freescale.com>
+ *
+ * Copyright 2007-2010 Freescale Semiconductor, Inc.
+ *
+ * This file is licensed under the terms of the GNU General Public License
+ * version 2.  This program is licensed "as is" without any warranty of any
+ * kind, whether express or implied.
+ */
 
 #include <linux/module.h>
 #include <linux/interrupt.h>
@@ -170,7 +174,7 @@ static int mpc8610_hpcd_machine_remove(struct snd_soc_card *card)
 /**
  * mpc8610_hpcd_ops: ASoC machine driver operations
  */
-static const struct snd_soc_ops mpc8610_hpcd_ops = {
+static struct snd_soc_ops mpc8610_hpcd_ops = {
 	.startup = mpc8610_hpcd_startup,
 };
 

@@ -1,4 +1,3 @@
-// SPDX-License-Identifier: GPL-2.0-only
 /*
  * This module exposes the interface to kernel space for specifying
  * QoS dependencies.  It provides infrastructure for registration of:
@@ -185,7 +184,8 @@ static inline void pm_qos_set_value(struct pm_qos_constraints *c, s32 value)
 	c->target_value = value;
 }
 
-static int pm_qos_debug_show(struct seq_file *s, void *unused)
+static inline int pm_qos_get_value(struct pm_qos_constraints *c);
+static int pm_qos_dbg_show_requests(struct seq_file *s, void *unused)
 {
 	struct pm_qos_object *qos = (struct pm_qos_object *)s->private;
 	struct pm_qos_constraints *c;
@@ -246,7 +246,18 @@ out:
 	return 0;
 }
 
-DEFINE_SHOW_ATTRIBUTE(pm_qos_debug);
+static int pm_qos_dbg_open(struct inode *inode, struct file *file)
+{
+	return single_open(file, pm_qos_dbg_show_requests,
+			   inode->i_private);
+}
+
+static const struct file_operations pm_qos_debug_fops = {
+	.open           = pm_qos_dbg_open,
+	.read           = seq_read,
+	.llseek         = seq_lseek,
+	.release        = single_release,
+};
 
 /**
  * pm_qos_update_target - manages the constraints list and calls the notifiers
@@ -284,7 +295,6 @@ int pm_qos_update_target(struct pm_qos_constraints *c, struct plist_node *node,
 		 * changed
 		 */
 		plist_del(node, &c->list);
-		/* fall through */
 	case PM_QOS_ADD_REQ:
 		plist_node_init(node, new_value);
 		plist_add(node, &c->list);
@@ -357,7 +367,6 @@ bool pm_qos_update_flags(struct pm_qos_flags *pqf,
 		break;
 	case PM_QOS_UPDATE_REQ:
 		pm_qos_flags_remove_req(pqf, req);
-		/* fall through */
 	case PM_QOS_ADD_REQ:
 		req->flags = val;
 		INIT_LIST_HEAD(&req->node);
@@ -473,7 +482,16 @@ void pm_qos_update_request(struct pm_qos_request *req,
 		return;
 	}
 
-	cancel_delayed_work_sync(&req->work);
+	/*
+	 * This function may be called very early during boot, for example,
+	 * from of_clk_init(), where irq needs to stay disabled.
+	 * cancel_delayed_work_sync() assumes that irq is enabled on
+	 * invocation and re-enables it on return.  Avoid calling it until
+	 * workqueue is initialized.
+	 */
+	if (keventd_up())
+		cancel_delayed_work_sync(&req->work);
+
 	__pm_qos_update_request(req, new_value);
 }
 EXPORT_SYMBOL_GPL(pm_qos_update_request);
@@ -583,8 +601,10 @@ static int register_pm_qos_misc(struct pm_qos_object *qos, struct dentry *d)
 	qos->pm_qos_power_miscdev.name = qos->name;
 	qos->pm_qos_power_miscdev.fops = &pm_qos_power_fops;
 
-	debugfs_create_file(qos->name, S_IRUGO, d, (void *)qos,
-			    &pm_qos_debug_fops);
+	if (d) {
+		(void)debugfs_create_file(qos->name, S_IRUGO, d,
+					  (void *)qos, &pm_qos_debug_fops);
+	}
 
 	return misc_register(&qos->pm_qos_power_miscdev);
 }
@@ -684,12 +704,14 @@ static int __init pm_qos_power_init(void)
 	BUILD_BUG_ON(ARRAY_SIZE(pm_qos_array) != PM_QOS_NUM_CLASSES);
 
 	d = debugfs_create_dir("pm_qos", NULL);
+	if (IS_ERR_OR_NULL(d))
+		d = NULL;
 
 	for (i = PM_QOS_CPU_DMA_LATENCY; i < PM_QOS_NUM_CLASSES; i++) {
 		ret = register_pm_qos_misc(pm_qos_array[i], d);
 		if (ret < 0) {
-			pr_err("%s: %s setup failed\n",
-			       __func__, pm_qos_array[i]->name);
+			printk(KERN_ERR "pm_qos_param: %s setup failed\n",
+			       pm_qos_array[i]->name);
 			return ret;
 		}
 	}

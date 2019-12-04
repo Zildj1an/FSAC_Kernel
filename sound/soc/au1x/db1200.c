@@ -1,4 +1,3 @@
-// SPDX-License-Identifier: GPL-2.0-only
 /*
  * DB1200/DB1300/DB1550 ASoC audio fabric support code.
  *
@@ -100,7 +99,7 @@ static int db1200_i2s_startup(struct snd_pcm_substream *substream)
 	return 0;
 }
 
-static const struct snd_soc_ops db1200_i2s_wm8731_ops = {
+static struct snd_soc_ops db1200_i2s_wm8731_ops = {
 	.startup	= db1200_i2s_startup,
 };
 

@@ -1,4 +1,3 @@
-// SPDX-License-Identifier: GPL-2.0-or-later
 /* 
  * CRC32C
  *@Article{castagnoli-crc,
@@ -24,6 +23,12 @@
  *  <endoflist>
  *
  * Copyright (c) 2004 Cisco Systems, Inc.
+ * 
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option) 
+ * any later version.
+ *
  */
 
 #include <crypto/hash.h>
@@ -38,18 +43,17 @@ static struct crypto_shash *tfm;
 u32 crc32c(u32 crc, const void *address, unsigned int length)
 {
 	SHASH_DESC_ON_STACK(shash, tfm);
-	u32 ret, *ctx = (u32 *)shash_desc_ctx(shash);
+	u32 *ctx = (u32 *)shash_desc_ctx(shash);
 	int err;
 
 	shash->tfm = tfm;
+	shash->flags = 0;
 	*ctx = crc;
 
 	err = crypto_shash_update(shash, address, length);
 	BUG_ON(err);
 
-	ret = *ctx;
-	barrier_data(ctx);
-	return ret;
+	return *ctx;
 }
 
 EXPORT_SYMBOL(crc32c);
@@ -64,12 +68,6 @@ static void __exit libcrc32c_mod_fini(void)
 {
 	crypto_free_shash(tfm);
 }
-
-const char *crc32c_impl(void)
-{
-	return crypto_shash_driver_name(tfm);
-}
-EXPORT_SYMBOL(crc32c_impl);
 
 module_init(libcrc32c_mod_init);
 module_exit(libcrc32c_mod_fini);

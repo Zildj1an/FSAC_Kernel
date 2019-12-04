@@ -1,1 +1,1 @@
-../../../../../arch/powerpc/mm/book3s64/vphn.h
+../../../../../arch/powerpc/mm/vphn.h

@@ -1,8 +1,9 @@
-// SPDX-License-Identifier: GPL-2.0-only
 /*
  * fireworks_stream.c - a part of driver for Fireworks based devices
  *
  * Copyright (c) 2013-2014 Takashi Sakamoto
+ *
+ * Licensed under the terms of the GNU General Public License, version 2.
  */
 #include "./fireworks.h"
 
@@ -116,7 +117,7 @@ destroy_stream(struct snd_efw *efw, struct amdtp_stream *stream)
 		conn = &efw->in_conn;
 
 	amdtp_stream_destroy(stream);
-	cmp_connection_destroy(conn);
+	cmp_connection_destroy(&efw->out_conn);
 }
 
 static int

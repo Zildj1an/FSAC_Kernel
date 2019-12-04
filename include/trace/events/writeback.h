@@ -1,4 +1,3 @@
-/* SPDX-License-Identifier: GPL-2.0 */
 #undef TRACE_SYSTEM
 #define TRACE_SYSTEM writeback
 
@@ -32,7 +31,7 @@
 
 #define WB_WORK_REASON							\
 	EM( WB_REASON_BACKGROUND,		"background")		\
-	EM( WB_REASON_VMSCAN,			"vmscan")		\
+	EM( WB_REASON_TRY_TO_FREE_PAGES,	"try_to_free_pages")	\
 	EM( WB_REASON_SYNC,			"sync")			\
 	EM( WB_REASON_PERIODIC,			"periodic")		\
 	EM( WB_REASON_LAPTOP_TIMER,		"laptop_timer")		\
@@ -53,7 +52,7 @@ WB_WORK_REASON
 
 struct wb_writeback_work;
 
-DECLARE_EVENT_CLASS(writeback_page_template,
+TRACE_EVENT(writeback_dirty_page,
 
 	TP_PROTO(struct page *page, struct address_space *mapping),
 
@@ -77,20 +76,6 @@ DECLARE_EVENT_CLASS(writeback_page_template,
 		__entry->ino,
 		__entry->index
 	)
-);
-
-DEFINE_EVENT(writeback_page_template, writeback_dirty_page,
-
-	TP_PROTO(struct page *page, struct address_space *mapping),
-
-	TP_ARGS(page, mapping)
-);
-
-DEFINE_EVENT(writeback_page_template, wait_on_page_writeback,
-
-	TP_PROTO(struct page *page, struct address_space *mapping),
-
-	TP_ARGS(page, mapping)
 );
 
 DECLARE_EVENT_CLASS(writeback_dirty_inode_template,
@@ -151,7 +136,7 @@ DEFINE_EVENT(writeback_dirty_inode_template, writeback_dirty_inode,
 
 static inline unsigned int __trace_wb_assign_cgroup(struct bdi_writeback *wb)
 {
-	return wb->memcg_css->cgroup->kn->id.ino;
+	return wb->memcg_css->cgroup->kn->ino;
 }
 
 static inline unsigned int __trace_wbc_assign_cgroup(struct writeback_control *wbc)
@@ -301,6 +286,7 @@ DEFINE_EVENT(writeback_class, name, \
 	TP_PROTO(struct bdi_writeback *wb), \
 	TP_ARGS(wb))
 
+DEFINE_WRITEBACK_EVENT(writeback_nowork);
 DEFINE_WRITEBACK_EVENT(writeback_wake_background);
 
 TRACE_EVENT(writeback_bdi_register,

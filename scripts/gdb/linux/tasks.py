@@ -79,7 +79,6 @@ class LxPs(gdb.Command):
                 pid=task["pid"],
                 comm=task["comm"].string()))
 
-
 LxPs()
 
 
@@ -97,8 +96,6 @@ def get_thread_info(task):
         thread_info_addr = task.address + ia64_task_size
         thread_info = thread_info_addr.cast(thread_info_ptr_type)
     else:
-        if task.type.fields()[0].type == thread_info_type.get_type():
-            return task['thread_info']
         thread_info = task['stack'].cast(thread_info_ptr_type)
     return thread_info.dereference()
 
@@ -134,6 +131,5 @@ variable."""
             return get_thread_info(task.dereference())
         else:
             raise gdb.GdbError("No task of PID " + str(pid))
-
 
 LxThreadInfoByPidFunc()

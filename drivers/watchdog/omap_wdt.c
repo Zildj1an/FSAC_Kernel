@@ -29,7 +29,6 @@
 #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
 #include <linux/module.h>
-#include <linux/mod_devicetable.h>
 #include <linux/types.h>
 #include <linux/kernel.h>
 #include <linux/mm.h>
@@ -231,6 +230,7 @@ static const struct watchdog_ops omap_wdt_ops = {
 static int omap_wdt_probe(struct platform_device *pdev)
 {
 	struct omap_wd_timer_platform_data *pdata = dev_get_platdata(&pdev->dev);
+	struct resource *res;
 	struct omap_wdt_dev *wdev;
 	int ret;
 
@@ -244,7 +244,8 @@ static int omap_wdt_probe(struct platform_device *pdev)
 	mutex_init(&wdev->lock);
 
 	/* reserve static register mappings */
-	wdev->base = devm_platform_ioremap_resource(pdev, 0);
+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+	wdev->base = devm_ioremap_resource(&pdev->dev, res);
 	if (IS_ERR(wdev->base))
 		return PTR_ERR(wdev->base);
 
@@ -252,10 +253,10 @@ static int omap_wdt_probe(struct platform_device *pdev)
 	wdev->wdog.ops = &omap_wdt_ops;
 	wdev->wdog.min_timeout = TIMER_MARGIN_MIN;
 	wdev->wdog.max_timeout = TIMER_MARGIN_MAX;
-	wdev->wdog.timeout = TIMER_MARGIN_DEFAULT;
 	wdev->wdog.parent = &pdev->dev;
 
-	watchdog_init_timeout(&wdev->wdog, timer_margin, &pdev->dev);
+	if (watchdog_init_timeout(&wdev->wdog, timer_margin, &pdev->dev) < 0)
+		wdev->wdog.timeout = TIMER_MARGIN_DEFAULT;
 
 	watchdog_set_nowayout(&wdev->wdog, nowayout);
 

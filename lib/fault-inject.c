@@ -1,4 +1,3 @@
-// SPDX-License-Identifier: GPL-2.0-only
 #include <linux/kernel.h>
 #include <linux/init.h>
 #include <linux/random.h>
@@ -57,7 +56,7 @@ static void fail_dump(struct fault_attr *attr)
 
 static bool fail_task(struct fault_attr *attr, struct task_struct *task)
 {
-	return in_task() && task->make_it_fail;
+	return !in_interrupt() && task->make_it_fail;
 }
 
 #define MAX_STACK_TRACE_DEPTH 32
@@ -66,16 +65,22 @@ static bool fail_task(struct fault_attr *attr, struct task_struct *task)
 
 static bool fail_stacktrace(struct fault_attr *attr)
 {
+	struct stack_trace trace;
 	int depth = attr->stacktrace_depth;
 	unsigned long entries[MAX_STACK_TRACE_DEPTH];
-	int n, nr_entries;
+	int n;
 	bool found = (attr->require_start == 0 && attr->require_end == ULONG_MAX);
 
 	if (depth == 0)
 		return found;
 
-	nr_entries = stack_trace_save(entries, depth, 1);
-	for (n = 0; n < nr_entries; n++) {
+	trace.nr_entries = 0;
+	trace.entries = entries;
+	trace.max_entries = depth;
+	trace.skip = 1;
+
+	save_stack_trace(&trace);
+	for (n = 0; n < trace.nr_entries; n++) {
 		if (attr->reject_start <= entries[n] &&
 			       entries[n] < attr->reject_end)
 			return false;
@@ -102,17 +107,6 @@ static inline bool fail_stacktrace(struct fault_attr *attr)
 
 bool should_fail(struct fault_attr *attr, ssize_t size)
 {
-	if (in_task()) {
-		unsigned int fail_nth = READ_ONCE(current->fail_nth);
-
-		if (fail_nth) {
-			if (!WRITE_ONCE(current->fail_nth, fail_nth - 1))
-				goto fail;
-
-			return false;
-		}
-	}
-
 	/* No need to check any other properties if the probability is 0 */
 	if (attr->probability == 0)
 		return false;
@@ -140,7 +134,6 @@ bool should_fail(struct fault_attr *attr, ssize_t size)
 	if (!fail_stacktrace(attr))
 		return false;
 
-fail:
 	fail_dump(attr);
 
 	if (atomic_read(&attr->times) != -1)

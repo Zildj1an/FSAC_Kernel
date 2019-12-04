@@ -1,4 +1,3 @@
-// SPDX-License-Identifier: GPL-2.0-only
 /*
  * linux/fs/nfs/read.c
  *
@@ -26,7 +25,6 @@
 #include "iostat.h"
 #include "fscache.h"
 #include "pnfs.h"
-#include "nfstrace.h"
 
 #define NFSDBG_FACILITY		NFSDBG_PAGECACHE
 
@@ -37,11 +35,7 @@ static struct kmem_cache *nfs_rdata_cachep;
 
 static struct nfs_pgio_header *nfs_readhdr_alloc(void)
 {
-	struct nfs_pgio_header *p = kmem_cache_zalloc(nfs_rdata_cachep, GFP_KERNEL);
-
-	if (p)
-		p->rw_mode = FMODE_READ;
-	return p;
+	return kmem_cache_zalloc(nfs_rdata_cachep, GFP_KERNEL);
 }
 
 static void nfs_readhdr_free(struct nfs_pgio_header *rhdr)
@@ -93,7 +87,7 @@ EXPORT_SYMBOL_GPL(nfs_pageio_reset_read_mds);
 
 static void nfs_readpage_release(struct nfs_page *req)
 {
-	struct inode *inode = d_inode(nfs_req_openctx(req)->dentry);
+	struct inode *inode = d_inode(req->wb_context->dentry);
 
 	dprintk("NFS: read done (%s/%llu %d@%lld)\n", inode->i_sb->s_id,
 		(unsigned long long)NFS_FILEID(inode), req->wb_bytes,
@@ -119,7 +113,7 @@ int nfs_readpage_async(struct nfs_open_context *ctx, struct inode *inode,
 	len = nfs_page_length(page);
 	if (len == 0)
 		return nfs_return_empty_page(page);
-	new = nfs_create_request(ctx, page, 0, len);
+	new = nfs_create_request(ctx, page, NULL, 0, len);
 	if (IS_ERR(new)) {
 		unlock_page(page);
 		return PTR_ERR(new);
@@ -202,11 +196,10 @@ static void nfs_initiate_read(struct nfs_pgio_header *hdr,
 
 	task_setup_data->flags |= swap_flags;
 	rpc_ops->read_setup(hdr, msg);
-	trace_nfs_initiate_read(inode, hdr->io_start, hdr->good_bytes);
 }
 
 static void
-nfs_async_read_error(struct list_head *head, int error)
+nfs_async_read_error(struct list_head *head)
 {
 	struct nfs_page	*req;
 
@@ -235,8 +228,6 @@ static int nfs_readpage_done(struct rpc_task *task,
 		return status;
 
 	nfs_add_stats(inode, NFSIOS_SERVERREADBYTES, hdr->res.count);
-	trace_nfs_readpage_done(inode, task->tk_status,
-				hdr->args.offset, hdr->res.eof);
 
 	if (task->tk_status == -ESTALE) {
 		set_bit(NFS_INO_STALE, &NFS_I(inode)->flags);
@@ -277,14 +268,16 @@ static void nfs_readpage_result(struct rpc_task *task,
 				struct nfs_pgio_header *hdr)
 {
 	if (hdr->res.eof) {
-		loff_t pos = hdr->args.offset + hdr->res.count;
-		unsigned int new = pos - hdr->io_start;
+		loff_t bound;
 
-		if (hdr->good_bytes > new) {
-			hdr->good_bytes = new;
+		bound = hdr->args.offset + hdr->res.count;
+		spin_lock(&hdr->lock);
+		if (bound < hdr->io_start + hdr->good_bytes) {
 			set_bit(NFS_IOHDR_EOF, &hdr->flags);
 			clear_bit(NFS_IOHDR_ERROR, &hdr->flags);
+			hdr->good_bytes = bound - hdr->io_start;
 		}
+		spin_unlock(&hdr->lock);
 	} else if (hdr->res.count < hdr->args.count)
 		nfs_readpage_retry(task, hdr);
 }
@@ -364,7 +357,7 @@ readpage_async_filler(void *data, struct page *page)
 	if (len == 0)
 		return nfs_return_empty_page(page);
 
-	new = nfs_create_request(desc->ctx, page, 0, len);
+	new = nfs_create_request(desc->ctx, page, NULL, 0, len);
 	if (IS_ERR(new))
 		goto out_error;
 
@@ -458,6 +451,7 @@ void nfs_destroy_readpagecache(void)
 }
 
 static const struct nfs_rw_ops nfs_rw_read_ops = {
+	.rw_mode		= FMODE_READ,
 	.rw_alloc_header	= nfs_readhdr_alloc,
 	.rw_free_header		= nfs_readhdr_free,
 	.rw_done		= nfs_readpage_done,

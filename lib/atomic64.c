@@ -1,9 +1,13 @@
-// SPDX-License-Identifier: GPL-2.0-or-later
 /*
  * Generic implementation of 64-bit atomics using spinlocks,
  * useful on processors that don't have 64-bit atomic instructions.
  *
  * Copyright © 2009 Paul Mackerras, IBM Corp. <paulus@au1.ibm.com>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version
+ * 2 of the License, or (at your option) any later version.
  */
 #include <linux/types.h>
 #include <linux/cache.h>
@@ -174,18 +178,18 @@ long long atomic64_xchg(atomic64_t *v, long long new)
 }
 EXPORT_SYMBOL(atomic64_xchg);
 
-long long atomic64_fetch_add_unless(atomic64_t *v, long long a, long long u)
+int atomic64_add_unless(atomic64_t *v, long long a, long long u)
 {
 	unsigned long flags;
 	raw_spinlock_t *lock = lock_addr(v);
-	long long val;
+	int ret = 0;
 
 	raw_spin_lock_irqsave(lock, flags);
-	val = v->counter;
-	if (val != u)
+	if (v->counter != u) {
 		v->counter += a;
+		ret = 1;
+	}
 	raw_spin_unlock_irqrestore(lock, flags);
-
-	return val;
+	return ret;
 }
-EXPORT_SYMBOL(atomic64_fetch_add_unless);
+EXPORT_SYMBOL(atomic64_add_unless);

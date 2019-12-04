@@ -1,4 +1,3 @@
-/* SPDX-License-Identifier: GPL-2.0 */
 #ifndef PAGE_FLAGS_LAYOUT_H
 #define PAGE_FLAGS_LAYOUT_H
 
@@ -80,16 +79,6 @@
 #define LAST_CPUPID_WIDTH LAST_CPUPID_SHIFT
 #else
 #define LAST_CPUPID_WIDTH 0
-#endif
-
-#ifdef CONFIG_KASAN_SW_TAGS
-#define KASAN_TAG_WIDTH 8
-#if SECTIONS_WIDTH+NODES_WIDTH+ZONES_WIDTH+LAST_CPUPID_WIDTH+KASAN_TAG_WIDTH \
-	> BITS_PER_LONG - NR_PAGEFLAGS
-#error "KASAN: not enough bits in page flags for tag"
-#endif
-#else
-#define KASAN_TAG_WIDTH 0
 #endif
 
 /*

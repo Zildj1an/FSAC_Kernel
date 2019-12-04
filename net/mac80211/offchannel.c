@@ -262,7 +262,7 @@ static void ieee80211_handle_roc_started(struct ieee80211_roc_work *roc,
 	if (roc->mgmt_tx_cookie) {
 		if (!WARN_ON(!roc->frame)) {
 			ieee80211_tx_skb_tid_band(roc->sdata, roc->frame, 7,
-						  roc->chan->band, 0);
+						  roc->chan->band);
 			roc->frame = NULL;
 		}
 	} else {
@@ -707,8 +707,6 @@ static int ieee80211_cancel_roc(struct ieee80211_local *local,
 	if (!cookie)
 		return -ENOENT;
 
-	flush_work(&local->hw_roc_start);
-
 	mutex_lock(&local->mtx);
 	list_for_each_entry_safe(roc, tmp, &local->roc_list, list) {
 		if (!mgmt_tx && roc->cookie != cookie)
@@ -801,14 +799,14 @@ int ieee80211_mgmt_tx(struct wiphy *wiphy, struct wireless_dev *wdev,
 	case NL80211_IFTYPE_ADHOC:
 		if (!sdata->vif.bss_conf.ibss_joined)
 			need_offchan = true;
-#ifdef CONFIG_MAC80211_MESH
 		/* fall through */
+#ifdef CONFIG_MAC80211_MESH
 	case NL80211_IFTYPE_MESH_POINT:
 		if (ieee80211_vif_is_mesh(&sdata->vif) &&
 		    !sdata->u.mesh.mesh_id_len)
 			need_offchan = true;
-#endif
 		/* fall through */
+#endif
 	case NL80211_IFTYPE_AP:
 	case NL80211_IFTYPE_AP_VLAN:
 	case NL80211_IFTYPE_P2P_GO:
@@ -887,7 +885,8 @@ int ieee80211_mgmt_tx(struct wiphy *wiphy, struct wireless_dev *wdev,
 	}
 	skb_reserve(skb, local->hw.extra_tx_headroom);
 
-	data = skb_put_data(skb, params->buf, params->len);
+	data = skb_put(skb, params->len);
+	memcpy(data, params->buf, params->len);
 
 	/* Update CSA counters */
 	if (sdata->vif.csa_active &&

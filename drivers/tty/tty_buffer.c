@@ -1,4 +1,3 @@
-// SPDX-License-Identifier: GPL-2.0
 /*
  * Tty buffer allocation management
  */
@@ -26,7 +25,7 @@
  * Byte threshold to limit memory consumption for flip buffers.
  * The actual memory limit is > 2x this amount.
  */
-#define TTYB_DEFAULT_MEM_LIMIT	(640 * 1024UL)
+#define TTYB_DEFAULT_MEM_LIMIT	65536
 
 /*
  * We default to dicing tty buffer allocations to this many characters
@@ -118,12 +117,9 @@ void tty_buffer_free_all(struct tty_port *port)
 	struct tty_bufhead *buf = &port->buf;
 	struct tty_buffer *p, *next;
 	struct llist_node *llist;
-	unsigned int freed = 0;
-	int still_used;
 
 	while ((p = buf->head) != NULL) {
 		buf->head = p->next;
-		freed += p->size;
 		if (p->size > 0)
 			kfree(p);
 	}
@@ -135,9 +131,7 @@ void tty_buffer_free_all(struct tty_port *port)
 	buf->head = &buf->sentinel;
 	buf->tail = &buf->sentinel;
 
-	still_used = atomic_xchg(&buf->mem_used, 0);
-	WARN(still_used != freed, "we still have not freed %d bytes!",
-			still_used - freed);
+	atomic_set(&buf->mem_used, 0);
 }
 
 /**
@@ -368,32 +362,6 @@ int tty_insert_flip_string_flags(struct tty_port *port,
 EXPORT_SYMBOL(tty_insert_flip_string_flags);
 
 /**
- *	__tty_insert_flip_char   -	Add one character to the tty buffer
- *	@port: tty port
- *	@ch: character
- *	@flag: flag byte
- *
- *	Queue a single byte to the tty buffering, with an optional flag.
- *	This is the slow path of tty_insert_flip_char.
- */
-int __tty_insert_flip_char(struct tty_port *port, unsigned char ch, char flag)
-{
-	struct tty_buffer *tb;
-	int flags = (flag == TTY_NORMAL) ? TTYB_NORMAL : 0;
-
-	if (!__tty_buffer_request_room(port, 1, flags))
-		return 0;
-
-	tb = port->buf.tail;
-	if (~tb->flags & TTYB_NORMAL)
-		*flag_buf_ptr(tb, tb->used) = flag;
-	*char_buf_ptr(tb, tb->used++) = ch;
-
-	return 1;
-}
-EXPORT_SYMBOL(__tty_insert_flip_char);
-
-/**
  *	tty_schedule_flip	-	push characters to ldisc
  *	@port: tty port to push from
  *
@@ -452,9 +420,9 @@ EXPORT_SYMBOL_GPL(tty_prepare_flip_string);
  *	Callers other than flush_to_ldisc() need to exclude the kworker
  *	from concurrent use of the line discipline, see paste_selection().
  *
- *	Returns the number of bytes processed
+ *	Returns the number of bytes not processed
  */
-int tty_ldisc_receive_buf(struct tty_ldisc *ld, const unsigned char *p,
+int tty_ldisc_receive_buf(struct tty_ldisc *ld, unsigned char *p,
 			  char *f, int count)
 {
 	if (ld->ops->receive_buf2)
@@ -469,19 +437,15 @@ int tty_ldisc_receive_buf(struct tty_ldisc *ld, const unsigned char *p,
 EXPORT_SYMBOL_GPL(tty_ldisc_receive_buf);
 
 static int
-receive_buf(struct tty_port *port, struct tty_buffer *head, int count)
+receive_buf(struct tty_ldisc *ld, struct tty_buffer *head, int count)
 {
 	unsigned char *p = char_buf_ptr(head, head->read);
 	char	      *f = NULL;
-	int n;
 
 	if (~head->flags & TTYB_NORMAL)
 		f = flag_buf_ptr(head, head->read);
 
-	n = port->client_ops->receive_buf(port, p, f, count);
-	if (n > 0)
-		memset(p, 0, n);
-	return n;
+	return tty_ldisc_receive_buf(ld, p, f, count);
 }
 
 /**
@@ -501,6 +465,16 @@ static void flush_to_ldisc(struct work_struct *work)
 {
 	struct tty_port *port = container_of(work, struct tty_port, buf.work);
 	struct tty_bufhead *buf = &port->buf;
+	struct tty_struct *tty;
+	struct tty_ldisc *disc;
+
+	tty = READ_ONCE(port->itty);
+	if (tty == NULL)
+		return;
+
+	disc = tty_ldisc_ref(tty);
+	if (disc == NULL)
+		return;
 
 	mutex_lock(&buf->lock);
 
@@ -530,7 +504,7 @@ static void flush_to_ldisc(struct work_struct *work)
 			continue;
 		}
 
-		count = receive_buf(port, head, count);
+		count = receive_buf(disc, head, count);
 		if (!count)
 			break;
 		head->read += count;
@@ -538,6 +512,7 @@ static void flush_to_ldisc(struct work_struct *work)
 
 	mutex_unlock(&buf->lock);
 
+	tty_ldisc_deref(disc);
 }
 
 /**

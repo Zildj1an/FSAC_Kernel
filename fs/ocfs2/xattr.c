@@ -1,4 +1,3 @@
-// SPDX-License-Identifier: GPL-2.0-only
 /* -*- mode: c; c-basic-offset: 8; -*-
  * vim: noexpandtab sw=8 ts=8 sts=0:
  *
@@ -9,6 +8,15 @@
  * CREDITS:
  * Lots of code in this file is copy from linux/fs/ext3/xattr.c.
  * Copyright (C) 2001-2003 Andreas Gruenbacher, <agruen@suse.de>
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License version 2 as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
  */
 
 #include <linux/capability.h>
@@ -630,17 +638,14 @@ int ocfs2_calc_xattr_init(struct inode *dir,
 						     si->value_len);
 
 	if (osb->s_mount_opt & OCFS2_MOUNT_POSIX_ACL) {
-		down_read(&OCFS2_I(dir)->ip_xattr_sem);
 		acl_len = ocfs2_xattr_get_nolock(dir, dir_bh,
 					OCFS2_XATTR_INDEX_POSIX_ACL_DEFAULT,
 					"", NULL, 0);
-		up_read(&OCFS2_I(dir)->ip_xattr_sem);
 		if (acl_len > 0) {
 			a_size = ocfs2_xattr_entry_real_size(0, acl_len);
 			if (S_ISDIR(mode))
 				a_size <<= 1;
 		} else if (acl_len != 0 && acl_len != -ENODATA) {
-			ret = acl_len;
 			mlog_errno(ret);
 			return ret;
 		}
@@ -896,7 +901,7 @@ static int ocfs2_xattr_list_entry(struct super_block *sb,
 
 	case OCFS2_XATTR_INDEX_POSIX_ACL_ACCESS:
 	case OCFS2_XATTR_INDEX_POSIX_ACL_DEFAULT:
-		if (!(sb->s_flags & SB_POSIXACL))
+		if (!(sb->s_flags & MS_POSIXACL))
 			return 0;
 		break;
 
@@ -1323,21 +1328,20 @@ static int ocfs2_xattr_get(struct inode *inode,
 			   void *buffer,
 			   size_t buffer_size)
 {
-	int ret, had_lock;
+	int ret;
 	struct buffer_head *di_bh = NULL;
-	struct ocfs2_lock_holder oh;
 
-	had_lock = ocfs2_inode_lock_tracker(inode, &di_bh, 0, &oh);
-	if (had_lock < 0) {
-		mlog_errno(had_lock);
-		return had_lock;
+	ret = ocfs2_inode_lock(inode, &di_bh, 0);
+	if (ret < 0) {
+		mlog_errno(ret);
+		return ret;
 	}
 	down_read(&OCFS2_I(inode)->ip_xattr_sem);
 	ret = ocfs2_xattr_get_nolock(inode, di_bh, name_index,
 				     name, buffer, buffer_size);
 	up_read(&OCFS2_I(inode)->ip_xattr_sem);
 
-	ocfs2_inode_unlock_tracker(inode, 0, &oh, had_lock);
+	ocfs2_inode_unlock(inode, 0);
 
 	brelse(di_bh);
 
@@ -2573,7 +2577,7 @@ int ocfs2_xattr_remove(struct inode *inode, struct buffer_head *di_bh)
 	if (!(oi->ip_dyn_features & OCFS2_HAS_XATTR_FL))
 		return 0;
 
-	if (ocfs2_is_refcount_inode(inode)) {
+	if (OCFS2_I(inode)->ip_dyn_features & OCFS2_HAS_REFCOUNT_FL) {
 		ret = ocfs2_lock_refcount_tree(OCFS2_SB(inode->i_sb),
 					       le64_to_cpu(di->i_refcount_loc),
 					       1, &ref_tree, &ref_root_bh);
@@ -3533,12 +3537,11 @@ int ocfs2_xattr_set(struct inode *inode,
 {
 	struct buffer_head *di_bh = NULL;
 	struct ocfs2_dinode *di;
-	int ret, credits, had_lock, ref_meta = 0, ref_credits = 0;
+	int ret, credits, ref_meta = 0, ref_credits = 0;
 	struct ocfs2_super *osb = OCFS2_SB(inode->i_sb);
 	struct inode *tl_inode = osb->osb_tl_inode;
 	struct ocfs2_xattr_set_ctxt ctxt = { NULL, NULL, NULL, };
 	struct ocfs2_refcount_tree *ref_tree = NULL;
-	struct ocfs2_lock_holder oh;
 
 	struct ocfs2_xattr_info xi = {
 		.xi_name_index = name_index,
@@ -3556,7 +3559,7 @@ int ocfs2_xattr_set(struct inode *inode,
 		.not_found = -ENODATA,
 	};
 
-	if (!ocfs2_supports_xattr(osb))
+	if (!ocfs2_supports_xattr(OCFS2_SB(inode->i_sb)))
 		return -EOPNOTSUPP;
 
 	/*
@@ -3569,9 +3572,8 @@ int ocfs2_xattr_set(struct inode *inode,
 		return -ENOMEM;
 	}
 
-	had_lock = ocfs2_inode_lock_tracker(inode, &di_bh, 1, &oh);
-	if (had_lock < 0) {
-		ret = had_lock;
+	ret = ocfs2_inode_lock(inode, &di_bh, 1);
+	if (ret < 0) {
 		mlog_errno(ret);
 		goto cleanup_nolock;
 	}
@@ -3606,7 +3608,7 @@ int ocfs2_xattr_set(struct inode *inode,
 	}
 
 	/* Check whether the value is refcounted and do some preparation. */
-	if (ocfs2_is_refcount_inode(inode) &&
+	if (OCFS2_I(inode)->ip_dyn_features & OCFS2_HAS_REFCOUNT_FL &&
 	    (!xis.not_found || !xbs.not_found)) {
 		ret = ocfs2_prepare_refcount_xattr(inode, di, &xi,
 						   &xis, &xbs, &ref_tree,
@@ -3668,7 +3670,7 @@ cleanup:
 		if (ret)
 			mlog_errno(ret);
 	}
-	ocfs2_inode_unlock_tracker(inode, 1, &oh, had_lock);
+	ocfs2_inode_unlock(inode, 1);
 cleanup_nolock:
 	brelse(di_bh);
 	brelse(xbs.xattr_bh);
@@ -6410,7 +6412,7 @@ static int ocfs2_reflink_xattr_header(handle_t *handle,
 		 * and then insert the extents one by one.
 		 */
 		if (xv->xr_list.l_tree_depth) {
-			memcpy(new_xv, &def_xv, OCFS2_XATTR_ROOT_SIZE);
+			memcpy(new_xv, &def_xv, sizeof(def_xv));
 			vb->vb_xv = new_xv;
 			vb->vb_bh = value_bh;
 			ocfs2_init_xattr_value_extent_tree(&data_et,
@@ -6795,7 +6797,7 @@ static int ocfs2_lock_reflink_xattr_rec_allocators(
 		*credits += 1;
 
 	/* count in the xattr tree change. */
-	num_free_extents = ocfs2_num_free_extents(xt_et);
+	num_free_extents = ocfs2_num_free_extents(osb, xt_et);
 	if (num_free_extents < 0) {
 		ret = num_free_extents;
 		mlog_errno(ret);

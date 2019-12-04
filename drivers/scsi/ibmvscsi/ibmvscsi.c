@@ -1,10 +1,24 @@
-// SPDX-License-Identifier: GPL-2.0-or-later
 /* ------------------------------------------------------------
  * ibmvscsi.c
  * (C) Copyright IBM Corporation 1994, 2004
  * Authors: Colin DeVilbiss (devilbis@us.ibm.com)
  *          Santiago Leon (santil@us.ibm.com)
  *          Dave Boutcher (sleddog@us.ibm.com)
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
+ * USA
  *
  * ------------------------------------------------------------
  * Emulation of a SCSI host adapter for Virtual I/O devices
@@ -79,10 +93,8 @@ static int max_requests = IBMVSCSI_MAX_REQUESTS_DEFAULT;
 static int max_events = IBMVSCSI_MAX_REQUESTS_DEFAULT + 2;
 static int fast_fail = 1;
 static int client_reserve = 1;
-static char partition_name[96] = "UNKNOWN";
+static char partition_name[97] = "UNKNOWN";
 static unsigned int partition_number = -1;
-static LIST_HEAD(ibmvscsi_head);
-static DEFINE_SPINLOCK(ibmvscsi_driver_lock);
 
 static struct scsi_transport_template *ibmvscsi_transport_template;
 
@@ -220,7 +232,6 @@ static void ibmvscsi_task(void *data)
 		while ((crq = crq_queue_next_crq(&hostdata->queue)) != NULL) {
 			ibmvscsi_handle_crq(crq, hostdata);
 			crq->valid = VIOSRP_CRQ_FREE;
-			wmb();
 		}
 
 		vio_enable_interrupts(vdev);
@@ -229,7 +240,6 @@ static void ibmvscsi_task(void *data)
 			vio_disable_interrupts(vdev);
 			ibmvscsi_handle_crq(crq, hostdata);
 			crq->valid = VIOSRP_CRQ_FREE;
-			wmb();
 		} else {
 			done = 1;
 		}
@@ -249,7 +259,7 @@ static void gather_partition_info(void)
 
 	ppartition_name = of_get_property(of_root, "ibm,partition-name", NULL);
 	if (ppartition_name)
-		strlcpy(partition_name, ppartition_name,
+		strncpy(partition_name, ppartition_name,
 				sizeof(partition_name));
 	p_number_ptr = of_get_property(of_root, "ibm,partition-no", NULL);
 	if (p_number_ptr)
@@ -668,7 +678,7 @@ static int map_sg_list(struct scsi_cmnd *cmd, int nseg,
 
 /**
  * map_sg_data: - Maps dma for a scatterlist and initializes decriptor fields
- * @cmd:	struct scsi_cmnd with the scatterlist
+ * @cmd:	Scsi_Cmnd with the scatterlist
  * @srp_cmd:	srp_cmd that contains the memory descriptor
  * @dev:	device for which to map dma memory
  *
@@ -824,9 +834,8 @@ static void ibmvscsi_reset_host(struct ibmvscsi_host_data *hostdata)
  *
  * Called when an internally generated command times out
 */
-static void ibmvscsi_timeout(struct timer_list *t)
+static void ibmvscsi_timeout(struct srp_event_struct *evt_struct)
 {
-	struct srp_event_struct *evt_struct = from_timer(evt_struct, t, timer);
 	struct ibmvscsi_host_data *hostdata = evt_struct->hostdata;
 
 	dev_err(hostdata->dev, "Command timed out (%x). Resetting connection\n",
@@ -915,9 +924,11 @@ static int ibmvscsi_send_srp_event(struct srp_event_struct *evt_struct,
 	 */
 	list_add_tail(&evt_struct->list, &hostdata->sent);
 
-	timer_setup(&evt_struct->timer, ibmvscsi_timeout, 0);
+	init_timer(&evt_struct->timer);
 	if (timeout) {
+		evt_struct->timer.data = (unsigned long) evt_struct;
 		evt_struct->timer.expires = jiffies + (timeout * HZ);
+		evt_struct->timer.function = (void (*)(unsigned long))ibmvscsi_timeout;
 		add_timer(&evt_struct->timer);
 	}
 
@@ -981,7 +992,7 @@ static void handle_cmd_rsp(struct srp_event_struct *evt_struct)
 	if (unlikely(rsp->opcode != SRP_RSP)) {
 		if (printk_ratelimit())
 			dev_warn(evt_struct->hostdata->dev,
-				 "bad SRP RSP type %#02x\n", rsp->opcode);
+				 "bad SRP RSP type %d\n", rsp->opcode);
 	}
 	
 	if (cmnd) {
@@ -1261,12 +1272,14 @@ static void send_mad_capabilities(struct ibmvscsi_host_data *hostdata)
 	if (hostdata->client_migrated)
 		hostdata->caps.flags |= cpu_to_be32(CLIENT_MIGRATED);
 
-	strlcpy(hostdata->caps.name, dev_name(&hostdata->host->shost_gendev),
+	strncpy(hostdata->caps.name, dev_name(&hostdata->host->shost_gendev),
 		sizeof(hostdata->caps.name));
+	hostdata->caps.name[sizeof(hostdata->caps.name) - 1] = '\0';
 
 	location = of_get_property(of_node, "ibm,loc-code", NULL);
 	location = location ? location : dev_name(hostdata->dev);
-	strlcpy(hostdata->caps.loc, location, sizeof(hostdata->caps.loc));
+	strncpy(hostdata->caps.loc, location, sizeof(hostdata->caps.loc));
+	hostdata->caps.loc[sizeof(hostdata->caps.loc) - 1] = '\0';
 
 	req->common.type = cpu_to_be32(VIOSRP_CAPABILITIES_TYPE);
 	req->buffer = cpu_to_be64(hostdata->caps_addr);
@@ -2056,7 +2069,6 @@ static struct scsi_host_template driver_template = {
 	.name = "IBM POWER Virtual SCSI Adapter " IBMVSCSI_VERSION,
 	.proc_name = "ibmvscsi",
 	.queuecommand = ibmvscsi_queuecommand,
-	.eh_timed_out = srp_timed_out,
 	.eh_abort_handler = ibmvscsi_eh_abort_handler,
 	.eh_device_reset_handler = ibmvscsi_eh_device_reset_handler,
 	.eh_host_reset_handler = ibmvscsi_eh_host_reset_handler,
@@ -2066,6 +2078,7 @@ static struct scsi_host_template driver_template = {
 	.can_queue = IBMVSCSI_MAX_REQUESTS_DEFAULT,
 	.this_id = -1,
 	.sg_tablesize = SG_ALL,
+	.use_clustering = ENABLE_CLUSTERING,
 	.shost_attrs = ibmvscsi_attrs,
 };
 
@@ -2257,9 +2270,6 @@ static int ibmvscsi_probe(struct vio_dev *vdev, const struct vio_device_id *id)
 	}
 
 	dev_set_drvdata(&vdev->dev, hostdata);
-	spin_lock(&ibmvscsi_driver_lock);
-	list_add_tail(&hostdata->host_list, &ibmvscsi_head);
-	spin_unlock(&ibmvscsi_driver_lock);
 	return 0;
 
       add_srp_port_failed:
@@ -2281,27 +2291,14 @@ static int ibmvscsi_probe(struct vio_dev *vdev, const struct vio_device_id *id)
 static int ibmvscsi_remove(struct vio_dev *vdev)
 {
 	struct ibmvscsi_host_data *hostdata = dev_get_drvdata(&vdev->dev);
-	unsigned long flags;
-
-	srp_remove_host(hostdata->host);
-	scsi_remove_host(hostdata->host);
-
-	purge_requests(hostdata, DID_ERROR);
-
-	spin_lock_irqsave(hostdata->host->host_lock, flags);
+	unmap_persist_bufs(hostdata);
 	release_event_pool(&hostdata->pool, hostdata);
-	spin_unlock_irqrestore(hostdata->host->host_lock, flags);
-
 	ibmvscsi_release_crq_queue(&hostdata->queue, hostdata,
 					max_events);
 
 	kthread_stop(hostdata->work_thread);
-	unmap_persist_bufs(hostdata);
-
-	spin_lock(&ibmvscsi_driver_lock);
-	list_del(&hostdata->host_list);
-	spin_unlock(&ibmvscsi_driver_lock);
-
+	srp_remove_host(hostdata->host);
+	scsi_remove_host(hostdata->host);
 	scsi_host_put(hostdata->host);
 
 	return 0;
@@ -2327,13 +2324,13 @@ static int ibmvscsi_resume(struct device *dev)
  * ibmvscsi_device_table: Used by vio.c to match devices in the device tree we 
  * support.
  */
-static const struct vio_device_id ibmvscsi_device_table[] = {
+static struct vio_device_id ibmvscsi_device_table[] = {
 	{"vscsi", "IBM,v-scsi"},
 	{ "", "" }
 };
 MODULE_DEVICE_TABLE(vio, ibmvscsi_device_table);
 
-static const struct dev_pm_ops ibmvscsi_pm_ops = {
+static struct dev_pm_ops ibmvscsi_pm_ops = {
 	.resume = ibmvscsi_resume
 };
 

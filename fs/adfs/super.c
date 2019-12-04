@@ -213,7 +213,7 @@ static int parse_options(struct super_block *sb, char *options)
 static int adfs_remount(struct super_block *sb, int *flags, char *data)
 {
 	sync_filesystem(sb);
-	*flags |= SB_NODIRATIME;
+	*flags |= MS_NODIRATIME;
 	return parse_options(sb, data);
 }
 
@@ -248,9 +248,15 @@ static struct inode *adfs_alloc_inode(struct super_block *sb)
 	return &ei->vfs_inode;
 }
 
-static void adfs_free_inode(struct inode *inode)
+static void adfs_i_callback(struct rcu_head *head)
 {
+	struct inode *inode = container_of(head, struct inode, i_rcu);
 	kmem_cache_free(adfs_inode_cachep, ADFS_I(inode));
+}
+
+static void adfs_destroy_inode(struct inode *inode)
+{
+	call_rcu(&inode->i_rcu, adfs_i_callback);
 }
 
 static void init_once(void *foo)
@@ -284,8 +290,7 @@ static void destroy_inodecache(void)
 
 static const struct super_operations adfs_sops = {
 	.alloc_inode	= adfs_alloc_inode,
-	.free_inode	= adfs_free_inode,
-	.drop_inode	= generic_delete_inode,
+	.destroy_inode	= adfs_destroy_inode,
 	.write_inode	= adfs_write_inode,
 	.put_super	= adfs_put_super,
 	.statfs		= adfs_statfs,
@@ -308,7 +313,7 @@ static struct adfs_discmap *adfs_read_map(struct super_block *sb, struct adfs_di
 
 	asb->s_ids_per_zone = zone_size / (asb->s_idlen + 1);
 
-	dm = kmalloc_array(nzones, sizeof(*dm), GFP_KERNEL);
+	dm = kmalloc(nzones * sizeof(*dm), GFP_KERNEL);
 	if (dm == NULL) {
 		adfs_error(sb, "not enough memory");
 		return ERR_PTR(-ENOMEM);
@@ -367,7 +372,7 @@ static int adfs_fill_super(struct super_block *sb, void *data, int silent)
 	struct inode *root;
 	int ret = -EINVAL;
 
-	sb->s_flags |= SB_NODIRATIME;
+	sb->s_flags |= MS_NODIRATIME;
 
 	asb = kzalloc(sizeof(*asb), GFP_KERNEL);
 	if (!asb)

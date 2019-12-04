@@ -1,4 +1,3 @@
-// SPDX-License-Identifier: GPL-2.0
 /*
  * linux/fs/ext4/readpage.c
  *
@@ -49,7 +48,7 @@
 
 static inline bool ext4_bio_encrypted(struct bio *bio)
 {
-#ifdef CONFIG_FS_ENCRYPTION
+#ifdef CONFIG_EXT4_FS_ENCRYPTION
 	return unlikely(bio->bi_private != NULL);
 #else
 	return false;
@@ -71,20 +70,20 @@ static inline bool ext4_bio_encrypted(struct bio *bio)
 static void mpage_end_io(struct bio *bio)
 {
 	struct bio_vec *bv;
-	struct bvec_iter_all iter_all;
+	int i;
 
 	if (ext4_bio_encrypted(bio)) {
-		if (bio->bi_status) {
+		if (bio->bi_error) {
 			fscrypt_release_ctx(bio->bi_private);
 		} else {
-			fscrypt_enqueue_decrypt_bio(bio->bi_private, bio);
+			fscrypt_decrypt_bio_pages(bio->bi_private, bio);
 			return;
 		}
 	}
-	bio_for_each_segment_all(bv, bio, iter_all) {
+	bio_for_each_segment_all(bv, bio, i) {
 		struct page *page = bv->bv_page;
 
-		if (!bio->bi_status) {
+		if (!bio->bi_error) {
 			SetPageUptodate(page);
 		} else {
 			ClearPageUptodate(page);
@@ -98,7 +97,7 @@ static void mpage_end_io(struct bio *bio)
 
 int ext4_mpage_readpages(struct address_space *mapping,
 			 struct list_head *pages, struct page *page,
-			 unsigned nr_pages, bool is_readahead)
+			 unsigned nr_pages)
 {
 	struct bio *bio = NULL;
 	sector_t last_block_in_bio = 0;
@@ -126,10 +125,9 @@ int ext4_mpage_readpages(struct address_space *mapping,
 		int fully_mapped = 1;
 		unsigned first_hole = blocks_per_page;
 
+		prefetchw(&page->flags);
 		if (pages) {
-			page = lru_to_page(pages);
-
-			prefetchw(&page->flags);
+			page = list_entry(pages->prev, struct page, lru);
 			list_del(&page->lru);
 			if (add_to_page_cache_lru(page, mapping, page->index,
 				  readahead_gfp_mask(mapping)))
@@ -243,8 +241,9 @@ int ext4_mpage_readpages(struct address_space *mapping,
 		if (bio == NULL) {
 			struct fscrypt_ctx *ctx = NULL;
 
-			if (IS_ENCRYPTED(inode) && S_ISREG(inode->i_mode)) {
-				ctx = fscrypt_get_ctx(GFP_NOFS);
+			if (ext4_encrypted_inode(inode) &&
+			    S_ISREG(inode->i_mode)) {
+				ctx = fscrypt_get_ctx(inode, GFP_NOFS);
 				if (IS_ERR(ctx))
 					goto set_error_page;
 			}
@@ -255,12 +254,11 @@ int ext4_mpage_readpages(struct address_space *mapping,
 					fscrypt_release_ctx(ctx);
 				goto set_error_page;
 			}
-			bio_set_dev(bio, bdev);
+			bio->bi_bdev = bdev;
 			bio->bi_iter.bi_sector = blocks[0] << (blkbits - 9);
 			bio->bi_end_io = mpage_end_io;
 			bio->bi_private = ctx;
-			bio_set_op_attrs(bio, REQ_OP_READ,
-						is_readahead ? REQ_RAHEAD : 0);
+			bio_set_op_attrs(bio, REQ_OP_READ, 0);
 		}
 
 		length = first_hole << blkbits;

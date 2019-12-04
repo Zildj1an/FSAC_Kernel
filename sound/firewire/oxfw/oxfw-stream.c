@@ -1,8 +1,9 @@
-// SPDX-License-Identifier: GPL-2.0-only
 /*
  * oxfw_stream.c - a part of driver for OXFW970/971 based devices
  *
  * Copyright (c) 2014 Takashi Sakamoto
+ *
+ * Licensed under the terms of the GNU General Public License, version 2.
  */
 
 #include "oxfw.h"
@@ -516,9 +517,8 @@ assume_stream_formats(struct snd_oxfw *oxfw, enum avc_general_plug_dir dir,
 	if (err < 0)
 		goto end;
 
-	formats[eid] = devm_kmemdup(&oxfw->card->card_dev, buf, *len,
-				    GFP_KERNEL);
-	if (!formats[eid]) {
+	formats[eid] = kmemdup(buf, *len, GFP_KERNEL);
+	if (formats[eid] == NULL) {
 		err = -ENOMEM;
 		goto end;
 	}
@@ -535,8 +535,7 @@ assume_stream_formats(struct snd_oxfw *oxfw, enum avc_general_plug_dir dir,
 			continue;
 
 		eid++;
-		formats[eid] = devm_kmemdup(&oxfw->card->card_dev, buf, *len,
-					    GFP_KERNEL);
+		formats[eid] = kmemdup(buf, *len, GFP_KERNEL);
 		if (formats[eid] == NULL) {
 			err = -ENOMEM;
 			goto end;
@@ -598,9 +597,8 @@ static int fill_stream_formats(struct snd_oxfw *oxfw,
 		if (err < 0)
 			break;
 
-		formats[eid] = devm_kmemdup(&oxfw->card->card_dev, buf, len,
-					    GFP_KERNEL);
-		if (!formats[eid]) {
+		formats[eid] = kmemdup(buf, len, GFP_KERNEL);
+		if (formats[eid] == NULL) {
 			err = -ENOMEM;
 			break;
 		}

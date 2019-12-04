@@ -1,11 +1,16 @@
-// SPDX-License-Identifier: GPL-2.0+
-//
-//  wm1133-ev1.c - Audio for WM1133-EV1 on i.MX31ADS
-//
-//  Copyright (c) 2010 Wolfson Microelectronics plc
-//  Author: Mark Brown <broonie@opensource.wolfsonmicro.com>
-//
-//  Based on an earlier driver for the same hardware by Liam Girdwood.
+/*
+ *  wm1133-ev1.c - Audio for WM1133-EV1 on i.MX31ADS
+ *
+ *  Copyright (c) 2010 Wolfson Microelectronics plc
+ *  Author: Mark Brown <broonie@opensource.wolfsonmicro.com>
+ *
+ *  Based on an earlier driver for the same hardware by Liam Girdwood.
+ *
+ *  This program is free software; you can redistribute  it and/or modify it
+ *  under  the terms of  the GNU General  Public License as published by the
+ *  Free Software Foundation;  either version 2 of the  License, or (at your
+ *  option) any later version.
+ */
 
 #include <linux/platform_device.h>
 #include <linux/clk.h>
@@ -134,7 +139,7 @@ static int wm1133_ev1_hw_params(struct snd_pcm_substream *substream,
 	return 0;
 }
 
-static const struct snd_soc_ops wm1133_ev1_ops = {
+static struct snd_soc_ops wm1133_ev1_ops = {
 	.hw_params = wm1133_ev1_hw_params,
 };
 
@@ -196,18 +201,18 @@ static struct snd_soc_jack_pin mic_jack_pins[] = {
 
 static int wm1133_ev1_init(struct snd_soc_pcm_runtime *rtd)
 {
-	struct snd_soc_component *component = rtd->codec_dai->component;
+	struct snd_soc_codec *codec = rtd->codec;
 
 	/* Headphone jack detection */
 	snd_soc_card_jack_new(rtd->card, "Headphone", SND_JACK_HEADPHONE,
 			      &hp_jack, hp_jack_pins, ARRAY_SIZE(hp_jack_pins));
-	wm8350_hp_jack_detect(component, WM8350_JDR, &hp_jack, SND_JACK_HEADPHONE);
+	wm8350_hp_jack_detect(codec, WM8350_JDR, &hp_jack, SND_JACK_HEADPHONE);
 
 	/* Microphone jack detection */
 	snd_soc_card_jack_new(rtd->card, "Microphone",
 			      SND_JACK_MICROPHONE | SND_JACK_BTN_0, &mic_jack,
 			      mic_jack_pins, ARRAY_SIZE(mic_jack_pins));
-	wm8350_mic_jack_detect(component, &mic_jack, SND_JACK_MICROPHONE,
+	wm8350_mic_jack_detect(codec, &mic_jack, SND_JACK_MICROPHONE,
 			       SND_JACK_BTN_0);
 
 	snd_soc_dapm_force_enable_pin(&rtd->card->dapm, "Mic Bias");

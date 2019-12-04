@@ -1,8 +1,9 @@
-// SPDX-License-Identifier: GPL-2.0-only
 /*
  * SPI-Engine SPI controller driver
  * Copyright 2015 Analog Devices Inc.
  *  Author: Lars-Peter Clausen <lars@metafoo.de>
+ *
+ * Licensed under the GPL-2.
  */
 
 #include <linux/clk.h>
@@ -493,8 +494,7 @@ static int spi_engine_probe(struct platform_device *pdev)
 			SPI_ENGINE_VERSION_MAJOR(version),
 			SPI_ENGINE_VERSION_MINOR(version),
 			SPI_ENGINE_VERSION_PATCH(version));
-		ret = -ENODEV;
-		goto err_put_master;
+		return -ENODEV;
 	}
 
 	spi_engine->clk = devm_clk_get(&pdev->dev, "s_axi_aclk");
@@ -552,15 +552,13 @@ err_put_master:
 
 static int spi_engine_remove(struct platform_device *pdev)
 {
-	struct spi_master *master = spi_master_get(platform_get_drvdata(pdev));
+	struct spi_master *master = platform_get_drvdata(pdev);
 	struct spi_engine *spi_engine = spi_master_get_devdata(master);
 	int irq = platform_get_irq(pdev, 0);
 
 	spi_unregister_master(master);
 
 	free_irq(irq, master);
-
-	spi_master_put(master);
 
 	writel_relaxed(0xff, spi_engine->base + SPI_ENGINE_REG_INT_PENDING);
 	writel_relaxed(0x00, spi_engine->base + SPI_ENGINE_REG_INT_ENABLE);
@@ -576,7 +574,6 @@ static const struct of_device_id spi_engine_match_table[] = {
 	{ .compatible = "adi,axi-spi-engine-1.00.a" },
 	{ },
 };
-MODULE_DEVICE_TABLE(of, spi_engine_match_table);
 
 static struct platform_driver spi_engine_driver = {
 	.probe = spi_engine_probe,
