@@ -1,0 +1,15 @@
+File created:		        Purpose:
+-------------                   -----------
+1 /fsac/fsac.c		        Initialize everything,including the proc and registers the dummy plugin. 
+2 /fsac/fsac_list.c	        Help with the management of the special linked lists, and the copy from user.	
+3 /fsac/fsac_plugin.c	        Dummy FSAC plugin(default) also manages the list of registered plugins.
+4 /fsac/fsac_proc.c	        Manages the /proc entry. Check laoded plugins, check/change active plugin, stats on it.
+5 /include/fsac/fsac.h          Header of (1). Also includes auxiliar definitions/functions.
+6 /include/fsac/fsac_list.h     Header of (2). Also includes auxiliar function.
+7 /include/fsac/fsac_macros.h   Some macros of FSAC.
+8 /include/fsac/fsac_proc.h     Header of (4).
+
+File modified:		        Why:
+--------------                  -----------
+9 /kernel/sched/sched.h		Make FSAC a valid policy, add it to the linked list as highest. 
+10 /include/uapi/linux/sched.h  Add macro SCHED_FSAC(7)

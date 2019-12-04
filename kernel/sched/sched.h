@@ -117,10 +117,15 @@ static inline int dl_policy(int policy)
 {
 	return policy == SCHED_DEADLINE;
 }
+
+static inline int fsac_policy(int policy){
+	return policy == SCHED_FSAC;
+}
+
 static inline bool valid_policy(int policy)
 {
 	return idle_policy(policy) || fair_policy(policy) ||
-		rt_policy(policy) || dl_policy(policy);
+		rt_policy(policy) || dl_policy(policy) || fsac_policy(policy);
 }
 
 static inline int task_has_rt_policy(struct task_struct *p)
@@ -1290,7 +1295,7 @@ static inline void set_curr_task(struct rq *rq, struct task_struct *curr)
 	curr->sched_class->set_curr_task(rq);
 }
 
-#define sched_class_highest (&stop_sched_class)
+#define sched_class_highest (&fsac_sched_class)
 #define for_each_class(class) \
    for (class = sched_class_highest; class; class = class->next)
 
@@ -1299,7 +1304,7 @@ extern const struct sched_class dl_sched_class;
 extern const struct sched_class rt_sched_class;
 extern const struct sched_class fair_sched_class;
 extern const struct sched_class idle_sched_class;
-
+extern const struct sched_class fsac_sched_class;
 
 #ifdef CONFIG_SMP
 
