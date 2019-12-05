@@ -87,7 +87,8 @@ int register_sched_plugin(struct sched_plugin* plugin){
 		goto out_reg;
 	}
 
-	printk(KERN_INFO "Registering FSAC plugin %s.\n",plugin->plugin_name);
+	printk(KERN_INFO "[%llu] Registering FSAC plugin %s.\n",
+		fsac_clock(),plugin->plugin_name);
 
 	CHECK(activate_plugin);
 	CHECK(deactivate_plugin);

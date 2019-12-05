@@ -19,7 +19,7 @@ void fsac_remove_list(struct list_head* ghost_node);
 /* Return value is number of elems copied into members[] */
 int fsac_print_list(struct list_head* list, char members*);
 /* On success,returns pointer to list node, otherwise NULL
-   If you use a spinlock/other mechanism for the list, lock it yourselve
+   If you use a spinlock/other mechanism for the list, lock it yourself
 */
 struct list_head* fsac_find_node(int n, char *c, struct list_head* head);
 /* Safely copying contents to user array */

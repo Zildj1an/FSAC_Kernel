@@ -10,6 +10,7 @@
 
 #include <linux/printk.h>
 #include <linux/uacces.h>    /* copy_from_user */
+#include <fsac/fsac.h>
 #include <fsac/fsac_list.h>
 
 typedef long (*activate_plugin_t) (void);
