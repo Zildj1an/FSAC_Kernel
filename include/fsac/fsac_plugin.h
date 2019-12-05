@@ -22,6 +22,8 @@ struct fsac_plugin {
 
 	struct list_head 	list;
 	char 			*plugin_name;
+	int 			is_real_time;
+
 	/*	Setup	*/
 	activate_plugin_t	activate_plugin;
 	deactivate_plugin_t	deactivate_plugin;

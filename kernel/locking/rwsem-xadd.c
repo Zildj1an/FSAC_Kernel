@@ -18,6 +18,7 @@
 
 #include "rwsem.h"
 
+#include <fsac/fsac.h>
 /*
  * Guide to the rw_semaphore's count field for common values.
  * (32-bit case illustrated, similar for 64-bit)
@@ -414,7 +415,8 @@ static bool rwsem_optimistic_spin(struct rw_semaphore *sem)
 		 * we're an RT task that will live-lock because we won't let
 		 * the owner complete.
 		 */
-		if (!sem->owner && (need_resched() || rt_task(current)))
+		if (!sem->owner && (need_resched() || rt_task(current))
+			|| fsac_is_real_time(current))
 			break;
 
 		/*

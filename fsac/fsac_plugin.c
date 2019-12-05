@@ -28,6 +28,7 @@ static long fsac_dummy_admit_task(struct task_struct* tsk){
 
 struct fsac_plugin fsac_sched_plugin = {
 	.plugin_name = "FSAC",
+	.is_real_time = 0,
 	.activate_plugin = fsac_dummy_activate_plugin,
 	.deactivate_plugin = fsac_dummy_deactivate_plugin,
 	.schedule = fsac_dummy_schedule,
@@ -79,6 +80,12 @@ int register_sched_plugin(struct sched_plugin* plugin){
 		err = -EPERM;
 		goto out_reg;
         }
+
+	if(unlikely(plugin->is_real_time != 0 && plugin->is_real_time != 1)) {
+		printk(KERN_ALERT "FSAC plugin not real-time(1) or other(0).\n");
+        	err = -EPERM;
+		goto out_reg;
+	}
 
 	printk(KERN_INFO "Registering FSAC plugin %s.\n",plugin->plugin_name);
 

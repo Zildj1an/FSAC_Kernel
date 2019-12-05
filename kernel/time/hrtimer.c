@@ -56,6 +56,8 @@
 
 #include "tick-internal.h"
 
+#include <fsac/fsac.h>
+
 /*
  * The timer bases:
  *
@@ -1541,7 +1543,7 @@ long hrtimer_nanosleep(struct timespec *rqtp, struct timespec __user *rmtp,
 	u64 slack;
 
 	slack = current->timer_slack_ns;
-	if (dl_task(current) || rt_task(current))
+	if (dl_task(current) || rt_task(current) || fsac_is_real_time(current))
 		slack = 0;
 
 	hrtimer_init_on_stack(&t.timer, clockid, mode);

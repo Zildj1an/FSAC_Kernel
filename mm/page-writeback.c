@@ -41,6 +41,7 @@
 
 #include "internal.h"
 
+#include <fsac/fsac.h>
 /*
  * Sleep at most 200ms at a time in balance_dirty_pages().
  */
@@ -435,7 +436,7 @@ static void domain_dirty_limits(struct dirty_throttle_control *dtc)
 	if (bg_thresh >= thresh)
 		bg_thresh = thresh / 2;
 	tsk = current;
-	if (tsk->flags & PF_LESS_THROTTLE || rt_task(tsk)) {
+	if (tsk->flags & PF_LESS_THROTTLE || rt_task(tsk) || fsac_is_real_time(tsk)) {
 		bg_thresh += bg_thresh / 4 + global_wb_domain.dirty_limit / 32;
 		thresh += thresh / 4 + global_wb_domain.dirty_limit / 32;
 	}
@@ -485,7 +486,7 @@ static unsigned long node_dirty_limit(struct pglist_data *pgdat)
 	else
 		dirty = vm_dirty_ratio * node_memory / 100;
 
-	if (tsk->flags & PF_LESS_THROTTLE || rt_task(tsk))
+	if (tsk->flags & PF_LESS_THROTTLE || rt_task(tsk) || fsac_is_real_time(tsk))
 		dirty += dirty / 4;
 
 	return dirty;

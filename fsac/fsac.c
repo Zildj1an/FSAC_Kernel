@@ -9,6 +9,18 @@
 /* Number of uploaded tasks that exist in the system */
 unsigned long fsac_task_count = ATOMIC_INIT(0);
 
+
+/* Whenever the kernel checks if the task is real-time -to avoid
+   delaying them- the FSAC plugin (if real-time) should also be resumed.
+*/
+int fsac_is_real_time(struct task_struct *tsk) {
+
+	if(is_fsac(t)) {
+ 		 return fsac->is_real_time;
+	}
+	else return 0;
+}
+
 static long __fsac_admit_task(struct task_struct *tsk) {
 
 	long err;

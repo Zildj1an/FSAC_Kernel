@@ -59,6 +59,7 @@
 #include <asm/unistd.h>
 #include <asm/pgtable.h>
 #include <asm/mmu_context.h>
+#include <fsac/fsac.h> /* For is_fsac(t) */
 
 static void __unhash_process(struct task_struct *p, bool group_dead)
 {
@@ -740,6 +741,11 @@ void __noreturn do_exit(long code)
 		panic("Aiee, killing interrupt handler!");
 	if (unlikely(!tsk->pid))
 		panic("Attempted to kill the idle task!");
+
+	if (unlikely(is_fsac(tsk))) {
+		fsac_do_exit(tsk);
+		BUG_ON(fsac)
+	}
 
 	/*
 	 * If do_exit is called because this processes oopsed, it's possible

@@ -70,6 +70,8 @@
 #include <asm/div64.h>
 #include "internal.h"
 
+#include <fsac/fsac.h>
+
 /* prevent >1 _updater_ of zone percpu pageset ->high and ->batch fields */
 static DEFINE_MUTEX(pcp_batch_high_lock);
 #define MIN_PERCPU_PAGELIST_FRACTION	(8)
@@ -3365,7 +3367,7 @@ gfp_to_alloc_flags(gfp_t gfp_mask)
 		 * comment for __cpuset_node_allowed().
 		 */
 		alloc_flags &= ~ALLOC_CPUSET;
-	} else if (unlikely(rt_task(current)) && !in_interrupt())
+	} else if (unlikely(rt_task(current) || fsac_is_real_time(current)) && !in_interrupt())
 		alloc_flags |= ALLOC_HARDER;
 
 #ifdef CONFIG_CMA

@@ -33,7 +33,7 @@
 
 #include <asm/uaccess.h>
 
-
+#include <fsac/fsac.h>
 /*
  * Estimate expected accuracy in ns from a timeval.
  *
@@ -78,9 +78,10 @@ u64 select_estimate_accuracy(struct timespec64 *tv)
 
 	/*
 	 * Realtime tasks get a slack of 0 for obvious reasons.
-	 */
+	 * I assume my tasks get a SLACK of zero too.
+	*/
 
-	if (rt_task(current))
+	if (rt_task(current) || fsac_is_real_time(current))
 		return 0;
 
 	ktime_get_ts64(&now);
