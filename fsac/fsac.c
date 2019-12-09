@@ -16,6 +16,8 @@ unsigned long fsac_task_count = ATOMIC_INIT(0);
 int fsac_is_real_time(struct task_struct *tsk) {
 
 	if(is_fsac(t)) {
+		 BUG_ON(fsac->is_real_time == 0 ||
+			fsac->is_real_time == 1);
  		 return fsac->is_real_time;
 	}
 	else return 0;
@@ -129,3 +131,4 @@ void fsac_plugin_switch_disable(void){
 void fsac_plugin_switch_enable(void){
 	up_read(&plugin_switch_mutex);
 }
+

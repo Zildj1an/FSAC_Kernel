@@ -41,6 +41,15 @@ struct fsac_plugin {
 /* Pointer to current scheduling plugin */
 extern struct sched_plugin *fsac;
 
+/* Linked list of loaded plugins */
+struct list_item {
+        char* plugin_name;
+        struct list_head links;
+};
+
+struct list_head proc_loaded_plugins;
+DEFINE_RAW_SPINLOCK(proc_plugins_lock);
+
 int register_sched_plugin(struct sched_plugin* plugin);
 int unregister_sched_plugin(struct sched_plugin* plugin);
 struct sched_plugin* find_sched_plugin(const char* name);

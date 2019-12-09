@@ -1,6 +1,5 @@
 /*
-   Dummy plugin, first registered (1)
-   and list of plugins managed (2)
+   Dummy plugin, first registered (1) and list of plugins managed (2)
    @author Carlos Bilbao Muñoz
    cbilbao@ucm.es
 */
@@ -44,9 +43,6 @@ struct sched_plugin *fsac = &fsac_sched_plugin;
 
 /* (2)  And now, manage the list of registered plugins. */
 
-static LIST_HEAD(sched_plugins);
-static DEFINE_RAW_SPINLOCK(sched_plugins_lock);
-
 /* Avoid NULL pointers on run-time
    ## = Concatenate args in macro
 */
@@ -58,9 +54,9 @@ struct sched_plugin* find_sched_plugin(const char* name) {
 
 	struct sched_plugin *plugin = NULL;
 
-	raw_spin_lock(&sched_plugins_lock);
-	plugin = fsac_find_node(0,name,sched_plugins);
-	raw_spin_unlock(&sched_plugins_lock);
+	raw_spin_lock(&proc_plugins_lock);
+	plugin = fsac_find_node(0,name,&proc_loaded_plugins);
+	raw_spin_unlock(&proc_plugins_lock);
 
 	return plugin;
 }
@@ -99,9 +95,9 @@ int register_sched_plugin(struct sched_plugin* plugin){
 	CHECK(task_exit);
 	CHECK(plugin_read);
 
-	raw_spin_lock(&sched_plugins_lock);
-	list_add(&plugin->list, &sched_plugins);
-	raw_spin_unlock(&sched_plugins_lock);
+	raw_spin_lock(&proc_plugins_lock);
+	add_plugin_proc(&plugin->plugin_name);
+	raw_spin_unlock(&proc_plugins_lock);
 
 out_reg:
     return err;
@@ -115,7 +111,7 @@ int unregister_sched_plugin(struct sched_plugin* plugin){
 	if (strcmp(fsac->plugin_name, plugin->plugin_name) != 0) {
 		unregister = 1;
 		raw_spin_lock(&sched_plugins_lock);
-		list_del(&plugin->list);
+		remove_plugin_proc(&plugin->plugin_name);
 		raw_spin_unlock(&sched_plugins_lock);
 	}
 	else
@@ -127,6 +123,7 @@ EXPORT_SYMBOL(unregister_sched_plugin);
 
 void print_sched_plugins(struct seq_file *m){
 
+	//TODO cambiar params?
 	struct list_head *pos;
 	struct sched_plugin *plugin;
 

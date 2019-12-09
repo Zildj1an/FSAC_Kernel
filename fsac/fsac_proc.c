@@ -17,20 +17,10 @@
 
 #include <fsac/fsac_proc.h>
 
-static DEFINE_RAW_SPINLOCK(proc_plugins_lock);
-static LIST_HEAD(proc_loaded_plugins);
-
 static struct proc_dir_entry *fsac_dir = NULL,
 	*loaded  = NULL,
 	*active_plugin = NULL,
 	*stats_active = NULL;
-
-struct list_item {
-	char* plugin_name;
-	struct list_head links;
-};
-
-struct list_head ghost_node;
 
 /* PROC FUNCTIONS */
 static ssize_t loaded_read(struct file *filp,
@@ -132,7 +122,7 @@ int __init start_fsac_proc(void) {
 
 	if (!fsac_dir || !loaded || !stats_active) goto mem_err;
 
-//	add_plugin_proc(&fsac_name); TODO no va aqui?
+//	add_plugin_proc(&fsac_name); TODO no va aqui? -> TB INICIALIZAR LA LISTA DE PLUGINS
 
   return 0;
 
@@ -150,6 +140,7 @@ void remove_fsac_proc(void) {
 	if (fsac_dir)      remove_proc_entry("fsac",NULL);
 }
 
+/* You have to adquire the lock in advance */
 void add_plugin_proc(char *name) {
 
 	struct list_item *new_item = NULL;
@@ -159,21 +150,17 @@ void add_plugin_proc(char *name) {
 		new_item = vmalloc(sizeof(struct list_item));
 		new_item->data = vmalloc(strlen(name) + 1);
 		strcpy(new_item->data,name);
-
-		raw_spin_lock(&proc_plugins_lock);
         	list_add_tail(&new_item->links, &proc_loaded_plugins);
-		raw_spin_unlock(&proc_plugins_lock);
 	}
 }
 
+/* Adquire the lock in advance */
 int remove_plugin_proc(char *name) {
 
 	struct list_item *new_item = NULL;
 
 	if ((new_item = fsac_find_node(0,name,&proc_loaded_plugins))) {
-		raw_spin_lock(&proc_plugins_lock);
                 list_del(&new_item->links);
-                raw_spin_unlock(&proc_plugins_lock);
 	}
 }
 
