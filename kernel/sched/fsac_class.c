@@ -1,6 +1,6 @@
 /*
     This is the new FSAC scheduling class.
-    It only does the most basic stuff and delegate on the active plugin.
+    It only does the most basic stuff and delegates on the active plugin.
     @author Carlos Bilbao Muñoz
     cbilbao@ucm.es
 */
