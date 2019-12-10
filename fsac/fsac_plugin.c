@@ -13,7 +13,7 @@ static long fsac_dummy_deactivate_plugin(void){ return 0;}
 static void fsac_dummy_task_new(struct task_struct *t,int on_rq,int running){}
 static void fsac_dummy_task_wake_up(struct task_struct *task){}
 static void fsac_dummy_task_exit(struct task_struct *task){}
-static ssize_t fsac_dummy_read(char *buf);
+static ssize_t fsac_dummy_read(char *buf){ return 0;}
 
 static struct task_struct* fsac_dummy_schedule(struct task_struct * prev){
 	sched_state_task_picked(); //TODO
@@ -27,7 +27,7 @@ static long fsac_dummy_admit_task(struct task_struct* tsk){
 
 struct fsac_plugin fsac_sched_plugin = {
 	.plugin_name = "FSAC",
-	.is_real_time = 0,
+	.is_real_time = 0, /* Not really needed as it's default */
 	.activate_plugin = fsac_dummy_activate_plugin,
 	.deactivate_plugin = fsac_dummy_deactivate_plugin,
 	.schedule = fsac_dummy_schedule,
@@ -55,7 +55,7 @@ struct sched_plugin* find_sched_plugin(const char* name) {
 	struct sched_plugin *plugin = NULL;
 
 	raw_spin_lock(&proc_plugins_lock);
-	plugin = fsac_find_node(0,name,&proc_loaded_plugins);
+	plugin = proc_find_node(0,name,&proc_loaded_plugins);
 	raw_spin_unlock(&proc_plugins_lock);
 
 	return plugin;
@@ -127,12 +127,12 @@ void print_sched_plugins(struct seq_file *m){
 	struct list_head *pos;
 	struct sched_plugin *plugin;
 
-	raw_spin_lock(&sched_plugins_lock);
+	raw_spin_lock(&proc_plugins_lock);
 	list_for_each(pos, &sched_plugins) {
-		plugin = list_entry(pos, struct sched_plugin, list);
+		plugin = list_entry(pos, struct sched_plugin, links);
 		seq_printf(m, "%s\n", plugin->plugin_name);
 	}
-	raw_spin_unlock(&sched_plugins_lock);
+	raw_spin_unlock(&proc_plugins_lock);
 }
 EXPORT_SYMBOL(print_sched_plugins);
 

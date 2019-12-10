@@ -1,6 +1,6 @@
 /*
 	Starts everything, including the proc entries for FSAC Kernel
-	and registers /fsac/fsac_plugin.c
+	and registers /fsac/fsac_plugin.c (Dummy default plugin)
 	@author Carlos Bilbao Muñoz
 	cbilbao@ucm.es
 */
@@ -8,7 +8,6 @@
 
 /* Number of uploaded tasks that exist in the system */
 unsigned long fsac_task_count = ATOMIC_INIT(0);
-
 
 /* Whenever the kernel checks if the task is real-time -to avoid
    delaying them- the FSAC plugin (if real-time) should also be resumed.
@@ -66,7 +65,7 @@ void fsac_exit_task(struct task_struct* tsk){
 	}
 }
 
-static atomic_t ready_to_switch; //TODO
+static atomic_t ready_to_switch; //TODO ?
 
 static int __do_plugin_switch(struct sched_plugin* plugin){
 
@@ -131,4 +130,35 @@ void fsac_plugin_switch_disable(void){
 void fsac_plugin_switch_enable(void){
 	up_read(&plugin_switch_mutex);
 }
+
+void fsac_do_exit(struct task_struct *tsk){
+
+	/* tsk called do_exit()
+	    so just make it FIFO and forget about it
+	*/
+	struct sched_param params;
+
+	printk(KERN_INFO "[%llu] Task with pid %d moved to SCHED_FIFO\n",
+			fsac_clock(),tsk->pid);
+	sched_setscheduler_nocheck(tsk,SCHED_FIFO,&params);
+}
+
+/* Wow, this function is important */
+static int __init _init_fsac(void){
+
+	printk(KERN_WARNING "Starting FSAC kernel\n");
+
+	register_sched_plugin(&fsac_sched_plugin);
+
+	init_fsac_proc();
+}
+
+static void _exit_fsac(void){
+
+	exit_fsac_proc();
+}
+
+module_init(_init_fsac);
+module_exit(_exit_fsac);
+
 

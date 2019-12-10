@@ -88,6 +88,9 @@
 #include "../workqueue_internal.h"
 #include "../smpboot.h"
 
+#include <fsac/fsac.h>
+#include <fsac/fsac_plugin.h>
+
 #define CREATE_TRACE_POINTS
 #include <trace/events/sched.h>
 
@@ -494,6 +497,9 @@ void resched_curr(struct rq *rq)
 		set_tsk_need_resched(curr);
 		set_preempt_need_resched();
 		return;
+	} else if (is_fsac(curr)){
+	  /* Cannot call set_tsk_need_resched() on FSAC task via remote core */
+	  return;
 	}
 
 	if (set_nr_and_not_polling(curr))
@@ -1808,6 +1814,8 @@ void scheduler_ipi(void)
 	if (llist_empty(&this_rq()->wake_list) && !got_nohz_idle_kick())
 		return;
 
+	/* Maybe let FSAC kernel know about this? */
+
 	/*
 	 * Not all reschedule IPI handlers call irq_enter/irq_exit, since
 	 * traditionally all their work was done from the interrupt return
@@ -1884,7 +1892,8 @@ static void ttwu_queue(struct task_struct *p, int cpu, int wake_flags)
 	struct pin_cookie cookie;
 
 #if defined(CONFIG_SMP)
-	if (sched_feat(TTWU_QUEUE) && !cpus_share_cache(smp_processor_id(), cpu)) {
+	if (!is_fsac(p) &&
+		sched_feat(TTWU_QUEUE) && !cpus_share_cache(smp_processor_id(), cpu)) {
 		sched_clock_cpu(cpu); /* sync clocks x-cpu */
 		ttwu_queue_remote(p, cpu, wake_flags);
 		return;
@@ -2010,6 +2019,9 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
 	unsigned long flags;
 	int cpu, success = 0;
 
+	if (is_fsac(p))
+		printk(KERN_NOTICE "try_to_wake_up() state:%d\n",p->state);
+
 	/*
 	 * If we are going to wake up a thread waiting for CONDITION we
 	 * need to ensure that CONDITION=1 done by the caller can not be
@@ -2082,6 +2094,9 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
 	 */
 	smp_cond_load_acquire(&p->on_cpu, !VAL);
 
+	if (is_fsac(p))
+		goto fsac_out_activate;
+
 	p->sched_contributes_to_load = !!task_contributes_to_load(p);
 	p->state = TASK_WAKING;
 
@@ -2090,12 +2105,15 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
 		wake_flags |= WF_MIGRATED;
 		set_task_cpu(p, cpu);
 	}
+fsac_out_activate:
 #endif /* CONFIG_SMP */
 
 	ttwu_queue(p, cpu, wake_flags);
 stat:
 	ttwu_stat(p, cpu, wake_flags);
 out:
+	if(is_fsac(p))
+		printk(KERN_NOTICE "try_to_wake_up() done state: %d\n",p->state);
 	raw_spin_unlock_irqrestore(&p->pi_lock, flags);
 
 	return success;
@@ -2171,6 +2189,11 @@ int wake_up_state(struct task_struct *p, unsigned int state)
 	return try_to_wake_up(p, state, 0);
 }
 
+/*
+ * This function clears the sched_dl_entity static params.
+ */
+void __dl_clear_params(struct task_struct *p)
+{
 /*
  * This function clears the sched_dl_entity static params.
  */
@@ -2562,6 +2585,9 @@ void wake_up_new_task(struct task_struct *p)
 {
 	struct rq_flags rf;
 	struct rq *rq;
+
+	if (is_fsac(p))
+		fsac->task_new(p,1,0);
 
 	raw_spin_lock_irqsave(&p->pi_lock, rf.flags);
 	p->state = TASK_RUNNING;
@@ -3091,7 +3117,8 @@ void scheduler_tick(void)
 
 #ifdef CONFIG_SMP
 	rq->idle_balance = idle_cpu(cpu);
-	trigger_load_balance(rq);
+	if (!is_fsac(current))
+		trigger_load_balance(rq);
 #endif
 	rq_last_tick_reset(rq);
 }
@@ -3261,23 +3288,24 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct pin_cookie cookie
 	const struct sched_class *class = &fair_sched_class;
 	struct task_struct *p;
 
-	/*
-	 * Optimization: we know that if all tasks are in
-	 * the fair class we can call that function directly:
-	 */
+/* IMPORTANT NOTE: Regarding this optimization...
+ * In FSAC kernel, an important assumption is that the FSAC class is the first
+ * reviewed in the linked-list. I am not sure how would affect certain real-time
+ * scheduling plugins to uncomment this. -Carlos.
+ 
 	if (likely(prev->sched_class == class &&
 		   rq->nr_running == rq->cfs.h_nr_running)) {
 		p = fair_sched_class.pick_next_task(rq, prev, cookie);
 		if (unlikely(p == RETRY_TASK))
 			goto again;
 
-		/* assumes fair_sched_class->next == idle_sched_class */
+		// assumes fair_sched_class->next == idle_sched_class 
 		if (unlikely(!p))
 			p = idle_sched_class.pick_next_task(rq, prev, cookie);
 
 		return p;
 	}
-
+*/
 again:
 	for_each_class(class) {
 		p = class->pick_next_task(rq, prev, cookie);
@@ -3752,7 +3780,7 @@ void set_user_nice(struct task_struct *p, long nice)
 	 * it wont have any effect on scheduling until the task is
 	 * SCHED_DEADLINE, SCHED_FIFO or SCHED_RR:
 	 */
-	if (task_has_dl_policy(p) || task_has_rt_policy(p)) {
+	if (task_has_dl_policy(p) || task_has_rt_policy(p) || is_fsac(p)) {
 		p->static_prio = NICE_TO_PRIO(nice);
 		goto out_unlock;
 	}
@@ -3979,7 +4007,9 @@ static void __setscheduler(struct rq *rq, struct task_struct *p,
 	else
 		p->prio = normal_prio(p);
 
-	if (dl_prio(p->prio))
+	if (is_fsac(p))
+		p->sched_class = &fsac_sched_class;
+	else if (dl_prio(p->prio))
 		p->sched_class = &dl_sched_class;
 	else if (rt_prio(p->prio))
 		p->sched_class = &rt_sched_class;
@@ -4083,6 +4113,7 @@ static int __sched_setscheduler(struct task_struct *p,
 	int reset_on_fork;
 	int queue_flags = DEQUEUE_SAVE | DEQUEUE_MOVE;
 	struct rq *rq;
+	int fsac_task = 0;
 
 	/* may grab non-irq protected spin_locks */
 	BUG_ON(in_interrupt());
@@ -4111,6 +4142,8 @@ recheck:
 		return -EINVAL;
 	if ((dl_policy(policy) && !__checkparam_dl(attr)) ||
 	    (rt_policy(policy) != (attr->sched_priority != 0)))
+		return -EINVAL;
+	if (policy == SCHED_FSAC && policy == p->policy)
 		return -EINVAL;
 
 	/*
@@ -4166,6 +4199,12 @@ recheck:
 
 	if (user) {
 		retval = security_task_setscheduler(p);
+		if (retval)
+			return retval;
+	}
+
+	if (policy == SCHED_FSAC){
+		retval = fsac_admit_task(p);
 		if (retval)
 			return retval;
 	}
@@ -4253,6 +4292,11 @@ change:
 		return -EBUSY;
 	}
 
+	if (is_fsac(p)){
+		fsac_exit_task(p);
+		fsac_task = 1;
+	}
+
 	p->sched_reset_on_fork = reset_on_fork;
 	oldprio = p->prio;
 
@@ -4278,6 +4322,10 @@ change:
 
 	prev_class = p->sched_class;
 	__setscheduler(rq, p, attr, pi);
+
+	if (fsac_policy(policy)){
+		fsac->task_new(p,queued,running);
+	}
 
 	if (queued) {
 		/*
@@ -4691,9 +4739,9 @@ long sched_setaffinity(pid_t pid, const struct cpumask *in_mask)
 	rcu_read_lock();
 
 	p = find_process_by_pid(pid);
-	if (!p) {
+	if (!p || is_fsac(pc)) {
 		rcu_read_unlock();
-		return -ESRCH;
+		return -ESRCH : -ESRCH;
 	}
 
 	/* Prevent p going away */
@@ -8757,11 +8805,6 @@ static struct cftype cpu_files[] = {
 	{
 		.name = "cfs_quota_us",
 		.read_s64 = cpu_cfs_quota_read_s64,
-		.write_s64 = cpu_cfs_quota_write_s64,
-	},
-	{
-		.name = "cfs_period_us",
-		.read_u64 = cpu_cfs_period_read_u64,
 		.write_u64 = cpu_cfs_period_write_u64,
 	},
 	{

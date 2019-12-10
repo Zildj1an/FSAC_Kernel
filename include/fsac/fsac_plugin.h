@@ -17,6 +17,12 @@ typedef long (*activate_plugin_t) (void);
 typedef long (*deactivate_plugin_t) (void);
 typedef struct task_struct* (*schedule_t)(struct task_struct * prev);
 typedef long (*admit_task_t)(struct task_struct* tsk);
+typedef void (*task_new_t) (struct task_struct *task,
+			    int on_rq,
+			    int running);
+/* Called to re-introduce a task after blocking */
+typedef void (*task_wake_up_t) (struct task_struct *task);
+typedef void (*task_exit_t)    (struct task_struct *);
 typedef ssize_t (*plugin_read_t) (char *buf);
 
 struct fsac_plugin {
@@ -43,11 +49,12 @@ extern struct sched_plugin *fsac;
 
 /* Linked list of loaded plugins */
 struct list_item {
-        char* plugin_name;
+	struct sched_plugin *plugin;
         struct list_head links;
 };
 
-struct list_head proc_loaded_plugins;
+/* List of registered plugins */
+static LIST_HEAD(proc_loaded_plugins);
 DEFINE_RAW_SPINLOCK(proc_plugins_lock);
 
 int register_sched_plugin(struct sched_plugin* plugin);

@@ -17,10 +17,14 @@
 /* My /proc file entry */
 static struct proc_dir_entry *my_proc_entry;
 
-int __init start_fsac_proc(void);
-void remove_fsac_proc(void);
-void add_plugin_proc(char *name);
-int remove_plugin_proc(char *name);
+int __init init_fsac_proc(void);
+void exit_fsac_proc(void);
+/* For the remaining function lock must be adquired prior invoked
+   If you want the sched_plugin n = 0, if the list_item n != 0
+*/
+void* proc_find_node(int n,char *c, struct list_head* head);
+void add_plugin_proc(struct sched_plugin *plugin);
+void remove_plugin_proc(char *name);
 
 
 
