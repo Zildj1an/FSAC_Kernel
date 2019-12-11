@@ -9,6 +9,16 @@
 /* Number of uploaded tasks that exist in the system */
 unsigned long fsac_task_count = ATOMIC_INIT(0);
 
+static DECLARE_RWSEM(plugin_switch_mutex);
+
+void fsac_plugin_switch_disable(void){
+        down_read(&plugin_switch_mutex);
+}
+
+void fsac_plugin_switch_enable(void){
+        up_read(&plugin_switch_mutex);
+}
+
 /* Whenever the kernel checks if the task is real-time -to avoid
    delaying them- the FSAC plugin (if real-time) should also be resumed.
 */
@@ -30,7 +40,7 @@ static long __fsac_admit_task(struct task_struct *tsk) {
 	//INIT_LIST_HEAD(&tsk_fsac(tsk)->list);
 
 	preempt_disable();
-	if (!(err = fsac->admit_task(tsk)){
+	if (!(err = fsac->admit_task(tsk))){
 		atomic_inc(&fsac_task_count);
 	}
 	preempt_enable();
@@ -48,11 +58,11 @@ long fsac_admit_task(struct task_struct *tsk) {
     retval = __fsac_admit_task(tsk);
 
     if (retval) {
- 	printk(KERN_INFO "[%llu] Task with pid %d accepted to FSAC plugin %s.\n",
+ 	printk(KERN_INFO "[%llu] Task with pid %d admitted to FSAC plugin %s.\n",
  		fsac_clock(),tsk->pid,fsac->plugin_name);
      } else {
-         printk(KERN_INFO "[%llu] Task with pid %d accepted to FSAC plugin %s.\n",
- 		fsac_clock(), tsk->pid,fsac_>plugin_name);
+         printk(KERN_INFO "[%llu] Task with pid %d NOT admitted to FSAC plugin %s(%d).\n",
+ 		fsac_clock(), tsk->pid,fsac->plugin_name, retval);
      }
 
   return ret;
@@ -65,7 +75,7 @@ void fsac_exit_task(struct task_struct* tsk){
 	}
 }
 
-static atomic_t ready_to_switch; //TODO ?
+static atomic_t ready_to_switch;
 
 static int __do_plugin_switch(struct sched_plugin* plugin){
 
@@ -121,14 +131,27 @@ static int do_plugin_switch(void *_plugin){
  return ret;
 }
 
-static DECLARE_RWSEM(plugin_switch_mutex);
+/* Important and tricky function.
+ * Possible deadlocks need to be avoided.
+ */
+int switch_sched_plugin(struct sched_plugin* plugin) {
 
-void fsac_plugin_switch_disable(void){
-	down_read(&plugin_switch_mutex);
-}
+	int err;
+	
+	BUG_ON(!plugin);
 
-void fsac_plugin_switch_enable(void){
-	up_read(&plugin_switch_mutex);
+	if (atomic_read(&fsac_task_count) == 0) {
+		down_write(&plugin_switch_mutex);
+		/* Used to inhibit cpu hotplug operations */
+		get_online_cpus();
+		atomic_set(&ready_to_switch, num_online_cpus());
+		err = stop_cpus(cpu_online_mask, do_plugin_switch, plugin);
+		put_online_cpus();
+		up_write(&plugin_switch_mutex);		
+		return err;
+	}
+	else 
+		return -EBUSY;	
 }
 
 void fsac_do_exit(struct task_struct *tsk){

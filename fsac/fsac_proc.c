@@ -56,6 +56,9 @@ static ssize_t active_read(struct file *filp,
  return read;
 }
 
+/* In fsac/fsac.c */
+int switch_sched_plugin(struct sched_plugin* plugin);
+
 static ssize_t active_write(struct file *filp, const char __user *buf,
 		size_t len, loff_t *off) {
 
@@ -69,12 +72,13 @@ static ssize_t active_write(struct file *filp, const char __user *buf,
 
 	found = proc_find_node(0,name,&proc_loaded_plugins);
 
-	if (found){
-		if(err = switch_sched_plugin(found)) {
+	if (found != NULL){
+		if((err = switch_sched_plugin(found))) {
 			printk(KERN_INFO "Could not switch plugin: %d.\n",err);
 			ret = err;
 		}
-	} else {
+	} 
+	else {
 		printk(KERN_INFO "Plugin '%s' is unknown.\n", name);
 		ret = -ESRCH;
 	}

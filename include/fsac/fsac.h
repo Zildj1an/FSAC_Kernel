@@ -8,12 +8,16 @@
 	2019
 */
 #include <linux/kernel.h>
+#include <linux/module.h>
+#include <linux/stop_machine.h>
 #include <linux/atomic.h>
-#include <fsac/fsac_plugin.h>
-#include <fsac/fsac_proc.h>
 #include <linux/interrupt.h>
 #include <linux/module.h>
 #include <linux/sched.h>
+#include <linux/rwsem.h>
+#include <fsac/fsac_plugin.h>
+#include <fsac/fsac_proc.h>
+
 
 #define is_fsac(t)    ((t)->policy == SCHED_FSAC)
 

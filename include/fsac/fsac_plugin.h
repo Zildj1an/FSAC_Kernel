@@ -22,6 +22,8 @@ typedef void (*task_new_t) (struct task_struct *task,
 			    int running);
 /* Called to re-introduce a task after blocking */
 typedef void (*task_wake_up_t) (struct task_struct *task);
+/* Called to notify the plugin of a blocking task */
+typedef void (*task_block_t)  (struct task_struct *task);
 typedef void (*task_exit_t)    (struct task_struct *);
 typedef ssize_t (*plugin_read_t) (char *buf);
 
@@ -39,6 +41,7 @@ struct fsac_plugin {
 	admit_task_t		admit_task;
 	task_new_t 		task_new;
 	task_wake_up_t		task_wake_up;
+	task_block_t		task_block;
 	task_exit_t 		task_exit;
 	plugin_read_t		plugin_read;
 

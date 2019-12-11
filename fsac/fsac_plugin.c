@@ -12,6 +12,7 @@ static long fsac_dummy_activate_plugin(void){ return 0;}
 static long fsac_dummy_deactivate_plugin(void){ return 0;}
 static void fsac_dummy_task_new(struct task_struct *t,int on_rq,int running){}
 static void fsac_dummy_task_wake_up(struct task_struct *task){}
+static void fsac_dummy_task_block(struct task_struct *task){}
 static void fsac_dummy_task_exit(struct task_struct *task){}
 static ssize_t fsac_dummy_read(char *buf){ return 0;}
 
@@ -34,6 +35,7 @@ struct fsac_plugin fsac_sched_plugin = {
 	.admit_task = fsac_dummy_admit_task,
 	.task_new = fsac_dummy_task_new,
 	.task_wake_up = fsac_dummy_task_wake_up,
+	.task_block = fsac_dummy_task_block,
 	.task_exit = fsac_dummy_task_exit,
 	.plugin_read = fsac_dummy_read,
 };

@@ -26,3 +26,5 @@ File modified:		              Why:
 
 NOTAS: No hecho nada de preempt (y state por ende) ó fork,exec...(ver ln 2427 core.c y compañía, funcion __schedule)
 	   Tampoco finish_switch que es funcion de los plugin (ln 2815 core.c)
+
+Other nice features to improve real-time plugins support would be managing the tasks' state. For instance in /kernel/sched/fsac_class.c function enqueue_task
