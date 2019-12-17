@@ -12,7 +12,7 @@ File created:		              Purpose:
 
 File modified:		              Why:
 --------------                    -----------
-10  /kernel/sched/sched.h		  Make FSAC class a valid policy, add it to the linked list as highest. 
+10 /kernel/sched/sched.h		  Make FSAC class a valid policy, add it to the linked list as highest. 
 11 /include/uapi/linux/sched.h    Add macro SCHED_FSAC (7).
 12 /kernel/sched.c                Hook to fsac_do_exit() from fsac.h when do_exit is called (ln. 729)
 13 /fs/select.c                   Needed to avoid delays if the FSAC plugin is real-time.

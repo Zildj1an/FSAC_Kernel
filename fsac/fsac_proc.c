@@ -64,7 +64,7 @@ static ssize_t active_write(struct file *filp, const char __user *buf,
 
 	char name[60];
 	struct sched_plugin* found;
-	ssize ret = -EINVAL;
+	ssize ret = 0;
 	int err;
 
 	if((ret = fsac_copy_safe(name,sizeof(name),buf,len) < 0)
@@ -73,17 +73,17 @@ static ssize_t active_write(struct file *filp, const char __user *buf,
 	found = proc_find_node(0,name,&proc_loaded_plugins);
 
 	if (found != NULL){
-		if((err = switch_sched_plugin(found))) {
+		if ((err = switch_sched_plugin(found))) {
 			printk(KERN_INFO "Could not switch plugin: %d.\n",err);
 			ret = err;
-		}
+		} 
 	} 
 	else {
 		printk(KERN_INFO "Plugin '%s' is unknown.\n", name);
 		ret = -ESRCH;
 	}
 
-	return 0;
+	return ret;
 }
 
 static ssize_t stats_read(struct file *filp,
@@ -124,13 +124,13 @@ int __init init_fsac_proc(void) {
 					fsac_dir,&fsac_active_fops);
         stats_active = proc_create("stats_active",0644,fsac_dir,&fsac_stats_fops);
 
-	if (!fsac_dir || !loaded || !stats_active) goto mem_err;
+	if (!fsac_dir || !loaded || !active_plugin || !stats_active) goto mem_err;
 
   return 0;
 
 mem_err:
-
-  printk(KERN_ERR "Could not create FSAC proc entries.\n");
+	exit_fsac_proc();
+  	printk(KERN_ERR "Could not create FSAC proc entries.\n");
   return -ENOMEM;
 }
 
@@ -140,6 +140,11 @@ void exit_fsac_proc(void) {
 	if (active_plugin) remove_proc_entry("active_plugin",fsac_dir);
 	if (loaded)        remove_proc_entry("loaded",fsac_dir);
 	if (fsac_dir)      remove_proc_entry("fsac",NULL);
+
+	raw_spin_lock(&proc_plugins_lock);
+	/* Free the memory from the linked list */
+	fsac_remove_list(&proc_loaded_plugins);
+	raw_spin_lock(&proc_plugins_unlock);
 }
 
 /*  If you want the sched_plugin n = 0, if the list_item n != 0 */
