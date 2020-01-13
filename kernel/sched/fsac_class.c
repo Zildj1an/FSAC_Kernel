@@ -1,5 +1,5 @@
 /*
- *  This is the new FSAC scheduling class. 
+ *  This is the new FSAC scheduling class (/kernel/sched.fsac.c). 
  *  Only does the most basic stuff and delegates on the active plugin.
  *  @author Carlos Bilbao Muñoz 
  *  cbilbao@ucm.es 
@@ -13,12 +13,34 @@
 static struct task_struct* fsac_schedule(struct rq *rq, struct task_struct *prev){
 	
 	struct task_struct *next;
-	
+
+#ifdef CONFIG_SMP
+	struct rq* other_rq;
+	int from_cpu;
+	long was_running;
+#endif
 	/* The FSAC plugin schedules */
 	next = fsac->schedule(prev);
 
 #ifdef CONFIG_SMP
-	//TODO ? que leches es todo esto.
+	/* Check if the global plugin took the task from a different RQ 
+	 * If so, I need to migrate the task. */
+	if (next && task_rq(next) != rq){
+		
+		other_rq = task_rq(next);
+		from_cpu = other_rq->cpu;
+		printk(KERN_WARNING "[%llu] Migration from %d\n", 
+				fsac_clock(),from_cpu);
+		
+		/* The previous task could have changed its state */
+		// TODO Puede hacer esto si es SMP?! Creo que no...
+		BUG_ON(prev != current);
+		was_running = is_current_running(); //TODO states
+		
+		//TODO
+	}
+
+	//TODO
 #endif
 	/* Check if the task became invalid */
 	if (next && !is_fsac(next)) {
