@@ -1,17 +1,16 @@
 /*
-    This is the new FSAC scheduling class.
-    It only does the most basic stuff and delegates on the active plugin.
-    @author Carlos Bilbao Muñoz
-    cbilbao@ucm.es
-*/
+ *  This is the new FSAC scheduling class. 
+ *  Only does the most basic stuff and delegates on the active plugin.
+ *  @author Carlos Bilbao Muñoz 
+ *  cbilbao@ucm.es 
+ */
 
 #include "sched.h"
 
 #include <fsac/fsac.h>
 #include <fsac/sched_plugin.h>
 
-static struct task_struct* fsac_schedule(struct rq *rq,
-		struct task_struct *prev){
+static struct task_struct* fsac_schedule(struct rq *rq, struct task_struct *prev){
 	
 	struct task_struct *next;
 	
@@ -38,21 +37,20 @@ static void enqueue_task_fsac(struct rq *rq, struct task_struct *p,
 		fsac->task_wake_up(p);
 	}
 	else {
-	     printk(KERN_INFO "[%llu] Ignoring an enqueue (task %d), not a wake up.\n",
+	     printk(KERN_INFO "[%llu] Ignoring an enqueue(task %d),not a wake up.\n",
 				fsac_clock(),tsk->pid);
-	     //p->se.exec_start = rq->clock; ? TODO
+	     //p->se.exec_start = rq->clock; ? TODO quizás si es R-T?
 	}
 }
 
-static void dequeue_task_fsac(struct rq *rq, struct task_struct *p,
-                int flags){
+static void dequeue_task_fsac(struct rq *rq, struct task_struct *p, int flags){
 
 	if (flags & DEQUEUE_SLEEP){
 		fsac->task_block(p);
 		//TODO ?
 	} 
 	else {
-	   printk(KERN_INFO "[%llu] Ignoring Denqueue (task %d), didn't go to sleep.\n"
+	   printk(KERN_INFO "[%llu] Ignoring Denqueue(task %d),didn't go to sleep.\n"
 			   fsac_clock(),tsk->pid);
 	}
 }
