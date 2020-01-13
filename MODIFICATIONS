@@ -1,30 +1,30 @@
 File created:		              Purpose:
 -------------                     -----------
 1 /fsac/fsac.c		              Initializes everything: the proc and registers the dummy plugin. 
-2 /fsac/fsac_list.c	              Help with the management of the special linked lists, and the copy from user.	
+2 /fsac/fsac_list.c	              Helps with the management of the special linked lists, and the copy from user.	
 3 /fsac/fsac_plugin.c	          Dummy FSAC plugin(default) also manages the list of registered plugins.
-4 /fsac/fsac_proc.c	              Manages the /proc entry. Check laoded plugins, check/change active plugin, stats on it.
-5 /include/fsac/fsac.h            Header of (1). Also includes auxiliar definitions/functions.
-6 /include/fsac/fsac_list.h       Header of (2). Also includes auxiliar function.
+4 /fsac/fsac_proc.c	              Manages the /proc entries. Check loaded plugins, check/change active plugin, stats on it.
+5 /include/fsac/fsac.h            Header of (1). Also includes auxiliary definitions/functions.
+6 /include/fsac/fsac_list.h       Header of (2). Also includes auxiliary function.
 7 /include/fsac/fsac_macros.h     Some macros of FSAC.
 8 /include/fsac/fsac_proc.h       Header of (4).
-9 /kernel/sched/fsac_class.c      FSAC new scheduling class, will mostly delegate on the plugin
+9 /kernel/sched/fsac_class.c      FSAC new scheduling class, will mostly always delegate on the plugin.
 
 File modified:		              Why:
 --------------                    -----------
-10 /kernel/sched/sched.h		  Make FSAC class a valid policy, add it to the linked list as highest. 
+10 /kernel/sched/sched.h		  Made FSAC class a valid policy, add it to the linked list as highest. 
 11 /include/uapi/linux/sched.h    Add macro SCHED_FSAC (7).
 12 /kernel/sched.c                Hook to fsac_do_exit() from fsac.h when do_exit is called (ln. 729)
 13 /fs/select.c                   Needed to avoid delays if the FSAC plugin is real-time.
 14 /kernel/locking/mutex.c        Needed to avoid live-lock if the FSAC plugin is real-time.
 15 /kernel/locking/rwsem-xadd.c   Same idea as (13) but with semaphores.
 16 /kernel/time/hrtimer.c         Same idea as (13) but for the kernel timer.
-17 /mm/page-writeback.c           FSAC Real-time tasks should get special treatment when it comes to writing back dirty pages at the address-space.
+17 /mm/page-writeback.c           FSAC RT tasks should get special treatment when it comes to writing back dirty pages at the address-space.
 18 /mm/page_alloc.c               Special amendments at page allocation when the FSAC plugin is intended to be real-time.
 19 /kernel/sched/core.c           Make sure no Linux balancing, integrate FSAC scheduling class.
 
 
-NOTAS: No hecho nada de preempt (y state por ende) ó fork,exec...(ver ln 2427 core.c y compañía, funcion __schedule)
+NOTAS: No hecho nada de preempt (y state por ende) ó fork,exec...(ver ln 2427 core.c y compañía, funcion __schedule) TODO
 	   Tampoco finish_switch que es funcion de los plugin (ln 2815 core.c)
 
 Other nice features to improve real-time plugins support would be managing the tasks' state. For instance in /kernel/sched/fsac_class.c function enqueue_task

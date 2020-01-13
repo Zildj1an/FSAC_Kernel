@@ -1,12 +1,13 @@
+/*
+ *  FSAC initialization code. 
+ *  @author Carlos Bilbao Muñoz 
+ *  cbilbao@ucm.es
+ *  Sept 2019-2020
+ */
+
 #ifndef _LINUX_FSAC_H_
 #define _LINUX_FSAC_H_
 
-/*
-	FSAC initialization code.
-	@author Carlos Bilbao Muñoz
-	cbilbao@ucm.es
-	2019
-*/
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/stop_machine.h>

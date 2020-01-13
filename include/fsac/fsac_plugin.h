@@ -1,9 +1,9 @@
 /*
-	Header of any FSAC plugin.
-	For example of /fsac/fsac_plugin.c
-	@author Carlos Bilbao Muñoz
-	cbilbao@ucm.es
-*/
+ *  Header of any FSAC plugin.
+ *  For example of /fsac/fsac_plugin.c
+ *  @author Carlos Bilbao Muñoz 
+ *  cbilbao@ucm.es
+ */
 
 #ifndef _LINUX_FSAC_PLUGIN_H_
 #define _LINUX_FSAC_PLUGIN_H_
@@ -30,20 +30,25 @@ typedef ssize_t (*plugin_read_t) (char *buf);
 struct fsac_plugin {
 
 	struct list_head 	list;
+	schedule_t              schedule;
+
+	/* Name used within the /proc entries */
 	char 			*plugin_name;
+	plugin_read_t           plugin_read; 
+
+	/* Extra time-related precautions are taken if it's R-T */
 	int 			is_real_time;
 
-	/*	Setup	*/
+	/*	Setup	   */
 	activate_plugin_t	activate_plugin;
 	deactivate_plugin_t	deactivate_plugin;
-	schedule_t 		schedule;
+	
 	/*	Task state changes 	*/
 	admit_task_t		admit_task;
 	task_new_t 		task_new;
 	task_wake_up_t		task_wake_up;
 	task_block_t		task_block;
 	task_exit_t 		task_exit;
-	plugin_read_t		plugin_read;
 
 } __attribute__ ((__aligned__(SMP_CACHE_BYTES)));
 

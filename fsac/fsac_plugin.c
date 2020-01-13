@@ -1,8 +1,10 @@
 /*
-   Dummy plugin, first registered (1) and list of plugins managed (2)
-   @author Carlos Bilbao Muñoz
-   cbilbao@ucm.es
-*/
+ *  In this file, two things are done:
+ *  (1) The dummy plugin -default- is developed and registered.
+ *  (2) The list of plugins is managed.
+ *  @author Carlos Bilbao Muñoz
+ *  cbilbao@ucm.es
+ */
 
 #include <fsac/fsac_plugin.h>
 
@@ -28,7 +30,7 @@ static long fsac_dummy_admit_task(struct task_struct* tsk){
 
 struct fsac_plugin fsac_sched_plugin = {
 	.plugin_name = "FSAC",
-	.is_real_time = 0, /* Not really needed as it's default */
+	.is_real_time = 0, /* Not really needed as this is default */
 	.activate_plugin = fsac_dummy_activate_plugin,
 	.deactivate_plugin = fsac_dummy_deactivate_plugin,
 	.schedule = fsac_dummy_schedule,
@@ -79,10 +81,10 @@ int register_sched_plugin(struct sched_plugin* plugin){
 		goto out_reg;
         }
 
-	if(unlikely(plugin->is_real_time != 0 && plugin->is_real_time != 1)) {
-		printk(KERN_ALERT "FSAC plugin not real-time(1) or other(0).\n");
-        	err = -EPERM;
-		goto out_reg;
+	if (plugin->is_real_time != 0 && plugin->is_real_time != 1) {
+		printk(KERN_ALERT "1/2 FSAC plugin not real-time(1) or other(0).\n");
+        	printk(KERN_ALERT "2/2 Default asummed (NOT real-time)\n");
+		plugin->is_real_time = 0;
 	}
 
 	printk(KERN_INFO "[%llu] Registering FSAC plugin %s.\n",

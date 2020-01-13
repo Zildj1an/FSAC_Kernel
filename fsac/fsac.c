@@ -1,9 +1,10 @@
 /*
-	Starts everything, including the proc entries for FSAC Kernel
-	and registers /fsac/fsac_plugin.c (Dummy default plugin)
-	@author Carlos Bilbao Muñoz
-	cbilbao@ucm.es
-*/
+ *  Starts everything, including the proc entries for FSAC Kernel
+ *  and registers /fsac/fsac_plugin.c (Dummy default plugin)
+ *  @author Carlos Bilbao Muñoz
+ *  cbilbao@ucm.es
+ */
+
 #include <fsac/fsac.h>
 
 /* Number of uploaded tasks that exist in the system */
@@ -19,8 +20,8 @@ void fsac_plugin_switch_enable(void){
         up_read(&plugin_switch_mutex);
 }
 
-/* Whenever the kernel checks if the task is real-time -to avoid
-   delaying them- the FSAC plugin (if real-time) should also be resumed.
+/* Whenever the kernel checks if the task is real-time to avoid
+   delaying them, the FSAC plugin (if real-time) should also be resumed.
 */
 int fsac_is_real_time(struct task_struct *tsk) {
 
@@ -83,6 +84,7 @@ static int __do_plugin_switch(struct sched_plugin* plugin){
 
 	/* Do not switch if there are active FSAC tasks */
 	if(atomic_read(&fsac_task_count) == 0) {
+
 		printk(KERN_INFO "[%llu] Deactivating plugin %s\n",fsac_clock(),
 		      fsac->plugin_name);
 		if ((ret = fsac->deactivate_plugin()) != 0) goto out;
@@ -156,9 +158,8 @@ int switch_sched_plugin(struct sched_plugin* plugin) {
 
 void fsac_do_exit(struct task_struct *tsk){
 
-	/* tsk called do_exit()
-	    so just make it FIFO and forget about it
-	*/
+	/* tsk called do_exit(), so just make it FIFO and forget about it */
+
 	struct sched_param params;
 
 	printk(KERN_INFO "[%llu] Task with pid %d moved to SCHED_FIFO\n",
@@ -166,7 +167,7 @@ void fsac_do_exit(struct task_struct *tsk){
 	sched_setscheduler_nocheck(tsk,SCHED_FIFO,&params);
 }
 
-/* Wow, this function is important */
+/* Wow, this function is important! */
 static int __init _init_fsac(void){
 
 	printk(KERN_WARNING "Starting FSAC kernel\n");
