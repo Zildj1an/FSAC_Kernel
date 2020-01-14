@@ -8,6 +8,8 @@
 
 #include <fsac/fsac_plugin.h>
 
+// TODO preempt if preemptable y demás
+
 /* (1) Dummy plugin functions */
 
 static long fsac_dummy_activate_plugin(void){ return 0;}
@@ -19,7 +21,7 @@ static void fsac_dummy_task_exit(struct task_struct *task){}
 static ssize_t fsac_dummy_read(char *buf){ return 0;}
 
 static struct task_struct* fsac_dummy_schedule(struct task_struct * prev){
-	sched_state_task_picked(); //TODO
+	sched_state_task_picked(); 
 	return NULL;
 }
 
