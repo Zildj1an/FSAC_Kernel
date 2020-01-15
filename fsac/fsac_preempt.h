@@ -21,7 +21,7 @@ void sched_state_will_schedule(struct task_struct* tsk){
 				TASK_PICKED | WILL_SCHEDULE);
 		
 		if (is_in_sched_state(TASK_PICKED | PICKED_WRONG_TASK))
-			set_sched_state(PCIKED_WRONG_TASK);
+			set_sched_state(PICKED_WRONG_TASK);
 		else {
 			set_sched_state(WILL_SCHEDULE);
 		}
@@ -55,45 +55,67 @@ void sched_state_ipi(void) {
  * used to serialize scheduling decisions. Also called by FSAC scheduling class */
 void fsac_reschedule(int cpu) {
 
-	int picked_transition_ok = 0;
-	int scheduled_transition_ok = 0;
+	int to_picked_wrong = 0;
+	int to_should_schedule = 0;
 
 	/* The (remote) CPU could be in any state.The critical states are 
-	 * TASK_PICKED and TASK_SCHEDULED, as the CPU
-	 * is not aware of the need to reschedule at this point. */
+	* TASK_PICKED and TASK_SCHEDULED, as the CPU
+	* is not aware of the need to reschedule at this point. */
 
-	/* Checks if there is a context switch in progress */
-	if (cpu_is_in_sched_state(cpu, TASK_PICKED))
-		picked_transition_ok = sched_state_transition_on(cpu, TASK_PICKED,
+	/* Also checks if there is a context switch in progress */
+	if (cpu_is_in_sched_state(cpu, TASK_PICKED)) {
+		/* Atomic CAS ~ Compare and Swap */
+		to_picked_wrong = sched_state_transition_on(cpu, TASK_PICKED,
 			       	PICKED_WRONG_TASK);
-//TODO pillar
-	if (!picked_transition_ok &&
-	    cpu_is_in_sched_state(cpu, TASK_SCHEDULED)) {
+	}
+
+	if (!to_picked_wrong && cpu_is_in_sched_state(cpu, TASK_SCHEDULED)) {
 		/* We either raced with the end of the context switch, or the
 		 * CPU was in TASK_SCHEDULED anyway. */
-		scheduled_transition_ok = sched_state_transition_on(
+		to_should_schedule = sched_state_transition_on(
 			cpu, TASK_SCHEDULED, SHOULD_SCHEDULE);
 	}
 
-	/* If the CPU was in state TASK_SCHEDULED, then we need to cause the
-	 * scheduler to be invoked. */
-	if (scheduled_transition_ok) {
+	/* If the CPU had state TASK_SCHEDULED,the scheduler should be invoked.*/
+	if (to_should_schedule) {
+		/* If it is in this core */
 		if (smp_processor_id() == cpu) {
 			set_tsk_need_resched(current);
 			preempt_set_need_resched();
 		} else {
-			TS_SEND_RESCHED_START(cpu);
 			smp_send_reschedule(cpu);
 		}
 	}
 
-	TRACE_STATE("%s picked-ok:%d sched-ok:%d\n",
-		    __FUNCTION__,
-		    picked_transition_ok,
-		    scheduled_transition_ok);
+	printk(KERN_INFO "[CPU %d] picked-ok:%d sched-ok:%d\n",cpu,
+		picked_transition_ok, scheduled_transition_ok);
 }
 
-// TODO
+void fsac_reschedule_local(void) {
+
+	if (is_insched_state(TASK_PICKED)) {
+		set_sched_state(PICKED_WRONG_TASK);
+	}
+	else if (is_in_sched_state(TASK_SCHEDULED | 
+				SHOULD_SCHEDULE | PICKED_WRONG_TASK)) {
+		set_sched_state(WILL_SCHEDULE);
+		set_tsk_need_resched(current);
+		preempt_set_need_resched();
+	}
+}
+
+#ifdef CONFIG_DEBUG_KERNEL
+
+void sched_state_plugin_check(void) {
+
+	if (!is_in_sched_state(TASK_PICKED | PICKED_WRONG_TASK)){
+		printk(KERN_ALERT "The plugin didn't call sched_state_task_pìcked
+		   ()! That is mandatory, fix it.\n");
+		set_sched_state(TASK_PICKED);
+	}
+}
+
+#endif
 
 /* While '##' is the token-pasting operator, as in /fsac/fsac_plugin.c,
  * '#' operator is usually referred to as the stringizing operator.

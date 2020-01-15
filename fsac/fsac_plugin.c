@@ -1,5 +1,5 @@
 /*
- *  In this file, two things are done:
+ *  In this file, mainly two things are done:
  *  (1) The dummy plugin -default- is developed and registered.
  *  (2) The list of plugins is managed.
  *  @author Carlos Bilbao Muñoz
@@ -8,7 +8,49 @@
 
 #include <fsac/fsac_plugin.h>
 
-// TODO preempt if preemptable y demás
+/* Triggers preemption in local or remote CPU for scheduler plugins. 
+ * This function is non-preemptive section aware and does NOT invoke the scheduler
+ * or send IPIs (if remote core) if the task to be preempted is non-preemptive.
+ */
+void preempt_if_preemptable(struct task_struct* task, int cpu) {
+
+	/* task is a FSAC task executing on CPU cpu. If task is NULL, then cpu
+	 * is currently executing background work. */
+	int reschedule = 0;
+
+	if (!task){
+		reschedule = 1;
+	}
+	else {
+		if (smp_processor_id() == cpu){
+			/* Local CPU 
+			 * Check if we need to poke userspace TODO /fsac/np.h
+			   (np for non-preemptive)
+			 */
+			if (is_user_np(task)){
+				/* Poke it. Doesn't have to be atomic since the
+				 * task is definitely not executing.
+				 */
+				request_exit_np(task);
+			}
+			else if (!is_kernel_np(task)){
+				/* Only if we are allowed to preempt the currently
+				 * executing task */
+				reschedule = 1;
+			}
+		}
+		else {
+			/* Remote CPU. Only notify if it is not a kernel NP section
+			 * and if we did not set the userspace flag */
+			reschedule = !(is_kernel_np(task) || 
+					request_exit_np_atomic(task));
+		}
+	}
+
+	if (likely(reschedule)) {
+		fsac_reschedule(cpu);
+	}
+}
 
 /* (1) Dummy plugin functions */
 
