@@ -1,9 +1,8 @@
-=============================================================
-= **FSAC KERNEL (Framework for Scheduling Algorithm Creation)** =
-= **author: Carlos Bilbao Muñoz**								=
-= GitHub                        							=
-=============================================================
+# FSAC KERNEL (Framework for Scheduling Algorithm Creation)
 
+**author: Carlos Bilbao Muñoz**		
+
+GitHub: https://github.com/Zildj1an                       							
 See http://kernel.org/
 
 | #  | File created                 | Purpose                                                                                   |
