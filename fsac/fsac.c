@@ -21,6 +21,61 @@ void fsac_plugin_switch_enable(void){
         up_read(&plugin_switch_mutex);
 }
 
+/* p is a FSAC task. */
+static void reinit_fsac_state(struct task_struct* p, int restore){
+
+	/* Cleanup */
+	memset(&p->fsac_param, 0, sizeof(p->fsac_param));
+
+	if (restore){
+		p->fsac_param.present = 1;
+		p->fsac_param.last_suspension = -1;
+		p->fsac_param.last_tick = -1;
+	}
+}
+
+/* Called after a fork */
+void fsac_fork(struct task_struct *p){
+
+	if (if_fsac(p)){
+		reinit_fsac_state(p,1);
+
+		if (fsac->fork_task(p)){
+			if (__fsac_admit_task(p)){
+				p->sched_reset_on_fork = 1;
+			}
+		}
+		else {
+			reinit_fsac_state(p,0);
+			printk(KERN_WARNING 
+				"[%llu] FSAC fork denied for task %d.\n",
+				fsac_clock(),p->pid);
+		}
+	}
+}
+
+/* Called upon execve() -- current is doing the exec. */
+void fsac_exec(void){
+
+	struct task_struct* p = current;
+
+	if (is_fsac(p)) {
+		/* Nothing at this point... */
+	}
+}
+
+void fsac_clear_state(struct task_struct *tsk){
+
+	atomic_dec(&fsac_task_count);
+	reinit_fsac_state(tsk,1);
+}
+
+void exit_fsac(struct task_struct *dead_tsk){
+
+	/* Free things form the fsac_param in future versions */
+	BUG_ON(is_fsac(dead_tsk));
+}
+
 /* Whenever the kernel checks if the task is real-time to avoid
    delaying them, the FSAC plugin (if real-time) should also be resumed.
 */
@@ -163,6 +218,14 @@ void fsac_do_exit(struct task_struct *tsk){
 	printk(KERN_INFO "[%llu] Task with pid %d moved to SCHED_FIFO\n",
 			fsac_clock(),tsk->pid);
 	sched_setscheduler_nocheck(tsk,SCHED_FIFO,&params);
+}
+
+/* Called from core.c */
+void fsac_dealloc(struct task_struct *tsk){
+
+	printk(KERN_INFO "Deallocating task from FSAC.\n");
+	fsac->task_cleanup(tsk);
+	fsac_clear_state(tsk);
 }
 
 /* Wow, this function is important! */

@@ -24,6 +24,8 @@ struct fsac_param {
 	/* Just in case it is real-time */
 	fsac_time last_suspension;
 	fsac_time last_tick;
+
+	unsigned int kernel_np;
 };
 
 #endif

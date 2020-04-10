@@ -15,8 +15,9 @@ File created:		              Purpose:
 8 /include/fsac/fsac_proc.h       Header of /fsac/fsac_proc.c.
 9 /kernel/sched/fsac_class.c      FSAC new scheduling class, will mostly always delegate on the plugin.
 10 /include/fsac/fsac_preempt.h        
-11 /fsac/fsac_preempt.c
-12 /include/fsac/fsac_param.h             The extra parameter added to the struct task struct 
+11 /fsac/fsac_preempt.c           Functions to switch and check the preemption states, for rescheduling.
+12 /include/fsac/fsac_param.h     The extra parameter added to the struct task struct 
+13 /include/fsac/fsac_np.h        Postponed to future versions, includes functions to manage non-preemptive sections.
 
 File modified:		              Why:
 --------------                    -----------
@@ -29,22 +30,13 @@ File modified:		              Why:
 16 /kernel/time/hrtimer.c         Same idea as /kernel/locking/mutex.c but for the kernel timer.
 17 /mm/page-writeback.c           FSAC RT tasks should get special treatment when it comes to writing back dirty pages at the address-space.
 18 /mm/page_alloc.c               Special amendments at page allocation when the FSAC plugin is intended to be real-time.
-19 /kernel/sched/core.c           Make sure no Linux balancing, integrate FSAC scheduling class.
-20 include/linux/sched.h          Add to struct task_struct the parameter fsac_param from /include/fsac/fsac_param.h
+19 /kernel/sched/core.c           Make sure no Linux balancing, integrate FSAC scheduling class. Also, add hooks for the preemption state machine, like
+								  sched_state_entered_schedule() at __schedule(), which flags WILL_SCHEDULE. Per-cpu bool fsac_preemption_in_progress updated in 
+								  __schedule(). Also in fsac_fork I add if (is_fsac(p)){ p->sched_class = &fsac_sched_class;}
+20 /include/linux/sched.h         Add to struct task_struct the parameter fsac_param from /include/fsac/fsac_param.h. Also, add resched hook for the state machine.
+21 /arch/arm/kernel/smp.c         Add handling of Inter-Processor Interrupt (IPI) for FSAC, with sched_state_ipi() at case IPI_RESCHEDULE.
+22 /arch/x86/kernel/smp.c         The IPI smp_reschedule_interrupt() might produce a transition in the FSAC sched_state machine.
+23 /arch/x86/xen/smp.c            Same idea as for /arch/x86/kernel/smp.c
+24 /fs/exec.c                     Added a hook for fsac_exec at do_execveat_common()
+25 /kernel/fork.c                 Added a hook for exit_fsac at __put_task_struct()
 
-
-NOTAS: No hecho nada de preempt (y state por ende) ó fork,exec...(ver ln 2427 core.c y compañía, funcion __schedule) TODO
-	   Tampoco finish_switch que es funcion de los plugin (ln 2815 core.c)
-	   y ver mi parche
-
-TODO litmus/np.h, usado en clear_exit_np de FSAC class
-TODO non-preemptive sections /fsac/np.h, ver fsac_plugin.c
-TODO COMMIT "Integrate preemption state machine with Linux scheduler "
-TODO REVISA kernel/sched/core.c
-TODO revisar fsac.c el NO_CPU
-Other nice features to improve real-time plugins support would be managing the tasks' state. For instance in /kernel/sched/fsac_class.c function enqueue_task
-TODO añadir memoria struct task struct fsac_param
-TODO En memoria_>soporte para real time habla de la funcion para plugins post_migration_validate_t, que sirve para comprobar que el plugin está sgeuro de que esa
-sigue siendo la task que quiere usar tras esperar por el stack, cosa que será asi probablemente si el algoritmo no es real time. TAMBIEN hablar del campo fsac_time last_suspension; en fsac_param, actualziado en dequeue_task_fsac en la FSAC class y el param last_tick actualizado en task_tick_fsac
-
-grep litmus y sustituir por fsac

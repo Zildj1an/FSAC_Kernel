@@ -67,6 +67,8 @@
 
 #include <trace/events/sched.h>
 
+#include <fsac/fsac.h>
+
 int suid_dumpable = 0;
 
 static LIST_HEAD(formats);
@@ -1706,6 +1708,7 @@ static int do_execveat_common(int fd, struct filename *filename,
 		goto out_unmark;
 
 	sched_exec();
+	fsac_exec();
 
 	bprm->file = file;
 	if (fd == AT_FDCWD || filename->name[0] == '/') {

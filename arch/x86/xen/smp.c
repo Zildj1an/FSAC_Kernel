@@ -36,6 +36,9 @@
 #include <xen/events.h>
 
 #include <xen/hvc-console.h>
+
+#include <fsac/fsac_preempt.h>
+
 #include "xen-ops.h"
 #include "mmu.h"
 #include "smp.h"
@@ -65,6 +68,7 @@ static irqreturn_t xen_reschedule_interrupt(int irq, void *dev_id)
 {
 	inc_irq_stat(irq_resched_count);
 	scheduler_ipi();
+	sched_state_ipi();
 
 	return IRQ_HANDLED;
 }

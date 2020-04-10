@@ -7,6 +7,7 @@
  */
 
 #include <fsac/fsac_plugin.h>
+#include <fsac/np.h>
 
 /* Triggers preemption in local or remote CPU for scheduler plugins. 
  * This function is non-preemptive section aware and does NOT invoke the scheduler
@@ -16,40 +17,44 @@ void preempt_if_preemptable(struct task_struct* task, int cpu) {
 
 	/* task is a FSAC task executing on CPU cpu. If task is NULL, then cpu
 	 * is currently executing background work. */
-	int reschedule = 0;
+	int reschedule = 1;
+/*
+	THESE CHECKS FOR NON-PREEMPTIVE SCENARIOS ARE LEFT FOR A FUTURE VERSION.
 
 	if (!task){
 		reschedule = 1;
 	}
+	
 	else {
 		if (smp_processor_id() == cpu){
-			/* Local CPU 
-			 * Check if we need to poke userspace TODO /fsac/np.h
-			   (np for non-preemptive)
-			 */
+			// Local CPU 
+			// Check if we need to poke userspace TODO /fsac/np.h
+			//  (np for non-preemptive)
+			//
 			if (is_user_np(task)){
-				/* Poke it. Doesn't have to be atomic since the
-				 * task is definitely not executing.
-				 */
+				// Poke it. Doesn't have to be atomic since the
+				// task is definitely not executing.
+				//
 				request_exit_np(task);
 			}
 			else if (!is_kernel_np(task)){
-				/* Only if we are allowed to preempt the currently
-				 * executing task */
+				// Only if we are allowed to preempt the currently
+				// executing task 
 				reschedule = 1;
 			}
 		}
 		else {
-			/* Remote CPU. Only notify if it is not a kernel NP section
-			 * and if we did not set the user-space flag */
+			// Remote CPU. Only notify if it is not a kernel NP section
+			// and if we did not set the user-space flag 
 			reschedule = !(is_kernel_np(task) || request_exit_np_atomic(task));
 		}
 	}
-
+*/
 	if (likely(reschedule)) {
 		fsac_reschedule(cpu);
 	}
 }
+EXPORT_SYMBOL(preempt_if_preemptable);
 
 /* (1) Dummy plugin functions */
 
@@ -70,6 +75,7 @@ static long fsac_dummy_admit_task(struct task_struct* tsk){
 	printk(KERN_INFO "Dummy FSAC plugin rejects %s/%d.\n",tsk->comm, tsk->pid);
 	return -EINVAL;
 }
+static int fsac_dummy_fork_task(struct task_struct* tsk){ return 0;}
 
 static int fsac_dummy_should_wait_for_stack(struct task_struct *next){
 	return 1; /* Wait indefinitely */
@@ -77,6 +83,8 @@ static int fsac_dummy_should_wait_for_stack(struct task_struct *next){
 
 static int fsac_dummy_post_migration_validate(struct task_struct *next){ return 1; }
 static void fsac_dummy_next_became_invalid(struct task_struct *next){}
+static void fsac_dummy_finish_switch(struct task_struct * prev){}
+static void fsac_dummy_task_cleanup(struct task_struct *task){}
 
 struct fsac_plugin fsac_sched_plugin = {
 	.plugin_name = "FSAC",
@@ -85,6 +93,7 @@ struct fsac_plugin fsac_sched_plugin = {
 	.deactivate_plugin = fsac_dummy_deactivate_plugin,
 	.schedule = fsac_dummy_schedule,
 	.admit_task = fsac_dummy_admit_task,
+	.fork_task = fsac_dummy_fork_task,
 	.task_new = fsac_dummy_task_new,
 	.task_wake_up = fsac_dummy_task_wake_up,
 	.task_block = fsac_dummy_task_block,
@@ -94,6 +103,8 @@ struct fsac_plugin fsac_sched_plugin = {
 	.should_wait_for_stack = fsac_dummy_should_wait_for_stack,
 	.post_migration_validate = fsac_dummy_post_migration_validate,
 	.next_became_invalid = fsac_dummy_next_became_invalid,
+	.finish_switch = fsac_dummy_finish_switch,
+	.task_cleanup = fsac_dummy_task_cleanup,
 };
 
 /* The current plugin */
@@ -155,6 +166,8 @@ int register_sched_plugin(struct sched_plugin* plugin){
 	CHECK(should_wait_for_stack);
 	CHECK(post_migration_validate);
 	CHECK(next_became_invalid);
+	CHECK(task_cleanup);
+	CHECK(fork_task);
 
 	raw_spin_lock(&proc_plugins_lock);
 	add_plugin_proc(&plugin->plugin_name);

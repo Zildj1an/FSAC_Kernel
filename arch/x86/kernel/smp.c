@@ -34,6 +34,8 @@
 #include <asm/trace/irq_vectors.h>
 #include <asm/kexec.h>
 
+#include <fsac/fsac_preempt.h>
+
 /*
  *	Some notes on x86 processor bugs affecting SMP operation:
  *
@@ -268,6 +270,8 @@ __visible void smp_reschedule_interrupt(struct pt_regs *regs)
 	/*
 	 * KVM uses this interrupt to force a cpu out of guest mode
 	 */
+	/* This IPI might produce a transition in the FSAC sched_state machine */
+	sched_state_ipi();
 }
 
 __visible void smp_trace_reschedule_interrupt(struct pt_regs *regs)

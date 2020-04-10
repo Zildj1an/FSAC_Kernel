@@ -3,11 +3,9 @@
  */
 #include <fsac/preempt.h>
 
-/* TODO Estos dos ya está definido en el Header.¿Sobra?
- * Preguntar JK
- */
+/* Already defined in the header */
 
-DEFINE_PER_CPU(bool, litmus_preemption_in_progress);
+DEFINE_PER_CPU(bool, fsac_preemption_in_progress);
 /* The rescheduling state of each processor. */
 DEFINE_PER_CPU_SHARED_ALIGNED(atomic_t, resched_state);
 

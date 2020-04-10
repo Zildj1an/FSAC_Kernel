@@ -10,6 +10,7 @@
 #include <fsac/fsac.h>
 #include <fsac/fsac_preempt.h>
 #include <fsac/sched_plugin.h>
+#include <fsac/fsac_np.h>
 
 static struct task_struct* fsac_schedule(struct rq *rq, struct task_struct *prev)
 {
@@ -166,7 +167,7 @@ static void yield_task_fsac(){
 
 	// Flags (Creo innecesario)
 	BUG_ON(rq->curr != current);
-	clear_exit_np(current); // TODO 
+	//clear_exit_fsac_np(current); /* Future versions */
 	fsac_reschedule_local();
 }
 

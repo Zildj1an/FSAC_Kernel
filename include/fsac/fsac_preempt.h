@@ -27,16 +27,17 @@ DECLARE_PER_CPU_SHARED_ALIGNED(atomic_t, resched_state);
 
 const char* sched_state_name(int s);
 
-#define VERIFY_SCHED_STATE(x) 					 \
-	do { int __state = get_sched_state();			 \
-	     if ((__state & (x)) == 0)				 \
-		printk(KERN_WARNING "INVALID state 0x%x (%s)\n", \
-		   __state,sched_state_name(__state));		 \
+#define VERIFY_SCHED_STATE(x) 					 			\
+	do { int __state = get_sched_state();			 		\
+	     if ((__state & (x)) == 0)				 			\
+		printk(KERN_WARNING "INVALID state 0x%x (%s)\n", 	\
+		   __state,sched_state_name(__state));		 		\
 	} while(0)
 
-#define TRACE_SCHED_STATE_CHANGE(x, y, cpu)			 	          \
-    printk(KERN_INFO "[%llu][CPU %d] Preemption state change: [0x%x](%s) ->"      \ 
-      "[0x%x](%s)\n",fsac_clock(),cpu,x,sched_state_name(x),y,sched_state_name(y))  
+#define TRACE_SCHED_STATE_CHANGE(x, y, cpu)			 	          			\
+    printk(KERN_INFO 														\
+    	"[%llu][CPU %d] Preemption state change: [0x%x](%s) ->[0x%x](%s)\n" \
+    	,fsac_clock(),cpu,x,sched_state_name(x),y,sched_state_name(y))  
 		
 typedef enum scheduling_state {
 
@@ -102,7 +103,8 @@ static inline int sched_state_transition(sched_state_t from, sched_state_t to){
 
 /* Just like sched_state_transition but for a given core */
 static inline int sched_state_transition_on(int cpu,
-					sched_state_t from,sched_state_t to){
+					sched_state_t from,sched_state_t to)
+{
 	sched_state_t old_state;
 
 	old_state = atomic_cmpxchg(&per_cpu(resched_state, cpu), from, to);

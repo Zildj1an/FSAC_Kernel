@@ -90,6 +90,7 @@
 
 #include <fsac/fsac.h>
 #include <fsac/fsac_plugin.h>
+#include <fsac/fsac_preempt.h>
 
 #define CREATE_TRACE_POINTS
 #include <trace/events/sched.h>
@@ -2408,11 +2409,14 @@ int sched_fork(unsigned long clone_flags, struct task_struct *p)
 	 */
 	p->prio = current->normal_prio;
 
+	fsac_fork(p);
+
 	/*
 	 * Revert to default priority/policy on fork if requested.
 	 */
 	if (unlikely(p->sched_reset_on_fork)) {
-		if (task_has_dl_policy(p) || task_has_rt_policy(p)) {
+		if (task_has_dl_policy(p) || task_has_rt_policy(p)
+			|| is_fsac(p)) {
 			p->policy = SCHED_NORMAL;
 			p->static_prio = NICE_TO_PRIO(0);
 			p->rt_priority = 0;
@@ -2429,7 +2433,10 @@ int sched_fork(unsigned long clone_flags, struct task_struct *p)
 		p->sched_reset_on_fork = 0;
 	}
 
-	if (dl_prio(p->prio)) {
+	if (is_fsac(p)){
+		p->sched_class = &fsac_sched_class;
+	}
+	else if (dl_prio(p->prio)) {
 		put_cpu();
 		return -EAGAIN;
 	} else if (rt_prio(p->prio)) {
@@ -2791,6 +2798,7 @@ static struct rq *finish_task_switch(struct task_struct *prev)
 	 */
 	prev_state = prev->state;
 	vtime_task_switch(prev);
+	fsac->finish_switch(prev);
 	perf_event_task_sched_in(prev, current);
 	finish_lock_switch(rq, prev);
 	finish_arch_post_lock_switch();
@@ -2874,6 +2882,12 @@ asmlinkage __visible void schedule_tail(struct task_struct *prev)
 	 */
 
 	rq = finish_task_switch(prev);
+
+	sched_trace_task_switch_to(current);
+
+	if (unlikely(sched_state_validate_switch()))
+		fsac_reschedule_local();
+
 	balance_callback(rq);
 	preempt_enable();
 
@@ -3366,6 +3380,8 @@ static void __sched notrace __schedule(bool preempt)
 	struct rq *rq;
 	int cpu;
 
+	sched_state_entered_schedule();
+
 	cpu = smp_processor_id();
 	rq = cpu_rq(cpu);
 	prev = rq->curr;
@@ -3388,6 +3404,8 @@ static void __sched notrace __schedule(bool preempt)
 	cookie = lockdep_pin_lock(&rq->lock);
 
 	rq->clock_skip_update <<= 1; /* promote REQ to ACT */
+
+	this_cpu_write(fsac_preemption_in_progress,preempt);
 
 	switch_count = &prev->nivcsw;
 	if (!preempt && prev->state) {
@@ -3421,6 +3439,8 @@ static void __sched notrace __schedule(bool preempt)
 	clear_preempt_need_resched();
 	rq->clock_skip_update = 0;
 
+	this_cpu_write(fsac_preemption_in_progress, false);
+
 	if (likely(prev != next)) {
 		rq->nr_switches++;
 		rq->curr = next;
@@ -3432,6 +3452,11 @@ static void __sched notrace __schedule(bool preempt)
 		lockdep_unpin_lock(&rq->lock, cookie);
 		raw_spin_unlock_irq(&rq->lock);
 	}
+
+	sched_trace_task_switch_to(current);
+
+	if (unlikely(sched_state_validate_switch()))
+		fsac_reschedule_local();
 
 	balance_callback(rq);
 }
@@ -4324,6 +4349,12 @@ change:
 	__setscheduler(rq, p, attr, pi);
 
 	if (fsac_policy(policy)){
+#ifdef CONFIG_SMP
+		p->fsac_param.stack_in_use ? rq->cpu : NO_CPU;
+#else
+		p->fsac_param.stack_in_use ? 0 : NO_CPU;
+#endif
+		p->fsac_param.present = running;
 		fsac->task_new(p,queued,running);
 	}
 
@@ -4352,6 +4383,10 @@ change:
 	 */
 	balance_callback(rq);
 	preempt_enable();
+
+	if (fsac_task){
+		fsac_dealloc();
+	}
 
 	return 0;
 }
@@ -4741,7 +4776,7 @@ long sched_setaffinity(pid_t pid, const struct cpumask *in_mask)
 	p = find_process_by_pid(pid);
 	if (!p || is_fsac(pc)) {
 		rcu_read_unlock();
-		return -ESRCH : -ESRCH;
+		return p ? -EPERM : -ESRCH;
 	}
 
 	/* Prevent p going away */

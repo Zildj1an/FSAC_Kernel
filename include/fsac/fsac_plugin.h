@@ -54,6 +54,15 @@ typedef int (*post_migration_validate_t)(struct task_struct *next);
 */
 typedef void (*next_became_invalid_t) (struct task_struct *next);
 
+/* Called after each task switch */
+typedef void (*finish_switch_t)(struct task_struct *prev);
+
+/* Called with no locks acquired */
+typedef void (*task_cleanup_t)	(struct task_struct *);
+
+/* return false to indicate that the plugin does not support forking */
+typedef int (*fork_task_t)(struct task_struct* tsk);
+
 struct fsac_plugin {
 
 	struct list_head 	list;
@@ -72,6 +81,7 @@ struct fsac_plugin {
 	
 	/*	Task state changes 	*/
 	admit_task_t		admit_task;
+	fork_task_t         fork_task;
 	task_new_t 		    task_new;
 	task_wake_up_t		task_wake_up;
 	task_block_t		task_block;
@@ -85,6 +95,11 @@ struct fsac_plugin {
 
 	/* Something went wrong */
 	next_became_invalid_t next_became_invalid;
+
+	/* Called at fsac_dealloc(), invoked from core.c */
+	task_cleanup_t		task_cleanup;
+
+	finish_switch_t finish_switch;
 
 } __attribute__ ((__aligned__(SMP_CACHE_BYTES)));
 
