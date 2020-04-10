@@ -15,7 +15,7 @@ void sched_state_will_schedule(struct task_struct* tsk){
 
 	/* It is not safe to rely on non-local processor invocations of
 	 * set_tsk_need_resched() that set the flag remotely*/
-	if (likely(task_cpu(tsk) == smp_processor_id()){
+	if (likely(task_cpu(tsk) == smp_processor_id())){
 		
 		VERIFY_SCHED_STATE(TASK_SCHEDULED | SHOULD_SCHEDULE | 
 				TASK_PICKED | WILL_SCHEDULE);
@@ -114,7 +114,7 @@ void sched_state_plugin_check(void) {
 		set_sched_state(TASK_PICKED);
 	}
 }
-
+EXPORT_SYMBOL(sched_state_plugin_check);
 #endif
 
 /* While '##' is the token-pasting operator, as in /fsac/fsac_plugin.c,

@@ -4,6 +4,7 @@
 #include <uapi/linux/sched.h>
 
 #include <linux/sched/prio.h>
+#include <fsac/fsac_param.h>
 
 
 struct sched_param {
@@ -1885,6 +1886,9 @@ struct task_struct {
 	int nr_dirtied;
 	int nr_dirtied_pause;
 	unsigned long dirty_paused_when; /* start of a write-and-pause period */
+
+	/* FSAC PARAMETERS AND STATE */
+	struct fsac_param fsac_param;
 
 #ifdef CONFIG_LATENCYTOP
 	int latency_record_count;

@@ -1,30 +1,50 @@
+=============================================================
+= FSAC KERNEL (Framework for Scheduling Algorithm Creation) =
+= author: Carlos Bilbao Muñoz								=
+=============================================================
+
 File created:		              Purpose:
 -------------                     -----------
 1 /fsac/fsac.c		              Initializes everything: the proc and registers the dummy plugin. 
 2 /fsac/fsac_list.c	              Helps with the management of the special linked lists, and the copy from user.	
-3 /fsac/fsac_plugin.c	          Dummy FSAC plugin(default) also manages the list of registered plugins.
+3 /fsac/fsac_plugin.c	          Dummy FSAC plugin (default) also manages the list of registered plugins.
 4 /fsac/fsac_proc.c	              Manages the /proc entries. Check loaded plugins, check/change active plugin, stats on it.
-5 /include/fsac/fsac.h            Header of (1). Also includes auxiliary definitions/functions.
-6 /include/fsac/fsac_list.h       Header of (2). Also includes auxiliary function.
+5 /include/fsac/fsac.h            Header of /fsac/fsac.c. Also includes auxiliary definitions/functions.
+6 /include/fsac/fsac_list.h       Header of /fsac/fsac_list.c. Also includes auxiliary function.
 7 /include/fsac/fsac_macros.h     Some macros of FSAC.
-8 /include/fsac/fsac_proc.h       Header of (4).
+8 /include/fsac/fsac_proc.h       Header of /fsac/fsac_proc.c.
 9 /kernel/sched/fsac_class.c      FSAC new scheduling class, will mostly always delegate on the plugin.
+10 /include/fsac/fsac_preempt.h        
+11 /fsac/fsac_preempt.c
+12 /include/fsac/fsac_param.h             The extra parameter added to the struct task struct 
 
 File modified:		              Why:
 --------------                    -----------
 10 /kernel/sched/sched.h		  Made FSAC class a valid policy, add it to the linked list as highest. 
-11 /include/uapi/linux/sched.h    Add macro SCHED_FSAC (7).
+11 /include/uapi/linux/sched.h    Add macro SCHED_FSAC from /include/fsac/fsac_macros.h.
 12 /kernel/sched.c                Hook to fsac_do_exit() from fsac.h when do_exit is called (ln. 729)
 13 /fs/select.c                   Needed to avoid delays if the FSAC plugin is real-time.
 14 /kernel/locking/mutex.c        Needed to avoid live-lock if the FSAC plugin is real-time.
-15 /kernel/locking/rwsem-xadd.c   Same idea as (13) but with semaphores.
-16 /kernel/time/hrtimer.c         Same idea as (13) but for the kernel timer.
+15 /kernel/locking/rwsem-xadd.c   Same idea as /kernel/locking/mutex.c but with semaphores.
+16 /kernel/time/hrtimer.c         Same idea as /kernel/locking/mutex.c but for the kernel timer.
 17 /mm/page-writeback.c           FSAC RT tasks should get special treatment when it comes to writing back dirty pages at the address-space.
 18 /mm/page_alloc.c               Special amendments at page allocation when the FSAC plugin is intended to be real-time.
 19 /kernel/sched/core.c           Make sure no Linux balancing, integrate FSAC scheduling class.
+20 include/linux/sched.h          Add to struct task_struct the parameter fsac_param from /include/fsac/fsac_param.h
 
 
 NOTAS: No hecho nada de preempt (y state por ende) ó fork,exec...(ver ln 2427 core.c y compañía, funcion __schedule) TODO
 	   Tampoco finish_switch que es funcion de los plugin (ln 2815 core.c)
+	   y ver mi parche
 
+TODO litmus/np.h, usado en clear_exit_np de FSAC class
+TODO non-preemptive sections /fsac/np.h, ver fsac_plugin.c
+TODO COMMIT "Integrate preemption state machine with Linux scheduler "
+TODO REVISA kernel/sched/core.c
+TODO revisar fsac.c el NO_CPU
 Other nice features to improve real-time plugins support would be managing the tasks' state. For instance in /kernel/sched/fsac_class.c function enqueue_task
+TODO añadir memoria struct task struct fsac_param
+TODO En memoria_>soporte para real time habla de la funcion para plugins post_migration_validate_t, que sirve para comprobar que el plugin está sgeuro de que esa
+sigue siendo la task que quiere usar tras esperar por el stack, cosa que será asi probablemente si el algoritmo no es real time. TAMBIEN hablar del campo fsac_time last_suspension; en fsac_param, actualziado en dequeue_task_fsac en la FSAC class y el param last_tick actualizado en task_tick_fsac
+
+grep litmus y sustituir por fsac

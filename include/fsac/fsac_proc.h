@@ -2,7 +2,7 @@
  *  Header of /fsac/fsac_proc.c
  *  More details about this file on it.
  *  @author Carlos Bilbao Muñoz   
- *  cbilbao@ucm.es                  
+ *  GitHub: https://github.com/Zildj1an                  
  */
 
 #ifndef _LINUX_FSAC_PROC_H_

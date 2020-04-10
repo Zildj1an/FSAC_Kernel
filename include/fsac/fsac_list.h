@@ -2,7 +2,7 @@
  *  Header of /fsac/fsac_list.c
  *  Auxiliar functions for managing linked list.
  *  @author Carlos Bilbao Muñoz
- *  cbilbao@ucm.es   
+ *  GitHub: https://github.com/Zildj1an
  */
 
 #ifndef _LINUX_FSAC_LIST_H_
@@ -12,7 +12,7 @@
 #include <linux/compiler.h>
 
 static inline int safe_char(void *val){
-    return (__builtin_types_compatible_p(typeof(val), char*) && val != NULL);
+    return (val != NULL && __builtin_types_compatible_p(typeof(val), char*));
 }
 
 void fsac_remove_list(struct list_head* ghost_node);

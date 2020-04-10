@@ -1,7 +1,7 @@
 /*
  *  Some aid for managing special linked lists.
  *  @author Carlos Bilbao Muñoz
- *  cbilbao@ucm.es
+ *  GitHub: https://github.com/Zildj1an
  */
 
 #include <fsac/fsac_list.h>

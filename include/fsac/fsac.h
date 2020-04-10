@@ -1,7 +1,7 @@
 /*
  *  FSAC initialization code. 
  *  @author Carlos Bilbao Muñoz 
- *  cbilbao@ucm.es
+ *  GitHub: https://github.com/Zildj1an
  *  Sept 2019-2020
  */
 
@@ -19,22 +19,27 @@
 #include <fsac/fsac_plugin.h>
 #include <fsac/fsac_proc.h>
 
-
 #define is_fsac(t)    ((t)->policy == SCHED_FSAC)
+#define tsk_fsac(t)   (&(t)->fsac_param)
+
+#define NO_CPU			0xffffffff
 
 static inline lt_t fsac_clock(void) {
 	return ktime_to_ns(ktime_get());
 }
 
 long fsac_admit_task(struct task_struct *tsk);
-int fsac_is_real_time(struct task_struct *tsk);
+int  fsac_is_real_time(struct task_struct *tsk);
 void fsac_exit_task(struct task_struct* tsk);
 void fsac_do_exit(struct task_struct *tsk); /* Called by ln.745 /kernel/exit.c */
 
 void fsac_plugin_switch_disable(void);
 void fsac_plugin_switch_enable(void);
 
-// TODO? Not sure if something left
+// TODO? fork y demás
+
+/* Done at /fsac/fsac_plugin.c */
+void preempt_if_preemptable(struct task_struct* t, int cpu);
 
 
 #endif

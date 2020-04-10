@@ -11,7 +11,8 @@
  *     +- stats_active (read, from module)
  *
  *  @author Carlos Bilbao Muñoz   
- *  cbilbao@ucm.es      
+ *  GitHub: https://github.com/Zildj1an     
+ *  2020
  */
 
 #include <fsac/fsac_proc.h>
@@ -57,7 +58,7 @@ static ssize_t active_read(struct file *filp,
 }
 
 /* In fsac/fsac.c */
-int switch_sched_plugin(struct sched_plugin* plugin);
+extern int switch_sched_plugin(struct sched_plugin* plugin);
 
 static ssize_t active_write(struct file *filp, const char __user *buf,
 		size_t len, loff_t *off) {
@@ -67,7 +68,7 @@ static ssize_t active_write(struct file *filp, const char __user *buf,
 	ssize ret = 0;
 	int err;
 
-	if((ret = fsac_copy_safe(name,sizeof(name),buf,len) < 0)
+	if((ret = fsac_copy_safe(name,sizeof(name),buf,len) < 0))
 		return ret;
 
 	found = proc_find_node(0,name,&proc_loaded_plugins);

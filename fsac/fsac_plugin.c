@@ -3,14 +3,14 @@
  *  (1) The dummy plugin -default- is developed and registered.
  *  (2) The list of plugins is managed.
  *  @author Carlos Bilbao Muñoz
- *  cbilbao@ucm.es
+ *  GitHub: https://github.com/Zildj1an
  */
 
 #include <fsac/fsac_plugin.h>
 
 /* Triggers preemption in local or remote CPU for scheduler plugins. 
  * This function is non-preemptive section aware and does NOT invoke the scheduler
- * or send IPIs (if remote core) if the task to be preempted is non-preemptive.
+ * or send IPIs (if executed at remote core) if the task to be preempted is non-preemptive.
  */
 void preempt_if_preemptable(struct task_struct* task, int cpu) {
 
@@ -41,9 +41,8 @@ void preempt_if_preemptable(struct task_struct* task, int cpu) {
 		}
 		else {
 			/* Remote CPU. Only notify if it is not a kernel NP section
-			 * and if we did not set the userspace flag */
-			reschedule = !(is_kernel_np(task) || 
-					request_exit_np_atomic(task));
+			 * and if we did not set the user-space flag */
+			reschedule = !(is_kernel_np(task) || request_exit_np_atomic(task));
 		}
 	}
 
@@ -72,6 +71,13 @@ static long fsac_dummy_admit_task(struct task_struct* tsk){
 	return -EINVAL;
 }
 
+static int fsac_dummy_should_wait_for_stack(struct task_struct *next){
+	return 1; /* Wait indefinitely */
+}
+
+static int fsac_dummy_post_migration_validate(struct task_struct *next){ return 1; }
+static void fsac_dummy_next_became_invalid(struct task_struct *next){}
+
 struct fsac_plugin fsac_sched_plugin = {
 	.plugin_name = "FSAC",
 	.is_real_time = 0, /* Not really needed as this is default */
@@ -84,6 +90,10 @@ struct fsac_plugin fsac_sched_plugin = {
 	.task_block = fsac_dummy_task_block,
 	.task_exit = fsac_dummy_task_exit,
 	.plugin_read = fsac_dummy_read,
+	/* For FSAC class:  */
+	.should_wait_for_stack = fsac_dummy_should_wait_for_stack,
+	.post_migration_validate = fsac_dummy_post_migration_validate,
+	.next_became_invalid = fsac_dummy_next_became_invalid,
 };
 
 /* The current plugin */
@@ -127,7 +137,7 @@ int register_sched_plugin(struct sched_plugin* plugin){
 
 	if (plugin->is_real_time != 0 && plugin->is_real_time != 1) {
 		printk(KERN_ALERT "1/2 FSAC plugin not real-time(1) or other(0).\n");
-        	printk(KERN_ALERT "2/2 Default asummed (NOT real-time)\n");
+        	printk(KERN_ALERT "2/2 Default assumed (NOT real-time)\n");
 		plugin->is_real_time = 0;
 	}
 
@@ -142,6 +152,9 @@ int register_sched_plugin(struct sched_plugin* plugin){
 	CHECK(task_wake_up);
 	CHECK(task_exit);
 	CHECK(plugin_read);
+	CHECK(should_wait_for_stack);
+	CHECK(post_migration_validate);
+	CHECK(next_became_invalid);
 
 	raw_spin_lock(&proc_plugins_lock);
 	add_plugin_proc(&plugin->plugin_name);

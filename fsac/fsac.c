@@ -2,7 +2,8 @@
  *  Starts everything, including the proc entries for FSAC Kernel
  *  and registers /fsac/fsac_plugin.c (Dummy default plugin)
  *  @author Carlos Bilbao Muñoz
- *  cbilbao@ucm.es
+ *  GitHub: https://github.com/Zildj1an
+ *  2020
  */
 
 #include <fsac/fsac.h>
@@ -36,9 +37,6 @@ int fsac_is_real_time(struct task_struct *tsk) {
 static long __fsac_admit_task(struct task_struct *tsk) {
 
 	long err;
-
-	/* TODO (?)*/
-	//INIT_LIST_HEAD(&tsk_fsac(tsk)->list);
 
 	preempt_disable();
 	if (!(err = fsac->admit_task(tsk))){
@@ -170,7 +168,9 @@ void fsac_do_exit(struct task_struct *tsk){
 /* Wow, this function is important! */
 static int __init _init_fsac(void){
 
-	printk(KERN_WARNING "Starting FSAC kernel\n");
+	printk(KERN_WARNING "Starting FSAC kernel...\n");
+	printk(KERN_WARNING "Author: Carlos Bilbao (2020)\n");
+	printk(KERN_WARNING "GitHub: https://github.com/Zildj1an\n");
 
 	register_sched_plugin(&fsac_sched_plugin);
 
@@ -179,6 +179,7 @@ static int __init _init_fsac(void){
 
 static void _exit_fsac(void){
 
+	// TODO quitar el plugin?
 	exit_fsac_proc();
 }
 
