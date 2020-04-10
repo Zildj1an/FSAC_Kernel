@@ -6,21 +6,21 @@
 
 See http://kernel.org/
 
-File created:		              Purpose:
--------------                     -----------
-1 /fsac/fsac.c		              Initializes everything: the proc and registers the dummy plugin. 
-2 /fsac/fsac_list.c	              Helps with the management of the special linked lists, and the copy from user.	
-3 /fsac/fsac_plugin.c	          Dummy FSAC plugin (default) also manages the list of registered plugins.
-4 /fsac/fsac_proc.c	              Manages the /proc entries. Check loaded plugins, check/change active plugin, stats on it.
-5 /include/fsac/fsac.h            Header of /fsac/fsac.c. Also includes auxiliary definitions/functions.
-6 /include/fsac/fsac_list.h       Header of /fsac/fsac_list.c. Also includes auxiliary function.
-7 /include/fsac/fsac_macros.h     Some macros of FSAC.
-8 /include/fsac/fsac_proc.h       Header of /fsac/fsac_proc.c.
-9 /kernel/sched/fsac_class.c      FSAC new scheduling class, will mostly always delegate on the plugin.
-10 /include/fsac/fsac_preempt.h        
-11 /fsac/fsac_preempt.c           Functions to switch and check the preemption states, for rescheduling.
-12 /include/fsac/fsac_param.h     The extra parameter added to the struct task struct 
-13 /include/fsac/fsac_np.h        Postponed to future versions, includes functions to manage non-preemptive sections.
+| #  | File created                 | Purpose                                                                                   |
+|----|------------------------------|-------------------------------------------------------------------------------------------|
+| 1  | /fsac/fsac.c                 | Helps with the management of the special linked lists, and the copy from user.            |
+| 2  | /fsac/fsac_list.c            | Helps with the management of the special linked lists, and the copy from user.            |
+| 3  | /fsac/fsac_plugin.c          | Dummy FSAC plugin (default) also manages the list of registered plugins.                  |
+| 4  | /fsac/fsac_proc.c            | Manages the /proc entries. Check loaded plugins, check/change active plugin, stats on it. |
+| 5  | /include/fsac/fsac.h         | Header of /fsac/fsac.c. Also includes auxiliary definitions/functions.                    |
+| 6  | /include/fsac/fsac_list.h    | Header of /fsac/fsac_list.c. Also includes auxiliary function.                            |
+| 7  | /include/fsac/fsac_macros.h  | Some macros of FSAC.                                                                      |
+| 8  | /include/fsac/fsac_proc.h    | Header of /fsac/fsac_proc.c.                                                              |
+| 9  | /kernel/sched/fsac_class.c   | FSAC new scheduling class, will mostly always delegate on the plugin.                     |
+| 10 | /include/fsac/fsac_preempt.h | Header of /fsac/fsac_preempt.c                                                            |
+| 11 | /fsac/fsac_preempt.c         | Functions to switch and check the preemption states, for rescheduling.                    |
+| 12 | /include/fsac/fsac_param.h   | The extra parameter added to the struct task struct                                       |
+| 13 | /include/fsac/fsac_np.h      | Postponed to future versions, includes functions to manage non-preemptive sections.       |
 
 File modified:		              Why:
 --------------                    -----------
