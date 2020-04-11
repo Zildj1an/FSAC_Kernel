@@ -53,7 +53,7 @@ typedef enum scheduling_state {
 	/* The processor is currently executing schedule(), has selected a new
 	 * task to schedule, but the context switch is still pending.
 	 */
-	TASK_PICKED = (1 << 3);
+	TASK_PICKED = (1 << 3),
 	/* The processor has not yet performed the context switch, but a remote
 	 * processor has already determined that a higher-priority task
 	 * should be the chosen one, after the task was picked*/
@@ -68,7 +68,7 @@ static inline sched_state_t get_sched_state_on(int cpu){
 
 /* Get preemption state for invoking processor */
 static inline sched_state_t get_sched_state(void){
-   return atomic_read(&this_cpu_ptr(resched_state));
+   return atomic_read(this_cpu_ptr(&resched_state));
 }
 
 static inline int is_in_sched_state(int possible_states){
@@ -92,7 +92,7 @@ static inline int sched_state_transition(sched_state_t from, sched_state_t to){
 	sched_state_t old_state;
 
 	/* cmpxchng = Compare and exchange */
-	old_state = atomic_cmpxchng(this_cpu_ptr(&resched_state), from, to);
+	old_state = atomic_cmpxchg(this_cpu_ptr(&resched_state), from, to);
 
 	if (old_state == from){
 		TRACE_SCHED_STATE_CHANGE(from,to,smp_processor_id());
@@ -165,3 +165,4 @@ void fsac_reschedule_local(void);
    #define sched_state_plugin_check() /* no check */
 #endif
  
+ #endif

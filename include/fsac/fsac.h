@@ -47,7 +47,7 @@ void fsac_exec(void);
 void fsac_clear_state(struct task_struct *dead_tsk);
 void exit_fsac(struct task_struct *dead_tsk);
 
-static inline lt_t fsac_clock(void) {
+static inline unsigned long long fsac_clock(void) {
 	return ktime_to_ns(ktime_get());
 }
 

@@ -18,7 +18,7 @@ static inline int safe_char(void *val){
 void fsac_remove_list(struct list_head* ghost_node);
 
 /* Return value = number of elements copied into members[] */
-int fsac_print_list(struct list_head* list, char members*);
+int fsac_print_list(struct list_head* list, char* members);
 
 /* On success, returns pointer to list node, otherwise NULL
    If you use a spinlock/other mechanism for the list, lock it yourself

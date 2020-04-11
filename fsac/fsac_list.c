@@ -25,7 +25,7 @@ void fsac_remove_list(struct list_head* ghost_node){
 }
 EXPORT_SYMBOL(fsac_remove_list);
 
-int fsac_print_list(struct list_head* list, char members*){
+int fsac_print_list(struct list_head* list, char* members){
 
 	struct list_item* item = NULL;
 	struct list_head* cur_node = NULL;
@@ -47,7 +47,7 @@ int fsac_print_list(struct list_head* list, char members*){
 			else {
 				read += sprintf(&members[read],"%i\n",
 					item->data);
-                        	members[read++] = '\n';
+                members[read++] = '\n';
 			}
 	}
 	return read;
