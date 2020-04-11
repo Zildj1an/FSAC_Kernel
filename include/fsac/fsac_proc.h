@@ -13,9 +13,6 @@
 #include <fsac/fsac_list.h>
 #include <fsac/fsac.h>
 
-/* My /proc file entry */
-static struct proc_dir_entry *my_proc_entry;
-
 int __init init_fsac_proc(void);
 void exit_fsac_proc(void);
 
@@ -25,7 +22,6 @@ void exit_fsac_proc(void);
 void* proc_find_node(int n,char *c, struct list_head* head);
 void add_plugin_proc(struct sched_plugin *plugin);
 void remove_plugin_proc(char *name);
-
 
 
 #endif
