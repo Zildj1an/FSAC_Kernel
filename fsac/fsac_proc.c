@@ -16,6 +16,7 @@
  */
 
 #include <fsac/fsac_proc.h>
+#include <linux/uacces.h> 
 
 static struct proc_dir_entry *fsac_dir = NULL,
 	*loaded  = NULL,

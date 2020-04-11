@@ -9,7 +9,6 @@
 #define _LINUX_FSAC_PROC_H_
 
 #include <linux/proc_fs.h>
-#include <linux/uacces.h>    /* copy_from_user */
 #include <fsac/fsac_plugin.h>
 #include <fsac/fsac_list.h>
 #include <fsac/fsac.h>

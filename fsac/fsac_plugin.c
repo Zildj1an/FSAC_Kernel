@@ -8,6 +8,7 @@
 
 #include <fsac/fsac_plugin.h>
 #include <fsac/np.h>
+#include <linux/uacces.h> 
 
 /* Triggers preemption in local or remote CPU for scheduler plugins. 
  * This function is non-preemptive section aware and does NOT invoke the scheduler

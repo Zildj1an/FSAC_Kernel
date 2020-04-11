@@ -9,7 +9,6 @@
 #define _LINUX_FSAC_PLUGIN_H_
 
 #include <linux/printk.h>
-#include <linux/uacces.h>    /* copy_from_user */
 #include <fsac/fsac.h>
 #include <fsac/fsac_list.h>
 
