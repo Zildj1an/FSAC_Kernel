@@ -5,7 +5,6 @@
 #ifndef FSAC_PREEMPT_H
 #define FSAC_PREEMPT_H
 
-#include <fsac/sched.h>
 #include <fsac/fsac.h>
 
 #include <linux/types.h>
