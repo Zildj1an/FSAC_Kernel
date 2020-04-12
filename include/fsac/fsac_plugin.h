@@ -12,6 +12,10 @@
 #include <fsac/fsac.h>
 #include <fsac/fsac_list.h>
 
+/* List of registered plugins */
+static LIST_HEAD(proc_loaded_plugins);
+DEFINE_RAW_SPINLOCK(proc_plugins_lock);
+
 typedef long (*activate_plugin_t) (void);
 
 typedef long (*deactivate_plugin_t) (void);
@@ -110,10 +114,6 @@ struct list_item {
 	struct sched_plugin *plugin;
     struct list_head links;
 };
-
-/* List of registered plugins */
-static LIST_HEAD(proc_loaded_plugins);
-DEFINE_RAW_SPINLOCK(proc_plugins_lock);
 
 int register_sched_plugin(struct sched_plugin* plugin);
 int unregister_sched_plugin(struct sched_plugin* plugin);
