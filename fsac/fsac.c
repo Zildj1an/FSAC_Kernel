@@ -12,7 +12,7 @@
 #include <linux/sched/rt.h>
 
 /* Number of uploaded tasks that exist in the system */
-unsigned long fsac_task_count = ATOMIC_INIT(0);
+static atomic_t fsac_task_count = ATOMIC_INIT(0);
 
 static DECLARE_RWSEM(plugin_switch_mutex);
 
@@ -84,12 +84,13 @@ void exit_fsac(struct task_struct *dead_tsk){
 */
 int fsac_is_real_time(struct task_struct *tsk) {
 
-	if(is_fsac(t)) {
-		 BUG_ON(fsac->is_real_time == 0 ||
-			fsac->is_real_time == 1);
+	if(is_fsac(tsk)) {
+		 BUG_ON(fsac->is_real_time != 0 &&
+			fsac->is_real_time != 1);
  		 return fsac->is_real_time;
 	}
-	else return 0;
+	
+	return 0;
 }
 
 static long __fsac_admit_task(struct task_struct *tsk) {
@@ -109,6 +110,7 @@ static long __fsac_admit_task(struct task_struct *tsk) {
 long fsac_admit_task(struct task_struct *tsk) {
 
     long ret = 0;
+    int retval;
 
     BUG_ON(is_fsac(tsk));
 
@@ -168,7 +170,7 @@ out:
 static int do_plugin_switch(void *_plugin){
 
 	int ret = 0;
-	unsigned long *flags;
+	unsigned long flags;
 
 	local_save_flags(flags);
 	local_irq_disable();
@@ -241,6 +243,8 @@ static int __init _init_fsac(void){
 	register_sched_plugin(&fsac_sched_plugin);
 
 	init_fsac_proc();
+
+	return 0;
 }
 
 static void _exit_fsac(void){
