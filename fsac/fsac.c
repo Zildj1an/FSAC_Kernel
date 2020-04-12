@@ -7,6 +7,7 @@
  */
 
 #include <fsac/fsac.h>
+#include <fsac/fsac_plugin.h>
 #include <asm/uaccess.h>
 #include <linux/uaccess.h>
 #include <linux/sched/rt.h>
@@ -37,10 +38,23 @@ static void reinit_fsac_state(struct task_struct* p, int restore){
 	}
 }
 
+static long __fsac_admit_task(struct task_struct *tsk) {
+
+        long err;
+
+        preempt_disable();
+        if (!(err = fsac->admit_task(tsk))){
+                atomic_inc(&fsac_task_count);
+        }
+        preempt_enable();
+
+        return err;
+}
+
 /* Called after a fork */
 void fsac_fork(struct task_struct *p){
 
-	if (if_fsac(p)){
+	if (is_fsac(p)){
 		reinit_fsac_state(p,1);
 
 		if (fsac->fork_task(p)){
@@ -91,19 +105,6 @@ int fsac_is_real_time(struct task_struct *tsk) {
 	}
 	
 	return 0;
-}
-
-static long __fsac_admit_task(struct task_struct *tsk) {
-
-	long err;
-
-	preempt_disable();
-	if (!(err = fsac->admit_task(tsk))){
-		atomic_inc(&fsac_task_count);
-	}
-	preempt_enable();
-
-	return err;
 }
 
 /* Invoked by /sched/core.c */

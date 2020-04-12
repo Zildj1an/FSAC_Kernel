@@ -13,6 +13,6 @@ TODO añadir memoria struct task struct fsac_param
 TODO En memoria_>soporte para real time habla de la funcion para plugins post_migration_validate_t, que sirve para comprobar que el plugin está sgeuro de que esa
 sigue siendo la task que quiere usar tras esperar por el stack, cosa que será asi probablemente si el algoritmo no es real time. TAMBIEN hablar del campo fsac_time last_suspension; en fsac_param, actualziado en dequeue_task_fsac en la FSAC class y el param last_tick actualizado en task_tick_fsac. Ademas reinicializados en reinit_fsac_state.
 
-future work -> non Preemptive
+future work -> non Preemptive + irq en core.c
 
 el grep picaro

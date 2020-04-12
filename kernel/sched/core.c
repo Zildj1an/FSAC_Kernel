@@ -1819,7 +1819,7 @@ void scheduler_ipi(void)
 #ifndef CONFIG_ARCH_CALLS_IRQ_ENTER_ON_RESCHED_IPI
                /* If we don't call irq_enter(), we need to triggger the IRQ
                 * tracing manually. */
-               ft_irq_fired();
+               //ft_irq_fired(); TODO FSAC future versions
  #endif
 	       return;
 	}
@@ -2121,7 +2121,7 @@ stat:
 	ttwu_stat(p, cpu, wake_flags);
 out:
 	if(is_fsac(p))
-		printk(KERN_NOTICE "try_to_wake_up() done state: %d\n",p->state);
+		printk(KERN_NOTICE "try_to_wake_up() done state: %ld\n",p->state);
 	raw_spin_unlock_irqrestore(&p->pi_lock, flags);
 
 	return success;
@@ -2225,7 +2225,7 @@ void __dl_clear_params(struct task_struct *p)
  *
  * __sched_fork() is basic setup used by init_idle() too:
  */
-static void __sched_fork(unsigned long clone_flags, struct task_struct *p)
+void __sched_fork(unsigned long clone_flags, struct task_struct *p)
 {
 	p->on_rq			= 0;
 
