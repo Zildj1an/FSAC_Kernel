@@ -2678,7 +2678,7 @@ void preempt_notifier_unregister(struct preempt_notifier *notifier)
 }
 EXPORT_SYMBOL_GPL(preempt_notifier_unregister);
 
-static void __fire_sched_in_preempt_notifiers(struct task_struct *curr)
+void __fire_sched_in_preempt_notifiers(struct task_struct *curr)
 {
 	struct preempt_notifier *notifier;
 
@@ -2686,13 +2686,13 @@ static void __fire_sched_in_preempt_notifiers(struct task_struct *curr)
 		notifier->ops->sched_in(notifier, raw_smp_processor_id());
 }
 
-static __always_inline void fire_sched_in_preempt_notifiers(struct task_struct *curr)
+ __always_inline void fire_sched_in_preempt_notifiers(struct task_struct *curr)
 {
 	if (static_key_false(&preempt_notifier_key))
 		__fire_sched_in_preempt_notifiers(curr);
 }
 
-static void
+void
 __fire_sched_out_preempt_notifiers(struct task_struct *curr,
 				   struct task_struct *next)
 {
@@ -2702,7 +2702,7 @@ __fire_sched_out_preempt_notifiers(struct task_struct *curr,
 		notifier->ops->sched_out(notifier, next);
 }
 
-static __always_inline void
+ __always_inline void
 fire_sched_out_preempt_notifiers(struct task_struct *curr,
 				 struct task_struct *next)
 {
@@ -2737,7 +2737,7 @@ fire_sched_out_preempt_notifiers(struct task_struct *curr,
  * prepare_task_switch sets up locking and calls architecture specific
  * hooks.
  */
-static inline void
+inline void
 prepare_task_switch(struct rq *rq, struct task_struct *prev,
 		    struct task_struct *next)
 {
@@ -2767,7 +2767,7 @@ prepare_task_switch(struct rq *rq, struct task_struct *prev,
  * past. prev == current is still correct but we need to recalculate this_rq
  * because prev may have moved to another CPU.
  */
-static struct rq *finish_task_switch(struct task_struct *prev)
+struct rq *finish_task_switch(struct task_struct *prev)
 	__releases(rq->lock)
 {
 	struct rq *rq = this_rq();
@@ -2806,7 +2806,7 @@ static struct rq *finish_task_switch(struct task_struct *prev)
 	prev_state = prev->state;
 	vtime_task_switch(prev);
 	fsac->finish_switch(prev);
-	prev->rt_param.stack_in_use = NO_CPU;
+	prev->fsac_param.stack_in_use = NO_CPU;
 	perf_event_task_sched_in(prev, current);
 	finish_lock_switch(rq, prev);
 	finish_arch_post_lock_switch();
@@ -2837,7 +2837,7 @@ static struct rq *finish_task_switch(struct task_struct *prev)
 #ifdef CONFIG_SMP
 
 /* rq->lock is NOT held, but preemption is disabled */
-static void __balance_callback(struct rq *rq)
+void __balance_callback(struct rq *rq)
 {
 	struct callback_head *head, *next;
 	void (*func)(struct rq *rq);
@@ -2857,7 +2857,7 @@ static void __balance_callback(struct rq *rq)
 	raw_spin_unlock_irqrestore(&rq->lock, flags);
 }
 
-static inline void balance_callback(struct rq *rq)
+inline void balance_callback(struct rq *rq)
 {
 	if (unlikely(rq->balance_callback))
 		__balance_callback(rq);
@@ -2904,7 +2904,7 @@ asmlinkage __visible void schedule_tail(struct task_struct *prev)
 /*
  * context_switch - switch to the new MM and the new thread's register state.
  */
-static __always_inline struct rq *
+inline struct rq *
 context_switch(struct rq *rq, struct task_struct *prev,
 	       struct task_struct *next, struct pin_cookie cookie)
 {

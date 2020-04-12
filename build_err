@@ -2342,39 +2342,6 @@ kernel/sched/core.c:2679:1: note: in expansion of macro ‘EXPORT_SYMBOL_GPL’
 kernel/sched/core.c:2675:6: note: previous definition of ‘preempt_notifier_unregister’ was here
  void preempt_notifier_unregister(struct preempt_notifier *notifier)
       ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-kernel/sched/core.c:2681:13: error: invalid storage class for function ‘__fire_sched_in_preempt_notifiers’
- static void __fire_sched_in_preempt_notifiers(struct task_struct *curr)
-             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-kernel/sched/core.c:2689:29: error: invalid storage class for function ‘fire_sched_in_preempt_notifiers’
- static __always_inline void fire_sched_in_preempt_notifiers(struct task_struct *curr)
-                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-kernel/sched/core.c:2696:1: error: invalid storage class for function ‘__fire_sched_out_preempt_notifiers’
- __fire_sched_out_preempt_notifiers(struct task_struct *curr,
- ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-kernel/sched/core.c:2706:1: error: invalid storage class for function ‘fire_sched_out_preempt_notifiers’
- fire_sched_out_preempt_notifiers(struct task_struct *curr,
- ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-kernel/sched/core.c:2741:1: error: invalid storage class for function ‘prepare_task_switch’
- prepare_task_switch(struct rq *rq, struct task_struct *prev,
- ^~~~~~~~~~~~~~~~~~~
-kernel/sched/core.c:2770:19: error: invalid storage class for function ‘finish_task_switch’
- static struct rq *finish_task_switch(struct task_struct *prev)
-                   ^~~~~~~~~~~~~~~~~~
-kernel/sched/core.c: In function ‘finish_task_switch’:
-kernel/sched/core.c:2809:8: error: ‘struct task_struct’ has no member named ‘rt_param’; did you mean ‘fsac_param’?
-  prev->rt_param.stack_in_use = NO_CPU;
-        ^~~~~~~~
-        fsac_param
-kernel/sched/core.c: In function ‘__dl_clear_params’:
-kernel/sched/core.c:2840:13: error: invalid storage class for function ‘__balance_callback’
- static void __balance_callback(struct rq *rq)
-             ^~~~~~~~~~~~~~~~~~
-kernel/sched/core.c:2860:20: error: invalid storage class for function ‘balance_callback’
- static inline void balance_callback(struct rq *rq)
-                    ^~~~~~~~~~~~~~~~
-kernel/sched/core.c:2908:1: error: invalid storage class for function ‘context_switch’
- context_switch(struct rq *rq, struct task_struct *prev,
- ^~~~~~~~~~~~~~
 In file included from ./include/linux/linkage.h:6,
                  from ./include/linux/kernel.h:6,
                  from ./include/linux/sched.h:18,
