@@ -415,8 +415,7 @@ static bool rwsem_optimistic_spin(struct rw_semaphore *sem)
 		 * we're an RT task that will live-lock because we won't let
 		 * the owner complete.
 		 */
-		if (!sem->owner && (need_resched() || rt_task(current))
-			|| fsac_is_real_time(current))
+		if (!sem->owner && (need_resched() || rt_task(current) || fsac_is_real_time(current)))
 			break;
 
 		/*

@@ -5,15 +5,15 @@
  */
 
 #include <fsac/fsac_list.h>
+#include <linux/vmalloc.h>
 
 void fsac_remove_list(struct list_head* ghost_node){
 
         struct list_head* cur_node = NULL;
         struct list_head* aux = NULL;
         struct list_item* item = NULL;
-	numElems = 0;
 
-        list_for_each_safe(cur_node, aux, &ghost_node) {
+        list_for_each_safe(cur_node, aux, ghost_node) {
 
                 item = list_entry(cur_node, struct list_item, links);
                 list_del(&item->links);

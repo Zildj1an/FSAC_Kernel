@@ -1812,10 +1812,17 @@ void scheduler_ipi(void)
 	 */
 	preempt_fold_need_resched();
 
-	if (llist_empty(&this_rq()->wake_list) && !got_nohz_idle_kick())
-		return;
+	/* Let FSAC now about this */
+	sched_state_ipi();
 
-	/* Maybe let FSAC kernel know about this? */
+	if (llist_empty(&this_rq()->wake_list) && !got_nohz_idle_kick()){
+#ifndef CONFIG_ARCH_CALLS_IRQ_ENTER_ON_RESCHED_IPI
+               /* If we don't call irq_enter(), we need to triggger the IRQ
+                * tracing manually. */
+               ft_irq_fired();
+ #endif
+	       return;
+	}
 
 	/*
 	 * Not all reschedule IPI handlers call irq_enter/irq_exit, since
@@ -2021,7 +2028,7 @@ try_to_wake_up(struct task_struct *p, unsigned int state, int wake_flags)
 	int cpu, success = 0;
 
 	if (is_fsac(p))
-		printk(KERN_NOTICE "try_to_wake_up() state:%d\n",p->state);
+		printk(KERN_NOTICE "try_to_wake_up() state:%ld\n",p->state);
 
 	/*
 	 * If we are going to wake up a thread waiting for CONDITION we
@@ -2799,6 +2806,7 @@ static struct rq *finish_task_switch(struct task_struct *prev)
 	prev_state = prev->state;
 	vtime_task_switch(prev);
 	fsac->finish_switch(prev);
+	prev->rt_param.stack_in_use = NO_CPU;
 	perf_event_task_sched_in(prev, current);
 	finish_lock_switch(rq, prev);
 	finish_arch_post_lock_switch();
@@ -2882,8 +2890,6 @@ asmlinkage __visible void schedule_tail(struct task_struct *prev)
 	 */
 
 	rq = finish_task_switch(prev);
-
-	sched_trace_task_switch_to(current);
 
 	if (unlikely(sched_state_validate_switch()))
 		fsac_reschedule_local();
@@ -3452,8 +3458,6 @@ static void __sched notrace __schedule(bool preempt)
 		lockdep_unpin_lock(&rq->lock, cookie);
 		raw_spin_unlock_irq(&rq->lock);
 	}
-
-	sched_trace_task_switch_to(current);
 
 	if (unlikely(sched_state_validate_switch()))
 		fsac_reschedule_local();
@@ -4774,7 +4778,7 @@ long sched_setaffinity(pid_t pid, const struct cpumask *in_mask)
 	rcu_read_lock();
 
 	p = find_process_by_pid(pid);
-	if (!p || is_fsac(pc)) {
+	if (!p || is_fsac(p)) {
 		rcu_read_unlock();
 		return p ? -EPERM : -ESRCH;
 	}

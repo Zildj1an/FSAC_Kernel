@@ -14,7 +14,8 @@
 
 /* List of registered plugins */
 static LIST_HEAD(proc_loaded_plugins);
-DEFINE_RAW_SPINLOCK(proc_plugins_lock);
+
+__attribute__((used)) static DEFINE_RAW_SPINLOCK(proc_plugins_lock);
 
 typedef long (*activate_plugin_t) (void);
 
