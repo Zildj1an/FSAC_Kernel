@@ -2,6 +2,7 @@
  * Also check /include/fsac/preempt.h
  */
 #include <fsac/preempt.h>
+#include <fsac/fsac.h>
 
 /* Already defined in the header */
 

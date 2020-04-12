@@ -5,8 +5,6 @@
 #ifndef FSAC_PREEMPT_H
 #define FSAC_PREEMPT_H
 
-#include <fsac/fsac.h>
-
 #include <linux/types.h>
 #include <linux/cache.h>
 #include <linux/percpu.h>
@@ -36,8 +34,8 @@ const char* sched_state_name(int s);
 #define TRACE_SCHED_STATE_CHANGE(x, y, cpu)			 	          			\
     printk(KERN_INFO 														\
     	"[%llu][CPU %d] Preemption state change: [0x%x](%s) ->[0x%x](%s)\n" \
-    	,fsac_clock(),cpu,x,sched_state_name(x),y,sched_state_name(y))  
-		
+    	,ktime_to_ns(ktime_get()),cpu,x,sched_state_name(x),y,sched_state_name(y))
+
 typedef enum scheduling_state {
 
 	/* The currently scheduled task is the one that it should, and the
@@ -57,7 +55,7 @@ typedef enum scheduling_state {
 	 * processor has already determined that a higher-priority task
 	 * should be the chosen one, after the task was picked*/
 	PICKED_WRONG_TASK = (1 << 4),
-	
+
 } sched_state_t;
 
 /* Get preemption state for a given processor */

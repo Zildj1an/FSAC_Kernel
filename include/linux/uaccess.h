@@ -2,9 +2,6 @@
 #define __LINUX_UACCESS_H__
 
 #include <linux/sched.h>
-#include <linux/thread_info.h>
-#include <uapi/linux/sched.h>
-#include <linux/fs_struct.h>
 #include <asm/uaccess.h>
 
 static __always_inline void pagefault_disabled_inc(void)

@@ -15,13 +15,9 @@
 #include <linux/interrupt.h>
 #include <linux/sched.h>
 #include <linux/rwsem.h>
-#include <asm/uaccess.h>
-#include <linux/uaccess.h>
 #include <linux/sysrq.h>
 #include <linux/slab.h>
 #include <linux/reboot.h>
-#include <linux/sched/rt.h>
-
 #include <fsac/fsac_plugin.h>
 #include <fsac/fsac_proc.h>
 

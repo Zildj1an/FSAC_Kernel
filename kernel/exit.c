@@ -744,7 +744,7 @@ void __noreturn do_exit(long code)
 
 	if (unlikely(is_fsac(tsk))) {
 		fsac_do_exit(tsk);
-		BUG_ON(fsac)
+		BUG_ON(fsac);
 	}
 
 	/*

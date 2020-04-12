@@ -7,6 +7,9 @@
  */
 
 #include <fsac/fsac.h>
+#include <asm/uaccess.h>
+#include <linux/uaccess.h>
+#include <linux/sched/rt.h>
 
 /* Number of uploaded tasks that exist in the system */
 unsigned long fsac_task_count = ATOMIC_INIT(0);
