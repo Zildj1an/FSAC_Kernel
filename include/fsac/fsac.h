@@ -1,6 +1,6 @@
 /*
- *  FSAC initialization code. 
- *  @author Carlos Bilbao Muñoz 
+ *  FSAC initialization code.
+ *  @author Carlos Bilbao Muñoz
  *  GitHub: https://github.com/Zildj1an
  *  Sept 2019-2020
  */
@@ -48,6 +48,7 @@ static inline unsigned long long fsac_clock(void) {
 
 long fsac_admit_task(struct task_struct *tsk);
 int  fsac_is_real_time(struct task_struct *tsk);
+int  fsac_is_real_time(void);
 void fsac_exit_task(struct task_struct* tsk);
 void fsac_do_exit(struct task_struct *tsk); /* Called by ln.745 /kernel/exit.c */
 void fsac_dealloc(struct task_struct *tsk);

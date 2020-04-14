@@ -94,10 +94,14 @@ void exit_fsac(struct task_struct *dead_tsk){
 	BUG_ON(is_fsac(dead_tsk));
 }
 
+int fsac_is_real_time(struct task_struct *tsk) {
+	return (is_fsac(t) && fsac->is_real_time); 
+}
+
 /* Whenever the kernel checks if the task is real-time to avoid
    delaying them, the FSAC plugin (if real-time) should also be resumed.
 */
-int fsac_is_real_time(struct task_struct *tsk) {
+int fsac_is_real_time(void) {
 
 	if(is_fsac(tsk)) {
 		 BUG_ON(fsac->is_real_time != 0 &&
