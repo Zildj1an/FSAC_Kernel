@@ -2595,8 +2595,7 @@ void wake_up_new_task(struct task_struct *p)
 	struct rq_flags rf;
 	struct rq *rq;
 
-	if (is_fsac(p))
-		fsac->task_new(p,1,0);
+	fsac_task_new(p,1,0);
 
 	raw_spin_lock_irqsave(&p->pi_lock, rf.flags);
 	p->state = TASK_RUNNING;
@@ -2800,7 +2799,7 @@ static struct rq *finish_task_switch(struct task_struct *prev)
 	 */
 	prev_state = prev->state;
 	vtime_task_switch(prev);
-	fsac->finish_switch(prev);
+	fsac_finish_switch(prev);
 	prev->fsac_param.stack_in_use = NO_CPU;
 	perf_event_task_sched_in(prev, current);
 	finish_lock_switch(rq, prev);
@@ -4354,7 +4353,7 @@ change:
 		p->fsac_param.stack_in_use ? 0 : NO_CPU;
 #endif
 		p->fsac_param.present = running;
-		fsac->task_new(p,queued,running);
+		fsac_task_new(p,queued,running);
 	}
 
 	if (queued) {

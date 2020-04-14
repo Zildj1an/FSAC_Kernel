@@ -235,6 +235,16 @@ void fsac_dealloc(struct task_struct *tsk){
 	fsac_clear_state(tsk);
 }
 
+inline void fsac_task_new(struct task_struct *p,int a,int b){
+        if (is_fsac(p)){
+                fsac->task_new(p,a,b);
+	}
+}
+
+inline void fsac_finish_switch(struct task_struct *p){
+ 	fsac->finish_switch(p);
+}
+
 /* Wow, this function is important! */
 static int __init _init_fsac(void){
 

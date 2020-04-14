@@ -628,8 +628,23 @@ ARCH_CFLAGS :=
 include arch/$(SRCARCH)/Makefile
 
 KBUILD_CFLAGS	+= $(call cc-option,-fno-delete-null-pointer-checks,)
+
+# Extra Warnings disabled for FSAC:
 KBUILD_CFLAGS	+= $(call cc-disable-warning,frame-address,)
-KBUILD_CFLAGS   += $(call cc-disable-warning, attribute-alias)
+KBUILD_CFLAGS   += $(call cc-disable-warning,attribute-alias,)
+KBUILD_CFLAGS   += $(call cc-disable-warning,packed-not-aligned,)
+KBUILD_CFLAGS   += $(call cc-disable-warning,stringop-truncation,)
+KBUILD_CFLAGS   += $(call cc-disable-warning,maybe-uninitialized,)
+KBUILD_CFLAGS   += $(call cc-disable-warning,format-overflow,)
+# For instance, this one if for [-Wnonnull]
+KBUILD_CFLAGS   += $(call cc-disable-warning,nonnull,)
+KBUILD_CFLAGS   += $(call cc-disable-warning,sizeof-pointer-memaccess,)
+KBUILD_CFLAGS   += $(call cc-disable-warning,unused-function,)
+KBUILD_CFLAGS   += $(call cc-disable-warning,int-in-bool-context,)
+KBUILD_CFLAGS   += $(call cc-disable-warning,stringop-overflow=,)
+KBUILD_CFLAGS   += $(call cc-disable-warning,format-truncation,)
+KBUILD_CFLAGS   += $(call cc-disable-warning,array-bounds,)
+
 # This supresses all warnings. Not advisable.
 #KBUILD_CFLAGS   += -w
 

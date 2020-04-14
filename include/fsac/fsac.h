@@ -56,6 +56,9 @@ void fsac_dealloc(struct task_struct *tsk);
 void fsac_plugin_switch_disable(void);
 void fsac_plugin_switch_enable(void);
 
+extern inline void fsac_task_new(struct task_struct *p,int a,int b);
+extern inline void fsac_finish_switch(struct task_struct *p);
+
 /* Done at /fsac/fsac_plugin.c */
 void preempt_if_preemptable(struct task_struct* t, int cpu);
 

@@ -41,7 +41,7 @@ struct nmi_desc {
 	struct list_head head;
 };
 
-static struct nmi_desc nmi_desc[NMI_MAX] = 
+static struct nmi_desc nmi_desc[NMI_MAX] =
 {
 	{
 		.lock = __SPIN_LOCK_UNLOCKED(&nmi_desc[0].lock),
