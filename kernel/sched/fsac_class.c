@@ -73,7 +73,7 @@ static struct task_struct* fsac_schedule(struct rq *rq, struct task_struct *prev
 					"[%llu]The next tsk chose by the plugin is from other RQ!\n",
 					fsac_clock());
 				raw_spin_lock(&rq->lock);
-				fsac->next_became_invalid(next);
+				fsac_next_became_invalid(next);
 				fsac_reschedule_local();
 				next = NULL;
 				goto end;
@@ -91,12 +91,12 @@ static struct task_struct* fsac_schedule(struct rq *rq, struct task_struct *prev
 				 * In any case, migration has to be aborted. */
 				printk(KERN_INFO "[%llu] Migration for new tsk aborted.\n",fsac_clock());
 				raw_spin_unlock(&other_rq->lock);
-				fsac->next_became_invalid(next);
+				fsac_next_became_invalid(next);
 				next = NULL;
 				goto end;
 			}
 
-			if (!fsac->post_migration_validate(next)){
+			if (!fsac_post_migration_validate(next)){
 				printk(KERN_INFO 
 					"[%llu] Plugin changed his mind about the next task!\n",
 					fsac_clock());
@@ -113,7 +113,7 @@ static struct task_struct* fsac_schedule(struct rq *rq, struct task_struct *prev
 		printk(KERN_INFO 
 			    "[%llu] The task (pid %d) became invalid.\n",
 				fsac_clock(),next->pid);
-		fsac->next_became_invalid(next);
+		fsac_next_became_invalid(next);
 		fsac_reschedule_local();
 		next = NULL;
 	}
@@ -139,7 +139,7 @@ static void enqueue_task_fsac(struct rq *rq, struct task_struct *p,
 
 	if (flags & ENQUEUE_WAKEUP){
 		p->state = TASK_RUNNING;
-		fsac->task_wake_up(p);
+		fsac_task_wake_up(p);
 	}
 	else {
 	     printk(KERN_INFO "[%llu] Ignoring an enqueue(task %d),not a wake up.\n",
@@ -151,7 +151,7 @@ static void enqueue_task_fsac(struct rq *rq, struct task_struct *p,
 static void dequeue_task_fsac(struct rq *rq, struct task_struct *p, int flags){
 
 	if (flags & DEQUEUE_SLEEP){
-		if (fsac->is_real_time){
+		if (fsac_is_real_time()){
 			tsk_fsac(p)->last_suspension = fsac_clock();
 		}
 		fsac->task_block(p);
@@ -161,7 +161,7 @@ static void dequeue_task_fsac(struct rq *rq, struct task_struct *p, int flags){
 	else {
 	   printk(KERN_INFO 
 		 "[%llu] Ignoring Denqueue(task %d),didn't go to sleep.\n",
-		  fsac_clock(),tsk->pid);
+		  fsac_clock(),p->pid);
 	}
 }
 
@@ -203,7 +203,7 @@ return next;
 }
 
 static void task_tick_fsac(struct rq *rq, struct task_struct *p, int queued){
-	if (fsac->is_real_time){
+	if (fsac_is_real_time()){
 			tsk_fsac(p)->last_tick = fsac_clock();
 	}
 }

@@ -104,7 +104,7 @@ int fsac_is_real_time(struct task_struct *tsk) {
 			fsac->is_real_time != 1);
  		 return fsac->is_real_time;
 	}
-	
+
 	return 0;
 }
 
@@ -199,7 +199,7 @@ static int do_plugin_switch(void *_plugin){
 int switch_sched_plugin(struct sched_plugin* plugin) {
 
 	int err;
-	
+
 	BUG_ON(!plugin);
 
 	if (atomic_read(&fsac_task_count) == 0) {
@@ -209,11 +209,11 @@ int switch_sched_plugin(struct sched_plugin* plugin) {
 		atomic_set(&ready_to_switch, num_online_cpus());
 		err = stop_cpus(cpu_online_mask, do_plugin_switch, plugin);
 		put_online_cpus();
-		up_write(&plugin_switch_mutex);		
+		up_write(&plugin_switch_mutex);
 		return err;
 	}
-	else 
-		return -EBUSY;	
+	else
+		return -EBUSY;
 }
 
 void fsac_do_exit(struct task_struct *tsk){
@@ -251,6 +251,22 @@ inline struct task_struct* fsac_schedule_prev(struct task_struct *prev){
 
 inline int fsac_should_wait_for_stack(struct task_struct *next){
 	return fsac->should_wait_for_stack(next);
+}
+
+inline void fsac_next_became_invalid(struct task_struct *next){
+	fsac->next_became_invalid(next);
+}
+
+inline void fsac_task_wake_up(struct task_struct *p){
+	fsac->task_wake_up(p);
+}
+
+inline void fsac_task_block(struct task_struct *p){
+	fsac->task_block(p);
+}
+
+inline int fsac_post_migration_validate(struct task_struct *next){
+	return fsac->post_migration_validate(next);
 }
 
 /* Wow, this function is important! */
