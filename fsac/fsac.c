@@ -245,8 +245,12 @@ inline void fsac_finish_switch(struct task_struct *p){
  	fsac->finish_switch(p);
 }
 
-inline struct task_struct* fsac_schedule(struct task_struct *prev){
+inline struct task_struct* fsac_schedule_prev(struct task_struct *prev){
  	return fsac->schedule(prev);
+}
+
+inline int fsac_should_wait_for_stack(struct task_struct *next){
+	return fsac->should_wait_for_stack(next);
 }
 
 /* Wow, this function is important! */

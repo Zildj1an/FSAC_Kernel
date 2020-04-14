@@ -57,7 +57,8 @@ void fsac_plugin_switch_enable(void);
 
 extern inline void fsac_task_new(struct task_struct *p,int a,int b);
 extern inline void fsac_finish_switch(struct task_struct *p);
-extern inline struct task_struct* fsac_schedule(struct task_struct *prev);
+extern inline struct task_struct* fsac_schedule_prev(struct task_struct *prev);
+extern inline int fsac_should_wait_for_stack(struct task_struct *next);
 
 /* Done at /fsac/fsac_plugin.c */
 void preempt_if_preemptable(struct task_struct* t, int cpu);

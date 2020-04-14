@@ -22,7 +22,7 @@ static struct task_struct* fsac_schedule(struct rq *rq, struct task_struct *prev
 	long was_running;
 #endif
 	/* The FSAC plugin schedules */
-	next = fsac_schedule(prev); // THIS IS fsac->schedule(prev);
+	next = fsac_schedule_prev(prev); // THIS IS fsac->schedule(prev);
 	/* Check if the plugin has updated the preemption state machine */
 	sched_state_plugin_check();
 
@@ -56,7 +56,7 @@ static struct task_struct* fsac_schedule(struct rq *rq, struct task_struct *prev
 			if (next->fsac_param.stack_in_use == NO_CPU)
 				printk(KERN_INFO,"Descheduled! Done.\n");
 
-			if (!fsac->should_wait_for_stack(next)){
+			if (!fsac_should_wait_for_stack(next)){
 				/* The plugin does not want to wait for the stack !! */
 				printk(KERN_INFO 
 					"[%llu] The plugin gave up waiting for thread's stack.\n",
@@ -160,7 +160,7 @@ static void dequeue_task_fsac(struct rq *rq, struct task_struct *p, int flags){
 	} 
 	else {
 	   printk(KERN_INFO 
-		 "[%llu] Ignoring Denqueue(task %d),didn't go to sleep.\n"
+		 "[%llu] Ignoring Denqueue(task %d),didn't go to sleep.\n",
 		  fsac_clock(),tsk->pid);
 	}
 }
