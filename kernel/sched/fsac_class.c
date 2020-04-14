@@ -151,7 +151,7 @@ static void enqueue_task_fsac(struct rq *rq, struct task_struct *p,
 static void dequeue_task_fsac(struct rq *rq, struct task_struct *p, int flags){
 
 	if (flags & DEQUEUE_SLEEP){
-		if (fsac_is_real_time()){
+		if (fsac_is_rt()){
 			tsk_fsac(p)->last_suspension = fsac_clock();
 		}
 		fsac->task_block(p);
@@ -203,7 +203,7 @@ return next;
 }
 
 static void task_tick_fsac(struct rq *rq, struct task_struct *p, int queued){
-	if (fsac_is_real_time()){
+	if (fsac_is_rt()){
 			tsk_fsac(p)->last_tick = fsac_clock();
 	}
 }

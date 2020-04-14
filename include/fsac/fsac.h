@@ -48,7 +48,7 @@ static inline unsigned long long fsac_clock(void) {
 
 long fsac_admit_task(struct task_struct *tsk);
 int  fsac_is_real_time(struct task_struct *tsk);
-int  fsac_is_real_time(void);
+int  fsac_is_rt(void);
 void fsac_exit_task(struct task_struct* tsk);
 void fsac_do_exit(struct task_struct *tsk); /* Called by ln.745 /kernel/exit.c */
 void fsac_dealloc(struct task_struct *tsk);
