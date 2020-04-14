@@ -20,7 +20,6 @@
 #include <linux/reboot.h>
 #include <fsac/fsac_plugin.h>
 #include <fsac/fsac_proc.h>
-#include <fsac/fsac_param.h>
 
 #ifdef CONFIG_RELEASE_MASTER
 extern atomic_t release_master_cpu;
@@ -35,11 +34,9 @@ static inline int in_list(struct list_head* list){
 
 //#define tsk_fsac(t)   (&(t)->fsac_param)
 
-extern inline
-struct fsac_param* tsk_fsac(struct task_struct* t)
-{
-	return &(t->fsac_param);
-}
+struct 
+
+#define tsk_rt(t)		(&(t)->rt_param)
 
 struct task_struct* __waitqueue_remove_first(wait_queue_head_t *wq);
 

@@ -94,7 +94,8 @@ void exit_fsac(struct task_struct *dead_tsk){
 	BUG_ON(is_fsac(dead_tsk));
 }
 
-int fsac_is_real_time(struct task_struct *tsk) {
+int fsac_is_real_time(struct task_struct *t)
+{
 	return (is_fsac(t) && fsac->is_real_time); 
 }
 
@@ -103,13 +104,9 @@ int fsac_is_real_time(struct task_struct *tsk) {
 */
 int fsac_is_rt(void) {
 
-	if(is_fsac(tsk)) {
-		 BUG_ON(fsac->is_real_time != 0 &&
-			fsac->is_real_time != 1);
- 		 return fsac->is_real_time;
-	}
-
-	return 0;
+	WARN_ON(fsac->is_real_time !=0 &&
+		fsac->is_real_time !=1);
+	return fsac->is_real_time;
 }
 
 /* Invoked by /sched/core.c */

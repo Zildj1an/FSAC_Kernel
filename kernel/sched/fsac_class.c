@@ -135,7 +135,7 @@ end:
 static void enqueue_task_fsac(struct rq *rq, struct task_struct *p,
 		int flags){
 
-	tsk_fsac()->present = 1;
+	tsk_fsac(p)->present = 1;
 
 	if (flags & ENQUEUE_WAKEUP){
 		p->state = TASK_RUNNING;
