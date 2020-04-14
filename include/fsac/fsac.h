@@ -27,8 +27,7 @@ extern atomic_t release_master_cpu;
 
 static inline int in_list(struct list_head* list){
 
-	return !( (list->next == LIST_POISON1 && list->prev == LIST_POISON2)
-		 || (list->next == list && list->prev == list));
+	return !( (list->next == LIST_POISON1 && list->prev == LIST_POISON2) || (list->next == list && list->prev == list));
 }
 
 #define is_fsac(t)    ((t)->policy == SCHED_FSAC)
@@ -58,6 +57,7 @@ void fsac_plugin_switch_enable(void);
 
 extern inline void fsac_task_new(struct task_struct *p,int a,int b);
 extern inline void fsac_finish_switch(struct task_struct *p);
+extern inline struct task_struct* fsac_schedule(struct task_struct *prev);
 
 /* Done at /fsac/fsac_plugin.c */
 void preempt_if_preemptable(struct task_struct* t, int cpu);

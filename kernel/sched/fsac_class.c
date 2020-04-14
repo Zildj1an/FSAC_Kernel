@@ -22,7 +22,7 @@ static struct task_struct* fsac_schedule(struct rq *rq, struct task_struct *prev
 	long was_running;
 #endif
 	/* The FSAC plugin schedules */
-	next = fsac->schedule(prev);
+	next = fsac_schedule(prev); // THIS IS fsac->schedule(prev);
 	/* Check if the plugin has updated the preemption state machine */
 	sched_state_plugin_check();
 

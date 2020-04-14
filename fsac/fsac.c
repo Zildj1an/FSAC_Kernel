@@ -245,6 +245,10 @@ inline void fsac_finish_switch(struct task_struct *p){
  	fsac->finish_switch(p);
 }
 
+inline struct task_struct* fsac_schedule(struct task_struct *prev){
+ 	return fsac->schedule(prev);
+}
+
 /* Wow, this function is important! */
 static int __init _init_fsac(void){
 
