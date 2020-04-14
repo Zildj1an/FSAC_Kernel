@@ -101,15 +101,17 @@ static struct task_struct* fsac_schedule(struct rq *rq, struct task_struct *prev
 					"[%llu] Plugin changed his mind about the next task!\n",
 					fsac_clock());
 				fsac_reschedule_local();
-				next = NULL
+				next = NULL;
 			}
+		}
 	}
 
 #endif
 	
 	/* Check if the task became invalid */
 	if (next && !is_fsac(next)) {
-		printk(KERNEL_NOTICE "[%llu] The task (pid %d) became invalid.\n",
+		printk(KERN_INFO 
+			    "[%llu] The task (pid %d) became invalid.\n",
 				fsac_clock(),tsk->pid);
 		fsac->next_became_invalid(next);
 		fsac_reschedule_local();
@@ -141,7 +143,7 @@ static void enqueue_task_fsac(struct rq *rq, struct task_struct *p,
 	}
 	else {
 	     printk(KERN_INFO "[%llu] Ignoring an enqueue(task %d),not a wake up.\n",
-				fsac_clock(),tsk->pid);
+				fsac_clock(),p->pid);
 	     p->se.exec_start = rq->clock;
 	}
 }
@@ -153,7 +155,7 @@ static void dequeue_task_fsac(struct rq *rq, struct task_struct *p, int flags){
 			tsk_fsac(p)->last_suspension = fsac_clock();
 		}
 		fsac->task_block(p);
-		tsk_rt(p)->present = 0;
+		tsk_fsac(p)->present = 0;
 		// rq->fsac.nr_running--; Creo innecesario (?)
 	} 
 	else {
@@ -163,7 +165,7 @@ static void dequeue_task_fsac(struct rq *rq, struct task_struct *p, int flags){
 }
 
 /* Yield task is used for delayed preemption. */
-static void yield_task_fsac(){
+static void yield_task_fsac(void){
 
 	// Flags (Creo innecesario)
 	BUG_ON(rq->curr != current);
