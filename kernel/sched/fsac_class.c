@@ -9,7 +9,7 @@
 
 #include <fsac/fsac.h>
 #include <fsac/fsac_preempt.h>
-#include <fsac/sched_plugin.h>
+#include <fsac/fsac_plugin.h>
 #include <fsac/fsac_np.h>
 
 static struct task_struct* fsac_schedule(struct rq *rq, struct task_struct *prev)
@@ -30,11 +30,11 @@ static struct task_struct* fsac_schedule(struct rq *rq, struct task_struct *prev
 	/* Check if the global plugin took the task from a different RQ 
 	 * If so, I need to migrate the task. */
 	if (next && task_rq(next) != rq){
-		
+
 		other_rq = task_rq(next);
 		from_cpu = other_rq->cpu;
 		printk(KERN_WARNING "[%llu] Migration from %d\n", fsac_clock(),from_cpu);
-		
+
 		/* The previous task could have changed its state */
 		BUG_ON(prev != current);
 		was_running = is_current_running();
