@@ -82,7 +82,7 @@ struct fsac_plugin {
 	/*	Setup	   */
 	activate_plugin_t	activate_plugin;
 	deactivate_plugin_t	deactivate_plugin;
-	
+
 	/*	Task state changes 	*/
 	admit_task_t		admit_task;
 	fork_task_t         fork_task;
