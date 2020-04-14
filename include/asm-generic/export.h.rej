@@ -1,0 +1,20 @@
+--- include/asm-generic/export.h
++++ include/asm-generic/export.h
+@@ -4,17 +4,9 @@ 
+ #ifndef KSYM_FUNC
+ #define KSYM_FUNC(x) x
+ #endif
+-#ifdef CONFIG_64BIT
+-#define __put .quad
+ #ifndef KSYM_ALIGN
+ #define KSYM_ALIGN 8
+ #endif
+-#else
+-#define __put .long
+-#ifndef KSYM_ALIGN
+-#define KSYM_ALIGN 4
+-#endif
+-#endif
+ #ifndef KCRC_ALIGN
+ #define KCRC_ALIGN 4
+ #endif

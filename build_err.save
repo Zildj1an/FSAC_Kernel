@@ -1,0 +1,547 @@
+c CHK     include/config/kernel.release
+make KBUILD_SRC=
+  CHK     include/config/kernel.release
+  HOSTCC  scripts/basic/fixdep
+  CHK     include/generated/uapi/linux/version.h
+  DESCEND  objtool
+  HOSTCC   /home/tfg-sched/Carlos/FSAC/FSAC_Kernel/tools/objtool/fixdep.o
+  HOSTLD   /home/tfg-sched/Carlos/FSAC/FSAC_Kernel/tools/objtool/fixdep-in.o
+  LINK     /home/tfg-sched/Carlos/FSAC/FSAC_Kernel/tools/objtool/fixdep
+  HOSTCC  scripts/basic/bin2c
+  CC       /home/tfg-sched/Carlos/FSAC/FSAC_Kernel/tools/objtool/builtin-check.o
+  CC       /home/tfg-sched/Carlos/FSAC/FSAC_Kernel/tools/objtool/elf.o
+  CC       /home/tfg-sched/Carlos/FSAC/FSAC_Kernel/tools/objtool/special.o
+  CC       /home/tfg-sched/Carlos/FSAC/FSAC_Kernel/tools/objtool/exec-cmd.o
+  CC       /home/tfg-sched/Carlos/FSAC/FSAC_Kernel/tools/objtool/arch/x86/decode.o
+  CC       /home/tfg-sched/Carlos/FSAC/FSAC_Kernel/tools/objtool/help.o
+  CC       /home/tfg-sched/Carlos/FSAC/FSAC_Kernel/tools/objtool/objtool.o
+  CC       /home/tfg-sched/Carlos/FSAC/FSAC_Kernel/tools/objtool/libstring.o
+  CC       /home/tfg-sched/Carlos/FSAC/FSAC_Kernel/tools/objtool/str_error_r.o
+  CC       /home/tfg-sched/Carlos/FSAC/FSAC_Kernel/tools/objtool/pager.o
+  CC       /home/tfg-sched/Carlos/FSAC/FSAC_Kernel/tools/objtool/parse-options.o
+  CC       /home/tfg-sched/Carlos/FSAC/FSAC_Kernel/tools/objtool/run-command.o
+  CC       /home/tfg-sched/Carlos/FSAC/FSAC_Kernel/tools/objtool/sigchain.o
+  CC       /home/tfg-sched/Carlos/FSAC/FSAC_Kernel/tools/objtool/subcmd-config.o
+  LD       /home/tfg-sched/Carlos/FSAC/FSAC_Kernel/tools/objtool/arch/x86/objtool-in.o
+  HOSTCC  arch/x86/tools/relocs_32.o
+  HOSTCC  arch/x86/tools/relocs_64.o
+  HOSTCC  arch/x86/tools/relocs_common.o
+  CHK     include/generated/utsrelease.h
+  LD       /home/tfg-sched/Carlos/FSAC/FSAC_Kernel/tools/objtool/libsubcmd-in.o
+  LD       /home/tfg-sched/Carlos/FSAC/FSAC_Kernel/tools/objtool/objtool-in.o
+  AR       /home/tfg-sched/Carlos/FSAC/FSAC_Kernel/tools/objtool/libsubcmd.a
+In file included from arch/x86/tools/relocs_64.c:17:
+In function ‘sort_relocs.isra.5’,
+    inlined from ‘emit_relocs’ at arch/x86/tools/relocs.c:995:2,
+    inlined from ‘process_64’ at arch/x86/tools/relocs.c:1099:2:
+arch/x86/tools/relocs.c:953:2: warning: argument 1 null where non-null expected [-Wnonnull]
+  qsort(r->offset, r->count, sizeof(r->offset[0]), cmp_relocs);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from arch/x86/tools/relocs.h:6,
+                 from arch/x86/tools/relocs_64.c:1:
+arch/x86/tools/relocs.c: In function ‘process_64’:
+/usr/include/stdlib.h:827:13: note: in a call to function ‘qsort’ declared here
+ extern void qsort (void *__base, size_t __nmemb, size_t __size,
+             ^~~~~
+  LINK     /home/tfg-sched/Carlos/FSAC/FSAC_Kernel/tools/objtool/objtool
+  HOSTLD  arch/x86/tools/relocs
+  HOSTCC  scripts/kallsyms
+  HOSTCC  scripts/genksyms/genksyms.o
+  CC      scripts/mod/empty.o
+  HOSTCC  scripts/mod/mk_elfconfig
+  HOSTCC  scripts/selinux/genheaders/genheaders
+  CC      scripts/mod/devicetable-offsets.s
+  HOSTCC  scripts/genksyms/parse.tab.o
+  HOSTCC  scripts/genksyms/lex.lex.o
+  HOSTCC  scripts/conmakehash
+  HOSTCC  scripts/selinux/mdp/mdp
+  MKELF   scripts/mod/elfconfig.h
+  HOSTCC  scripts/recordmcount
+  HOSTCC  scripts/mod/modpost.o
+  HOSTCC  scripts/sortextable
+  HOSTCC  scripts/asn1_compiler
+  HOSTCC  scripts/mod/sumversion.o
+  CC      arch/x86/purgatory/purgatory.o
+  GEN     scripts/mod/devicetable-offsets.h
+  AS      arch/x86/purgatory/stack.o
+  AS      arch/x86/purgatory/setup-x86_64.o
+  CC      arch/x86/purgatory/sha256.o
+  AS      arch/x86/purgatory/entry64.o
+  CC      arch/x86/purgatory/string.o
+  HOSTCC  scripts/mod/file2alias.o
+  HOSTLD  scripts/genksyms/genksyms
+  LD      arch/x86/purgatory/purgatory.ro
+  BIN2C   arch/x86/purgatory/kexec-purgatory.c
+  CHK     include/generated/timeconst.h
+  CC      kernel/bounds.s
+  CHK     include/generated/bounds.h
+  CC      arch/x86/kernel/asm-offsets.s
+  HOSTLD  scripts/mod/modpost
+  CHK     include/generated/asm-offsets.h
+  CALL    scripts/checksyscalls.sh
+  CC      init/main.o
+  CHK     include/generated/compile.h
+  CC      init/do_mounts.o
+  CC      init/do_mounts_initrd.o
+  HOSTCC  usr/gen_init_cpio
+  CC      init/initramfs.o
+  CC      init/calibrate.o
+  CC      init/init_task.o
+  CC      kernel/fork.o
+  AS      arch/x86/entry/entry_64.o
+  CC      kernel/exec_domain.o
+  CC      arch/x86/events/core.o
+  LD      certs/built-in.o
+  AS      arch/x86/entry/thunk_64.o
+  CC      mm/filemap.o
+  CC      init/version.o
+  CC      mm/mempool.o
+  LD      arch/x86/crypto/built-in.o
+  CC      mm/oom_kill.o
+  GEN     usr/initramfs_data.cpio.gz
+  CC [M]  arch/x86/crypto/glue_helper.o
+  CC      kernel/panic.o
+  CC      arch/x86/entry/syscall_64.o
+  CC      arch/x86/entry/common.o
+  AS      usr/initramfs_data.o
+  LD      usr/built-in.o
+  CC      fs/open.o
+  CC      arch/x86/entry/vdso/vma.o
+  CC      arch/x86/entry/vdso/vdso32-setup.o
+  CC      kernel/cpu.o
+  CC      ipc/compat.o
+  CC      security/apparmor/apparmorfs.o
+  CC      kernel/exit.o
+kernel/panic.o: warning: objtool: warn_slowpath_fmt()+0x5f: function has unreachable instruction
+  CC      mm/maccess.o
+  CC      kernel/softirq.o
+  CC      mm/page_alloc.o
+  LD      init/mounts.o
+  LD      init/built-in.o
+  CC      crypto/api.o
+  CC      kernel/resource.o
+  CC      block/bio.o
+  AS [M]  arch/x86/crypto/aes-x86_64-asm_64.o
+  CC      arch/x86/events/amd/core.o
+  CC [M]  arch/x86/crypto/aes_glue.o
+  LDS     arch/x86/entry/vdso/vdso.lds
+  AS      arch/x86/entry/vdso/vdso-note.o
+  CC      block/elevator.o
+  CC      arch/x86/entry/vdso/vclock_gettime.o
+  CC      ipc/util.o
+  CC      fs/read_write.o
+  AS [M]  arch/x86/crypto/des3_ede-asm_64.o
+  CC      block/blk-core.o
+  CC      security/apparmor/audit.o
+block/elevator.c: In function ‘elv_register’:
+block/elevator.c:838:14: warning: ‘snprintf’ output may be truncated before the last format character [-Wformat-truncation=]
+     "%s_io_cq", e->elevator_name);
+              ^
+block/elevator.c:837:3: note: ‘snprintf’ output between 7 and 22 bytes into a destination of size 21
+   snprintf(e->icq_cache_name, sizeof(e->icq_cache_name),
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     "%s_io_cq", e->elevator_name);
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  CC [M]  arch/x86/crypto/des3_ede_glue.o
+  CC      arch/x86/entry/vdso/vgetcpu.o
+  AS [M]  arch/x86/crypto/camellia-x86_64-asm_64.o
+  CC      crypto/cipher.o
+  CC      ipc/msgutil.o
+  CC [M]  arch/x86/crypto/camellia_glue.o
+  CC      arch/x86/events/amd/uncore.o
+  HOSTCC  arch/x86/entry/vdso/vdso2c
+  AS [M]  arch/x86/crypto/blowfish-x86_64-asm_64.o
+  CC      crypto/compress.o
+  CC      crypto/memneq.o
+  GEN     security/apparmor/capability_names.h
+  CC      security/apparmor/context.o
+  CC      ipc/msg.o
+block/elevator.o: warning: objtool: __elv_add_request()+0xa9: function has unreachable instruction
+  CC      block/blk-tag.o
+  CC      kernel/sysctl.o
+  CC [M]  arch/x86/crypto/blowfish_glue.o
+  CC      block/blk-sysfs.o
+  LDS     arch/x86/entry/vdso/vdsox32.lds
+  X32     arch/x86/entry/vdso/vdso-note-x32.o
+  X32     arch/x86/entry/vdso/vclock_gettime-x32.o
+  CC      crypto/crypto_wq.o
+  X32     arch/x86/entry/vdso/vgetcpu-x32.o
+  CC      arch/x86/events/amd/ibs.o
+  LDS     arch/x86/entry/vdso/vdso32/vdso32.lds
+  CC      kernel/sysctl_binary.o
+  CC      arch/x86/entry/vdso/vdso32/vclock_gettime.o
+  CC      ipc/sem.o
+  CC      crypto/algapi.o
+  AS [M]  arch/x86/crypto/twofish-x86_64-asm_64.o
+  CC      block/blk-flush.o
+  CC      fs/file_table.o
+  CC      security/apparmor/ipc.o
+  CC      fs/super.o
+  CC [M]  arch/x86/crypto/twofish_glue.o
+  AS      arch/x86/entry/vdso/vdso32/note.o
+  CC      fs/char_dev.o
+  CC      fs/stat.o
+  AS      arch/x86/entry/vdso/vdso32/system_call.o
+  CC      mm/page-writeback.o
+  CC      crypto/scatterwalk.o
+  CC      security/apparmor/lib.o
+  AS      arch/x86/entry/vdso/vdso32/sigreturn.o
+  CC      arch/x86/events/msr.o
+  CC      fs/exec.o
+  AS [M]  arch/x86/crypto/twofish-x86_64-asm_64-3way.o
+  CC      ipc/shm.o
+  CC      fs/pipe.o
+  CC [M]  arch/x86/crypto/twofish_glue_3way.o
+  CC      fs/namei.o
+  CC      block/blk-settings.o
+fs/exec.c: In function ‘get_task_comm’:
+fs/exec.c:1216:32: warning: argument to ‘sizeof’ in ‘strncpy’ call is the same expression as the destination; did you mean to provide an explicit length? [-Wsizeof-pointer-memaccess]
+  strncpy(buf, tsk->comm, sizeof(buf));
+                                ^
+  CC      kernel/capability.o
+  CC      security/apparmor/match.o
+fs/exec.c:1216:2: warning: ‘strncpy’ output may be truncated copying 8 bytes from a string of length 15 [-Wstringop-truncation]
+  strncpy(buf, tsk->comm, sizeof(buf));
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  VDSO    arch/x86/entry/vdso/vdso64.so.dbg
+  CC      crypto/proc.o
+  CC      arch/x86/events/amd/iommu.o
+  CC      fs/fcntl.o
+  CC      ipc/syscall.o
+  CC      ipc/ipc_sysctl.o
+  CC      block/blk-ioc.o
+  CC      security/apparmor/path.o
+  CC      ipc/mqueue.o
+  VDSO    arch/x86/entry/vdso/vdsox32.so.dbg
+  CC      kernel/ptrace.o
+  CC      fs/ioctl.o
+  AS [M]  arch/x86/crypto/chacha20-ssse3-x86_64.o
+  CC      crypto/aead.o
+  CC      mm/readahead.o
+  CC      mm/swap.o
+  CC      arch/x86/events/intel/core.o
+  CC [M]  arch/x86/events/amd/power.o
+  CC [M]  arch/x86/crypto/chacha20_glue.o
+  CC      fs/readdir.o
+  CC      security/apparmor/domain.o
+  CC      fs/select.o
+  CC      block/blk-map.o
+  VDSO    arch/x86/entry/vdso/vdso32.so.dbg
+  OBJCOPY arch/x86/entry/vdso/vdso64.so
+  AS [M]  arch/x86/crypto/chacha20-avx2-x86_64.o
+  OBJCOPY arch/x86/entry/vdso/vdsox32.so
+  CC      fs/dcache.o
+  CC      ipc/compat_mq.o
+  CC      mm/truncate.o
+  OBJCOPY arch/x86/entry/vdso/vdso32.so
+  CC      mm/vmscan.o
+  VDSO2C  arch/x86/entry/vdso/vdso-image-64.c
+  VDSO2C  arch/x86/entry/vdso/vdso-image-x32.c
+  VDSO2C  arch/x86/entry/vdso/vdso-image-32.c
+  AS [M]  arch/x86/crypto/serpent-sse2-x86_64-asm_64.o
+  CC      arch/x86/entry/vdso/vdso-image-64.o
+  CC      crypto/ablkcipher.o
+  CC      security/apparmor/policy.o
+  CC [M]  arch/x86/crypto/serpent_sse2_glue.o
+  CC      arch/x86/entry/vdso/vdso-image-x32.o
+  CC      fs/inode.o
+  CC      kernel/user.o
+  CC      ipc/namespace.o
+  CC      arch/x86/entry/vdso/vdso-image-32.o
+crypto/ablkcipher.c: In function ‘crypto_ablkcipher_report’:
+crypto/ablkcipher.c:373:2: warning: ‘strncpy’ specified bound 64 equals destination size [-Wstringop-truncation]
+  strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<default>",
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   sizeof(rblkcipher.geniv));
+   ~~~~~~~~~~~~~~~~~~~~~~~~~
+crypto/ablkcipher.c: In function ‘crypto_givcipher_report’:
+crypto/ablkcipher.c:447:2: warning: ‘strncpy’ specified bound 64 equals destination size [-Wstringop-truncation]
+  strncpy(rblkcipher.geniv, alg->cra_ablkcipher.geniv ?: "<built-in>",
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   sizeof(rblkcipher.geniv));
+   ~~~~~~~~~~~~~~~~~~~~~~~~~
+  CC      block/blk-exec.o
+  CC      mm/shmem.o
+  CC      fs/attr.o
+  CC      arch/x86/events/intel/bts.o
+  LD      arch/x86/entry/vdso/built-in.o
+  CC      arch/x86/entry/vsyscall/vsyscall_gtod.o
+  CC      fs/bad_inode.o
+  CC      ipc/mq_sysctl.o
+  CC      crypto/blkcipher.o
+  AS [M]  arch/x86/crypto/aesni-intel_asm.o
+  CC      arch/x86/events/intel/cqm.o
+  CC      arch/x86/entry/vsyscall/vsyscall_64.o
+  CC      kernel/signal.o
+  CC [M]  arch/x86/crypto/aesni-intel_glue.o
+crypto/blkcipher.c: In function ‘crypto_blkcipher_report’:
+crypto/blkcipher.c:513:2: warning: ‘strncpy’ specified bound 64 equals destination size [-Wstringop-truncation]
+  strncpy(rblkcipher.geniv, alg->cra_blkcipher.geniv ?: "<default>",
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   sizeof(rblkcipher.geniv));
+   ~~~~~~~~~~~~~~~~~~~~~~~~~
+  CC      security/apparmor/policy_unpack.o
+  CC      security/apparmor/procattr.o
+  LD      ipc/built-in.o
+  CC      fs/file.o
+  CC      fs/filesystems.o
+  CC      block/blk-merge.o
+  CC      fsac/fsac_plugin.o
+  CC      fsac/fsac.o
+  CC      crypto/skcipher.o
+  CC [M]  arch/x86/crypto/fpu.o
+fsac/fsac.c: In function ‘__fsac_admit_task’:
+fsac/fsac.c:47:25: error: dereferencing pointer to incomplete type ‘struct sched_plugin’
+         if (!(err = fsac->admit_task(tsk))){
+                         ^~
+make[3]: *** [scripts/Makefile.build:293: fsac/fsac.o] Error 1
+make[3]: *** Waiting for unfinished jobs....
+  AS [M]  arch/x86/crypto/aesni-intel_avx-x86_64.o
+  AS      arch/x86/entry/vsyscall/vsyscall_emu_64.o
+In file included from ./include/fsac/fsac.h:22,
+                 from ./include/fsac/fsac_plugin.h:12,
+                 from fsac/fsac_plugin.c:9:
+./include/fsac/fsac_proc.h:23:29: warning: ‘struct sched_plugin’ declared inside parameter list will not be visible outside of this definition or declaration
+ void add_plugin_proc(struct sched_plugin *plugin);
+                             ^~~~~~~~~~~~
+fsac/fsac_plugin.c:11:10: fatal error: linux/uacces.h: No such file or directory
+ #include <linux/uacces.h>
+          ^~~~~~~~~~~~~~~~
+compilation terminated.
+  CC      security/apparmor/lsm.o
+make[3]: *** [scripts/Makefile.build:293: fsac/fsac_plugin.o] Error 1
+make[2]: *** [Makefile:992: fsac] Error 2
+make[2]: *** Waiting for unfinished jobs....
+  GEN     security/apparmor/rlim_names.h
+  CC      security/apparmor/sid.o
+  LD      arch/x86/entry/vsyscall/built-in.o
+  AS      arch/x86/entry/entry_64_compat.o
+  CC      arch/x86/events/intel/ds.o
+  CC      fs/namespace.o
+  AS [M]  arch/x86/crypto/aes_ctrby8_avx-x86_64.o
+  CC      mm/util.o
+  AS [M]  arch/x86/crypto/ghash-clmulni-intel_asm.o
+  CC      security/apparmor/file.o
+  CC      security/apparmor/crypto.o
+  CC [M]  arch/x86/crypto/ghash-clmulni-intel_glue.o
+  CC [M]  arch/x86/crypto/crc32c-intel_glue.o
+  CC      arch/x86/entry/syscall_32.o
+  CC      fs/seq_file.o
+  CC      security/apparmor/capability.o
+  AS [M]  arch/x86/crypto/crc32c-pcl-intel-asm_64.o
+  CC      arch/x86/events/intel/knc.o
+  CC      security/apparmor/resource.o
+  LD      arch/x86/entry/built-in.o
+  AS [M]  arch/x86/crypto/sha1_ssse3_asm.o
+  CC      fs/xattr.o
+  CC      arch/x86/ia32/sys_ia32.o
+  CC      fs/libfs.o
+  CC      block/blk-softirq.o
+  CC      mm/mmzone.o
+  CC      crypto/ahash.o
+  CC      mm/vmstat.o
+  CC [M]  arch/x86/crypto/sha1_ssse3_glue.o
+  CC      kernel/sys.o
+  CC      kernel/kmod.o
+  CC      arch/x86/events/intel/lbr.o
+  CC      arch/x86/ia32/ia32_signal.o
+  CC      mm/backing-dev.o
+  LD      security/apparmor/apparmor.o
+  CC      mm/mm_init.o
+  LD      security/apparmor/built-in.o
+  CC      fs/fs-writeback.o
+  CC      security/integrity/iint.o
+  CC      block/blk-timeout.o
+  CC      arch/x86/events/intel/p4.o
+  AS [M]  arch/x86/crypto/sha1_avx2_x86_64_asm.o
+  CC      arch/x86/ia32/ia32_aout.o
+  CC      crypto/shash.o
+  CC      block/blk-lib.o
+  AS [M]  arch/x86/crypto/sha1_ni_asm.o
+  CC      block/blk-mq.o
+  CC      fs/pnode.o
+  CC      fs/splice.o
+  CC      security/integrity/integrity_audit.o
+  AS [M]  arch/x86/crypto/crc32-pclmul_asm.o
+  CC      kernel/workqueue.o
+  CC      kernel/pid.o
+In file included from ./include/trace/define_trace.h:96,
+                 from ./include/trace/events/writeback.h:762,
+                 from fs/fs-writeback.c:98:
+./include/trace/events/writeback.h: In function ‘perf_trace_writeback_work_class’:
+./include/trace/events/writeback.h:222:3: warning: ‘strncpy’ specified bound 32 equals destination size [-Wstringop-truncation]
+   strncpy(__entry->name,
+   ^~~~~~~~~~~~~~~~~~~~~~
+    wb->bdi->dev ? dev_name(wb->bdi->dev) : "(unknown)", 32);
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./include/trace/perf.h:65:4: note: in definition of macro ‘DECLARE_EVENT_CLASS’
+  { assign; }       \
+    ^~~~~~
+./include/trace/events/writeback.h:221:2: note: in expansion of macro ‘TP_fast_assign’
+  TP_fast_assign(
+  ^~~~~~~~~~~~~~
+  CC [M]  arch/x86/crypto/crc32-pclmul_glue.o
+./include/trace/events/writeback.h: In function ‘perf_trace_writeback_class’:
+./include/trace/events/writeback.h:276:3: warning: ‘strncpy’ specified bound 32 equals destination size [-Wstringop-truncation]
+   strncpy(__entry->name, dev_name(wb->bdi->dev), 32);
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./include/trace/perf.h:65:4: note: in definition of macro ‘DECLARE_EVENT_CLASS’
+  { assign; }       \
+    ^~~~~~
+./include/trace/events/writeback.h:275:2: note: in expansion of macro ‘TP_fast_assign’
+  TP_fast_assign(
+  ^~~~~~~~~~~~~~
+./include/trace/events/writeback.h: In function ‘perf_trace_writeback_bdi_register’:
+./include/trace/events/writeback.h:299:3: warning: ‘strncpy’ specified bound 32 equals destination size [-Wstringop-truncation]
+   strncpy(__entry->name, dev_name(bdi->dev), 32);
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./include/trace/perf.h:65:4: note: in definition of macro ‘DECLARE_EVENT_CLASS’
+  { assign; }       \
+    ^~~~~~
+./include/trace/trace_events.h:64:9: note: in expansion of macro ‘PARAMS’
+         PARAMS(assign),         \
+         ^~~~~~
+./include/trace/events/writeback.h:292:1: note: in expansion of macro ‘TRACE_EVENT’
+ TRACE_EVENT(writeback_bdi_register,
+ ^~~~~~~~~~~
+./include/trace/events/writeback.h:298:2: note: in expansion of macro ‘TP_fast_assign’
+  TP_fast_assign(
+  ^~~~~~~~~~~~~~
+./include/trace/events/writeback.h: In function ‘perf_trace_wbc_class’:
+./include/trace/events/writeback.h:324:3: warning: ‘strncpy’ specified bound 32 equals destination size [-Wstringop-truncation]
+   strncpy(__entry->name, dev_name(bdi->dev), 32);
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./include/trace/perf.h:65:4: note: in definition of macro ‘DECLARE_EVENT_CLASS’
+  { assign; }       \
+    ^~~~~~
+./include/trace/events/writeback.h:323:2: note: in expansion of macro ‘TP_fast_assign’
+  TP_fast_assign(
+  ^~~~~~~~~~~~~~
+  CC      arch/x86/events/intel/p6.o
+./include/trace/events/writeback.h: In function ‘perf_trace_writeback_queue_io’:
+./include/trace/events/writeback.h:375:3: warning: ‘strncpy’ specified bound 32 equals destination size [-Wstringop-truncation]
+   strncpy(__entry->name, dev_name(wb->bdi->dev), 32);
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./include/trace/perf.h:65:4: note: in definition of macro ‘DECLARE_EVENT_CLASS’
+  { assign; }       \
+    ^~~~~~
+./include/trace/trace_events.h:64:9: note: in expansion of macro ‘PARAMS’
+         PARAMS(assign),         \
+         ^~~~~~
+./include/trace/events/writeback.h:360:1: note: in expansion of macro ‘TRACE_EVENT’
+ TRACE_EVENT(writeback_queue_io,
+ ^~~~~~~~~~~
+./include/trace/events/writeback.h:373:2: note: in expansion of macro ‘TP_fast_assign’
+  TP_fast_assign(
+  ^~~~~~~~~~~~~~
+  CC      arch/x86/ia32/audit.o
+  CC      security/integrity/ima/ima_fs.o
+  LD      arch/x86/ia32/built-in.o
+  CC      security/integrity/ima/ima_queue.o
+  CC      block/blk-mq-tag.o
+./include/trace/events/writeback.h: In function ‘perf_trace_writeback_dirty_inode_template’:
+./include/trace/events/writeback.h:98:3: warning: ‘strncpy’ specified bound 32 equals destination size [-Wstringop-truncation]
+   strncpy(__entry->name,
+   ^~~~~~~~~~~~~~~~~~~~~~
+    bdi->dev ? dev_name(bdi->dev) : "(unknown)", 32);
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./include/trace/perf.h:65:4: note: in definition of macro ‘DECLARE_EVENT_CLASS’
+  { assign; }       \
+    ^~~~~~
+./include/trace/events/writeback.h:94:2: note: in expansion of macro ‘TP_fast_assign’
+  TP_fast_assign(
+  ^~~~~~~~~~~~~~
+  CC      arch/x86/kernel/process_64.o
+./include/trace/events/writeback.h: In function ‘perf_trace_writeback_write_inode_template’:
+./include/trace/events/writeback.h:178:3: warning: ‘strncpy’ specified bound 32 equals destination size [-Wstringop-truncation]
+   strncpy(__entry->name,
+   ^~~~~~~~~~~~~~~~~~~~~~
+    dev_name(inode_to_bdi(inode)->dev), 32);
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./include/trace/perf.h:65:4: note: in definition of macro ‘DECLARE_EVENT_CLASS’
+  { assign; }       \
+    ^~~~~~
+./include/trace/events/writeback.h:177:2: note: in expansion of macro ‘TP_fast_assign’
+  TP_fast_assign(
+  ^~~~~~~~~~~~~~
+  CC      fs/sync.o
+./include/trace/events/writeback.h: In function ‘perf_trace_writeback_sb_inodes_requeue’:
+./include/trace/events/writeback.h:586:3: warning: ‘strncpy’ specified bound 32 equals destination size [-Wstringop-truncation]
+   strncpy(__entry->name,
+   ^~~~~~~~~~~~~~~~~~~~~~
+           dev_name(inode_to_bdi(inode)->dev), 32);
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./include/trace/perf.h:65:4: note: in definition of macro ‘DECLARE_EVENT_CLASS’
+  { assign; }       \
+    ^~~~~~
+./include/trace/trace_events.h:64:9: note: in expansion of macro ‘PARAMS’
+         PARAMS(assign),         \
+         ^~~~~~
+./include/trace/events/writeback.h:572:1: note: in expansion of macro ‘TRACE_EVENT’
+ TRACE_EVENT(writeback_sb_inodes_requeue,
+ ^~~~~~~~~~~
+./include/trace/events/writeback.h:585:2: note: in expansion of macro ‘TP_fast_assign’
+  TP_fast_assign(
+  ^~~~~~~~~~~~~~
+./include/trace/events/writeback.h: In function ‘perf_trace_writeback_single_inode_template’:
+./include/trace/events/writeback.h:660:3: warning: ‘strncpy’ specified bound 32 equals destination size [-Wstringop-truncation]
+   strncpy(__entry->name,
+   ^~~~~~~~~~~~~~~~~~~~~~
+    dev_name(inode_to_bdi(inode)->dev), 32);
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./include/trace/perf.h:65:4: note: in definition of macro ‘DECLARE_EVENT_CLASS’
+  { assign; }       \
+    ^~~~~~
+./include/trace/events/writeback.h:659:2: note: in expansion of macro ‘TP_fast_assign’
+  TP_fast_assign(
+  ^~~~~~~~~~~~~~
+./include/trace/events/writeback.h: In function ‘perf_trace_writeback_dirty_page’:
+./include/trace/events/writeback.h:68:3: warning: ‘strncpy’ specified bound 32 equals destination size [-Wstringop-truncation]
+   strncpy(__entry->name,
+   ^~~~~~~~~~~~~~~~~~~~~~
+    mapping ? dev_name(inode_to_bdi(mapping->host)->dev) : "(unknown)", 32);
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./include/trace/perf.h:65:4: note: in definition of macro ‘DECLARE_EVENT_CLASS’
+  { assign; }       \
+    ^~~~~~
+./include/trace/trace_events.h:64:9: note: in expansion of macro ‘PARAMS’
+         PARAMS(assign),         \
+         ^~~~~~
+./include/trace/events/writeback.h:55:1: note: in expansion of macro ‘TRACE_EVENT’
+ TRACE_EVENT(writeback_dirty_page,
+ ^~~~~~~~~~~
+./include/trace/events/writeback.h:67:2: note: in expansion of macro ‘TP_fast_assign’
+  TP_fast_assign(
+  ^~~~~~~~~~~~~~
+In file included from ./include/trace/define_trace.h:95,
+                 from ./include/trace/events/writeback.h:762,
+                 from fs/fs-writeback.c:98:
+./include/trace/events/writeback.h: In function ‘trace_event_raw_event_writeback_bdi_register’:
+./include/trace/events/writeback.h:299:3: warning: ‘strncpy’ specified bound 32 equals destination size [-Wstringop-truncation]
+   strncpy(__entry->name, dev_name(bdi->dev), 32);
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./include/trace/trace_events.h:686:4: note: in definition of macro ‘DECLARE_EVENT_CLASS’
+  { assign; }       \
+    ^~~~~~
+./include/trace/trace_events.h:64:9: note: in expansion of macro ‘PARAMS’
+         PARAMS(assign),         \
+         ^~~~~~
+./include/trace/events/writeback.h:292:1: note: in expansion of macro ‘TRACE_EVENT’
+ TRACE_EVENT(writeback_bdi_register,
+ ^~~~~~~~~~~
+./include/trace/events/writeback.h:298:2: note: in expansion of macro ‘TP_fast_assign’
+  TP_fast_assign(
+  ^~~~~~~~~~~~~~
+./include/trace/events/writeback.h: In function ‘trace_event_raw_event_writeback_class’:
+./include/trace/events/writeback.h:276:3: warning: ‘strncpy’ specified bound 32 equals destination size [-Wstringop-truncation]
+   strncpy(__entry->name, dev_name(wb->bdi->dev), 32);
+   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./include/trace/trace_events.h:686:4: note: in definition of macro ‘DECLARE_EVENT_CLASS’
+  { assign; }       \
+    ^~~~~~
+./include/trace/events/writeback.h:275:2: note: in expansion of macro ‘TP_fast_assign’
+  TP_fast_assign(
+  ^~~~~~~~~~~~~~
+  CC      mm/mmu_context.o
+./include/trace/events/writeback.h: In function ‘trace_event_raw_event_writeback_dirty_inode_template’:
+./include/trace/events/writeback.h:98:3: warning: ‘strncpy’ specified bound 32 equals destination size [-Wstringop-truncation]

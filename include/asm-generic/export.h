@@ -38,7 +38,7 @@
 	.section ___ksymtab\sec+\name,"a"
 	.balign KSYM_ALIGN
 KSYM(__ksymtab_\name):
-	__put \val, KSYM(__kstrtab_\name)
+	.long \val - ., KSYM(__kstrtab_\name) - .
 	.previous
 	.section __ksymtab_strings,"a"
 KSYM(__kstrtab_\name):
