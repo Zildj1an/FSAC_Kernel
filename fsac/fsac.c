@@ -43,6 +43,7 @@ static long __fsac_admit_task(struct task_struct *tsk) {
         long err;
 
         preempt_disable();
+
         if (!(err = fsac->admit_task(tsk))){
                 atomic_inc(&fsac_task_count);
         }

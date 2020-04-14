@@ -7,10 +7,10 @@
  */
 
 #include <fsac/fsac_plugin.h>
-#include <fsac/np.h>
-#include <linux/uacces.h> 
+//#include <fsac/np.h>
+#include <linux/uacces.h>
 
-/* Triggers preemption in local or remote CPU for scheduler plugins. 
+/* Triggers preemption in local or remote CPU for scheduler plugins.
  * This function is non-preemptive section aware and does NOT invoke the scheduler
  * or send IPIs (if executed at remote core) if the task to be preempted is non-preemptive.
  */
@@ -25,7 +25,7 @@ void preempt_if_preemptable(struct task_struct* task, int cpu) {
 	if (!task){
 		reschedule = 1;
 	}
-	
+
 	else {
 		if (smp_processor_id() == cpu){
 			// Local CPU 
