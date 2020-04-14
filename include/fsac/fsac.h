@@ -27,8 +27,8 @@ extern atomic_t release_master_cpu;
 
 static inline int in_list(struct list_head* list){
 
-	return !( (list->next == LIST_POISON1 &&list->prev == LIST_POISON2)
-		 || (list->next == list &&list->prev == list));
+	return !( (list->next == LIST_POISON1 && list->prev == LIST_POISON2)
+		 || (list->next == list && list->prev == list));
 }
 
 #define is_fsac(t)    ((t)->policy == SCHED_FSAC)

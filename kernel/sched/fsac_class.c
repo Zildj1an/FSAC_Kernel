@@ -112,7 +112,7 @@ static struct task_struct* fsac_schedule(struct rq *rq, struct task_struct *prev
 	if (next && !is_fsac(next)) {
 		printk(KERN_INFO 
 			    "[%llu] The task (pid %d) became invalid.\n",
-				fsac_clock(),tsk->pid);
+				fsac_clock(),next->pid);
 		fsac->next_became_invalid(next);
 		fsac_reschedule_local();
 		next = NULL;
@@ -120,7 +120,7 @@ static struct task_struct* fsac_schedule(struct rq *rq, struct task_struct *prev
 
 	if (next){
 
-#ifdef CONFIG_SMP:
+#ifdef CONFIG_SMP
 		next->fsac_param.stack_in_use == rq->cpu;
 #else 
 		next->fsac_param.stack_in_use == 0;
@@ -159,13 +159,14 @@ static void dequeue_task_fsac(struct rq *rq, struct task_struct *p, int flags){
 		// rq->fsac.nr_running--; Creo innecesario (?)
 	} 
 	else {
-	   printk(KERN_INFO "[%llu] Ignoring Denqueue(task %d),didn't go to sleep.\n"
-			   fsac_clock(),tsk->pid);
+	   printk(KERN_INFO 
+		 "[%llu] Ignoring Denqueue(task %d),didn't go to sleep.\n"
+		  fsac_clock(),tsk->pid);
 	}
 }
 
 /* Yield task is used for delayed preemption. */
-static void yield_task_fsac(void){
+static void yield_task_fsac(struct rq *rq){
 
 	// Flags (Creo innecesario)
 	BUG_ON(rq->curr != current);
