@@ -2202,11 +2202,6 @@ int wake_up_state(struct task_struct *p, unsigned int state)
  */
 void __dl_clear_params(struct task_struct *p)
 {
-/*
- * This function clears the sched_dl_entity static params.
- */
-void __dl_clear_params(struct task_struct *p)
-{
 	struct sched_dl_entity *dl_se = &p->dl;
 
 	dl_se->dl_runtime = 0;
@@ -2225,7 +2220,7 @@ void __dl_clear_params(struct task_struct *p)
  *
  * __sched_fork() is basic setup used by init_idle() too:
  */
-void __sched_fork(unsigned long clone_flags, struct task_struct *p)
+static void __sched_fork(unsigned long clone_flags, struct task_struct *p)
 {
 	p->on_rq			= 0;
 
@@ -2323,7 +2318,7 @@ int sysctl_numa_balancing(struct ctl_table *table, int write,
 DEFINE_STATIC_KEY_FALSE(sched_schedstats);
 static bool __initdata __sched_schedstats = false;
 
-static inline void set_schedstats(bool enabled)
+static void set_schedstats(bool enabled)
 {
 	if (enabled)
 		static_branch_enable(&sched_schedstats);
@@ -2806,7 +2801,7 @@ static struct rq *finish_task_switch(struct task_struct *prev)
 	prev_state = prev->state;
 	vtime_task_switch(prev);
 	fsac->finish_switch(prev);
-	prev->rt_param.stack_in_use = NO_CPU;
+	prev->fsac_param.stack_in_use = NO_CPU;
 	perf_event_task_sched_in(prev, current);
 	finish_lock_switch(rq, prev);
 	finish_arch_post_lock_switch();
@@ -4389,7 +4384,7 @@ change:
 	preempt_enable();
 
 	if (fsac_task){
-		fsac_dealloc();
+		fsac_dealloc(p);
 	}
 
 	return 0;
