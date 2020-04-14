@@ -5,47 +5,56 @@ make KBUILD_SRC=
   CHK     include/generated/uapi/linux/version.h
   HOSTCC  scripts/basic/bin2c
   HOSTCC  arch/x86/tools/relocs_32.o
+  CHK     include/generated/utsrelease.h
   HOSTCC  arch/x86/tools/relocs_64.o
   HOSTCC  arch/x86/tools/relocs_common.o
-  CHK     include/generated/utsrelease.h
+In file included from arch/x86/tools/relocs_32.c:17:
+arch/x86/tools/relocs.c: In function ‘sort_relocs’:
+arch/x86/tools/relocs.c:953:2: warning: ‘nonnull’ attribute only applies to function types [-Wattributes]
+  __attribute__((nonnull)) uint32_t *roffset = r->offset;
+  ^~~~~~~~~~~~~
+In file included from arch/x86/tools/relocs_64.c:17:
+arch/x86/tools/relocs.c: In function ‘sort_relocs’:
+arch/x86/tools/relocs.c:953:2: warning: ‘nonnull’ attribute only applies to function types [-Wattributes]
+  __attribute__((nonnull)) uint32_t *roffset = r->offset;
+  ^~~~~~~~~~~~~
   HOSTCC  scripts/genksyms/genksyms.o
   HOSTCC  scripts/genksyms/parse.tab.o
-In file included from arch/x86/tools/relocs_64.c:17:
+  CC      scripts/mod/empty.o
+  HOSTCC  scripts/kallsyms
+  HOSTCC  scripts/selinux/genheaders/genheaders
+  HOSTCC  scripts/conmakehash
+  HOSTCC  scripts/recordmcount
+  HOSTCC  scripts/sortextable
+  HOSTCC  scripts/mod/mk_elfconfig
+  HOSTCC  scripts/asn1_compiler
 In function ‘sort_relocs.isra.5’,
-    inlined from ‘emit_relocs’ at arch/x86/tools/relocs.c:995:2,
-    inlined from ‘process_64’ at arch/x86/tools/relocs.c:1099:2:
-arch/x86/tools/relocs.c:953:2: warning: argument 1 null where non-null expected [-Wnonnull]
-  qsort(r->offset, r->count, sizeof(r->offset[0]), cmp_relocs);
-  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    inlined from ‘emit_relocs’ at arch/x86/tools/relocs.c:996:2,
+    inlined from ‘process_64’ at arch/x86/tools/relocs.c:1100:2:
+arch/x86/tools/relocs.c:954:2: warning: argument 1 null where non-null expected [-Wnonnull]
+  qsort(roffset, r->count, sizeof(r->offset[0]), cmp_relocs);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 In file included from arch/x86/tools/relocs.h:6,
                  from arch/x86/tools/relocs_64.c:1:
 arch/x86/tools/relocs.c: In function ‘process_64’:
 /usr/include/stdlib.h:827:13: note: in a call to function ‘qsort’ declared here
  extern void qsort (void *__base, size_t __nmemb, size_t __size,
              ^~~~~
-  HOSTCC  scripts/genksyms/lex.lex.o
-  CC      scripts/mod/empty.o
-  HOSTCC  scripts/selinux/genheaders/genheaders
-  HOSTCC  scripts/mod/mk_elfconfig
-  HOSTCC  scripts/kallsyms
   CC      scripts/mod/devicetable-offsets.s
-  HOSTCC  scripts/selinux/mdp/mdp
-  HOSTCC  scripts/conmakehash
+  HOSTCC  scripts/genksyms/lex.lex.o
+  GEN     scripts/mod/devicetable-offsets.h
   HOSTLD  arch/x86/tools/relocs
   MKELF   scripts/mod/elfconfig.h
-  GEN     scripts/mod/devicetable-offsets.h
+  HOSTCC  scripts/mod/modpost.o
+  HOSTCC  scripts/selinux/mdp/mdp
+  HOSTCC  scripts/mod/file2alias.o
   HOSTCC  scripts/mod/sumversion.o
-  HOSTCC  scripts/recordmcount
-  HOSTCC  scripts/sortextable
-  HOSTCC  scripts/asn1_compiler
   CC      arch/x86/purgatory/purgatory.o
   AS      arch/x86/purgatory/stack.o
   AS      arch/x86/purgatory/setup-x86_64.o
   CC      arch/x86/purgatory/sha256.o
   AS      arch/x86/purgatory/entry64.o
   CC      arch/x86/purgatory/string.o
-  HOSTCC  scripts/mod/modpost.o
-  HOSTCC  scripts/mod/file2alias.o
   HOSTLD  scripts/genksyms/genksyms
   LD      arch/x86/purgatory/purgatory.ro
   BIN2C   arch/x86/purgatory/kexec-purgatory.c
@@ -61,2107 +70,2183 @@ arch/x86/tools/relocs.c: In function ‘process_64’:
   CHK     include/generated/compile.h
   CC      init/do_mounts.o
   CC      init/do_mounts_initrd.o
-  HOSTCC  usr/gen_init_cpio
   CC      init/initramfs.o
+  HOSTCC  usr/gen_init_cpio
   CC      init/calibrate.o
   CC      init/init_task.o
   CC      kernel/fork.o
-  CC      arch/x86/events/core.o
-  AS      arch/x86/entry/entry_64.o
-  CC      arch/x86/kernel/process_64.o
-  CC      arch/x86/ia32/sys_ia32.o
+  CC      kernel/exec_domain.o
   LD      certs/built-in.o
+  CC      kernel/panic.o
+  AS      arch/x86/entry/entry_64.o
+  CC      kernel/cpu.o
+  CC      mm/filemap.o
   CC      init/version.o
-  LD      arch/x86/kvm/built-in.o
-  CC [M]  arch/x86/kvm/../../../virt/kvm/kvm_main.o
+  CC      mm/mempool.o
   GEN     usr/initramfs_data.cpio.gz
   LD      arch/x86/crypto/built-in.o
-  CC      arch/x86/mm/init.o
   CC [M]  arch/x86/crypto/glue_helper.o
-  CC      arch/x86/mm/init_64.o
-  CC      arch/x86/mm/fault.o
-  AS      usr/initramfs_data.o
+  CC      kernel/exit.o
   AS      arch/x86/entry/thunk_64.o
+  CC      kernel/softirq.o
+  AS      usr/initramfs_data.o
+  CC      kernel/resource.o
+  CC      kernel/sysctl.o
   LD      usr/built-in.o
-  CC      arch/x86/mm/ioremap.o
-  CC      mm/filemap.o
-  CC      arch/x86/ia32/ia32_signal.o
-  CC      fs/open.o
+  CC      kernel/sysctl_binary.o
   CC      arch/x86/entry/syscall_64.o
   CC      arch/x86/entry/common.o
-  CC      arch/x86/kernel/signal.o
+  CC      arch/x86/entry/vsyscall/vsyscall_gtod.o
+  CC      arch/x86/entry/vdso/vma.o
+  CC      arch/x86/entry/vsyscall/vsyscall_64.o
+  CC      arch/x86/entry/vdso/vdso32-setup.o
+  CC      mm/oom_kill.o
   LD      init/mounts.o
   LD      init/built-in.o
-  CC      ipc/compat.o
-  CC      arch/x86/ia32/ia32_aout.o
   AS [M]  arch/x86/crypto/aes-x86_64-asm_64.o
-  CC      arch/x86/entry/vdso/vma.o
-  CC      arch/x86/mm/extable.o
-  CC      arch/x86/mm/pageattr.o
-  CC [M]  arch/x86/crypto/aes_glue.o
-  CC      arch/x86/events/amd/core.o
-  CC      kernel/exec_domain.o
-  CC      arch/x86/mm/mmap.o
-  CC      ipc/util.o
-  CC      ipc/msgutil.o
-  CC      arch/x86/ia32/audit.o
-  CC      ipc/msg.o
-  CC      arch/x86/kernel/signal_compat.o
-  AS [M]  arch/x86/crypto/des3_ede-asm_64.o
-  CC      arch/x86/entry/vdso/vdso32-setup.o
-  LD      arch/x86/ia32/built-in.o
-  CC      ipc/sem.o
-  CC      arch/x86/mm/pat.o
-  CC      arch/x86/mm/pgtable.o
+  CC      kernel/capability.o
   LDS     arch/x86/entry/vdso/vdso.lds
-  CC [M]  arch/x86/crypto/des3_ede_glue.o
+  CC      fs/open.o
+  CC      kernel/ptrace.o
+  CC [M]  arch/x86/crypto/aes_glue.o
   AS      arch/x86/entry/vdso/vdso-note.o
-  CC      arch/x86/entry/vdso/vclock_gettime.o
-  CC      arch/x86/entry/vdso/vgetcpu.o
-  CC      kernel/panic.o
-  CC      arch/x86/kernel/traps.o
-  CC      ipc/shm.o
-  CC      fs/read_write.o
-  CC      arch/x86/mm/physaddr.o
-  HOSTCC  arch/x86/entry/vdso/vdso2c
-  CC      arch/x86/events/amd/uncore.o
-  CC      mm/mempool.o
-  LDS     arch/x86/entry/vdso/vdsox32.lds
-  CC      ipc/syscall.o
-  CC      arch/x86/mm/gup.o
-  X32     arch/x86/entry/vdso/vdso-note-x32.o
-  X32     arch/x86/entry/vdso/vclock_gettime-x32.o
-  X32     arch/x86/entry/vdso/vgetcpu-x32.o
-  LDS     arch/x86/entry/vdso/vdso32/vdso32.lds
-  CC      ipc/ipc_sysctl.o
-  AS [M]  arch/x86/crypto/camellia-x86_64-asm_64.o
-  CC      arch/x86/entry/vdso/vdso32/vclock_gettime.o
-  AS      arch/x86/entry/vdso/vdso32/note.o
-  CC [M]  arch/x86/kvm/../../../virt/kvm/coalesced_mmio.o
-  CC [M]  arch/x86/crypto/camellia_glue.o
-  AS      arch/x86/entry/vdso/vdso32/system_call.o
-  CC      arch/x86/mm/setup_nx.o
-  AS      arch/x86/entry/vdso/vdso32/sigreturn.o
-  CC      arch/x86/events/amd/ibs.o
-  CC      ipc/mqueue.o
-  CC      arch/x86/mm/tlb.o
-  CC      arch/x86/mm/pat_rbtree.o
-  CC      ipc/compat_mq.o
-  CC      arch/x86/mm/hugetlbpage.o
-  CC      kernel/cpu.o
-  CC      ipc/namespace.o
-  CC      arch/x86/mm/dump_pagetables.o
-  CC      mm/oom_kill.o
-  CC      arch/x86/kernel/irq.o
-  CC [M]  arch/x86/kvm/../../../virt/kvm/eventfd.o
-  CC      arch/x86/mm/kmmio.o
-  CC      ipc/mq_sysctl.o
-  VDSO    arch/x86/entry/vdso/vdso64.so.dbg
-  CC      fs/file_table.o
-  CC      arch/x86/mm/pf_in.o
-  CC      arch/x86/mm/mmio-mod.o
-  CC      arch/x86/mm/numa.o
-  CC      arch/x86/mm/numa_64.o
-  CC      arch/x86/mm/amdtopology.o
-  AS [M]  arch/x86/crypto/blowfish-x86_64-asm_64.o
-  VDSO    arch/x86/entry/vdso/vdsox32.so.dbg
-  CC      arch/x86/mm/srat.o
-  CC [M]  arch/x86/crypto/blowfish_glue.o
-  CC      arch/x86/events/msr.o
-  CC [M]  arch/x86/kvm/../../../virt/kvm/irqchip.o
-  CC      arch/x86/mm/numa_emulation.o
-  CC      mm/maccess.o
-  LD      ipc/built-in.o
-  CC      arch/x86/mm/mpx.o
-  CC      security/apparmor/apparmorfs.o
-  CC      fs/super.o
-  CC      kernel/exit.o
-  CC      security/apparmor/audit.o
-  CC      arch/x86/mm/pkeys.o
-  CC      arch/x86/mm/kaslr.o
-  CC      arch/x86/kernel/irq_64.o
-  CC      arch/x86/events/amd/iommu.o
-  LD      arch/x86/mm/mmiotrace.o
-  VDSO    arch/x86/entry/vdso/vdso32.so.dbg
-  CC      arch/x86/events/intel/core.o
-  OBJCOPY arch/x86/entry/vdso/vdso64.so
-  CC      arch/x86/events/intel/bts.o
-  OBJCOPY arch/x86/entry/vdso/vdsox32.so
-  OBJCOPY arch/x86/entry/vdso/vdso32.so
-  CC      arch/x86/events/intel/cqm.o
-  AS [M]  arch/x86/crypto/twofish-x86_64-asm_64.o
-  VDSO2C  arch/x86/entry/vdso/vdso-image-64.c
-  VDSO2C  arch/x86/entry/vdso/vdso-image-x32.c
-  CC [M]  arch/x86/kvm/../../../virt/kvm/vfio.o
-  VDSO2C  arch/x86/entry/vdso/vdso-image-32.c
-  CC      mm/page_alloc.o
-  CC      arch/x86/entry/vdso/vdso-image-64.o
-  CC [M]  arch/x86/crypto/twofish_glue.o
-  GEN     security/apparmor/capability_names.h
-  CC      security/apparmor/context.o
-  CC      arch/x86/kernel/dumpstack_64.o
-  CC [M]  arch/x86/events/amd/power.o
-  CC      security/apparmor/ipc.o
-  CC      arch/x86/events/intel/ds.o
-  LD      arch/x86/mm/built-in.o
-  CC      arch/x86/entry/vdso/vdso-image-x32.o
-  CC      fs/char_dev.o
-  CC      arch/x86/entry/vdso/vdso-image-32.o
-  AS [M]  arch/x86/crypto/twofish-x86_64-asm_64-3way.o
-  AS      arch/x86/net/bpf_jit.o
-  CC      arch/x86/events/intel/knc.o
-  CC      arch/x86/net/bpf_jit_comp.o
-  CC [M]  arch/x86/kvm/../../../virt/kvm/async_pf.o
-  CC      arch/x86/events/intel/lbr.o
-  CC      arch/x86/events/intel/p4.o
-  CC [M]  arch/x86/crypto/twofish_glue_3way.o
-  LD      arch/x86/entry/vdso/built-in.o
-  CC      arch/x86/kernel/time.o
-  CC      arch/x86/entry/vsyscall/vsyscall_gtod.o
+  CC      kernel/user.o
   AS      arch/x86/entry/entry_64_compat.o
-  CC      security/apparmor/lib.o
-  CC      arch/x86/entry/vsyscall/vsyscall_64.o
-  CC      kernel/softirq.o
-  CC      fs/stat.o
-  CC      fs/exec.o
-  CC      arch/x86/events/intel/p6.o
-  CC      arch/x86/events/intel/pt.o
-  CC      arch/x86/kernel/ioport.o
-  CC [M]  arch/x86/kvm/x86.o
-fs/exec.c: In function ‘get_task_comm’:
-fs/exec.c:1216:32: warning: argument to ‘sizeof’ in ‘strncpy’ call is the same expression as the destination; did you mean to provide an explicit length? [-Wsizeof-pointer-memaccess]
-  strncpy(buf, tsk->comm, sizeof(buf));
-                                ^
-  CC [M]  arch/x86/events/intel/rapl.o
-  CC [M]  arch/x86/events/intel/uncore.o
-  CC      security/apparmor/match.o
-  AS [M]  arch/x86/crypto/chacha20-ssse3-x86_64.o
-  CC [M]  arch/x86/events/intel/uncore_nhmex.o
+  CC      arch/x86/entry/vdso/vclock_gettime.o
+  CC      kernel/signal.o
+  CC      arch/x86/entry/vdso/vgetcpu.o
+  HOSTCC  arch/x86/entry/vdso/vdso2c
   AS      arch/x86/entry/vsyscall/vsyscall_emu_64.o
-  CC [M]  arch/x86/crypto/chacha20_glue.o
-  LD      arch/x86/net/built-in.o
-  CC [M]  arch/x86/events/intel/uncore_snb.o
+  AS [M]  arch/x86/crypto/des3_ede-asm_64.o
+  LDS     arch/x86/entry/vdso/vdsox32.lds
+  X32     arch/x86/entry/vdso/vdso-note-x32.o
   LD      arch/x86/entry/vsyscall/built-in.o
-  CC      arch/x86/platform/atom/pmc_atom.o
+  CC      kernel/sys.o
   CC      arch/x86/entry/syscall_32.o
-  CC      arch/x86/kernel/dumpstack.o
-  CC [M]  arch/x86/events/intel/uncore_snbep.o
-  CC      kernel/resource.o
-  LD      arch/x86/entry/built-in.o
-  CC [M]  arch/x86/events/intel/cstate.o
-  CC      fs/pipe.o
-  CC      arch/x86/purgatory/kexec-purgatory.o
-  CC      fs/namei.o
-  CC      security/apparmor/path.o
-  LD [M]  arch/x86/events/intel/intel-rapl-perf.o
-  AS [M]  arch/x86/crypto/chacha20-avx2-x86_64.o
-  CC      security/apparmor/domain.o
-  LD      arch/x86/purgatory/built-in.o
-  CC      arch/x86/realmode/init.o
-  CC      arch/x86/xen/enlighten.o
-  AS [M]  arch/x86/crypto/serpent-sse2-x86_64-asm_64.o
-  CC      arch/x86/xen/setup.o
-  LD      arch/x86/events/intel/built-in.o
-  LD      arch/x86/platform/atom/built-in.o
-  LD [M]  arch/x86/events/intel/intel-cstate.o
-  CC [M]  arch/x86/crypto/serpent_sse2_glue.o
-  LD      arch/x86/platform/ce4100/built-in.o
-  AS [M]  arch/x86/crypto/aesni-intel_asm.o
-  CC      arch/x86/platform/efi/quirks.o
-  LD [M]  arch/x86/events/intel/intel-uncore.o
-  CC      arch/x86/kernel/nmi.o
-  LD      arch/x86/events/built-in.o
+  CC      mm/maccess.o
+  X32     arch/x86/entry/vdso/vclock_gettime-x32.o
+  CC      mm/page_alloc.o
+  X32     arch/x86/entry/vdso/vgetcpu-x32.o
+  CC      kernel/kmod.o
+  CC [M]  arch/x86/crypto/des3_ede_glue.o
+  CC      kernel/workqueue.o
+  CC      kernel/pid.o
+  AS [M]  arch/x86/crypto/camellia-x86_64-asm_64.o
   CC      mm/page-writeback.o
-  CC      arch/x86/platform/efi/efi.o
+  LDS     arch/x86/entry/vdso/vdso32/vdso32.lds
+  CC      arch/x86/entry/vdso/vdso32/vclock_gettime.o
+  CC      kernel/task_work.o
+  CC [M]  arch/x86/crypto/camellia_glue.o
+  AS [M]  arch/x86/crypto/blowfish-x86_64-asm_64.o
+  CC [M]  arch/x86/crypto/blowfish_glue.o
+  CC      kernel/extable.o
+  CC      mm/readahead.o
+  CC      mm/swap.o
+  AS      arch/x86/entry/vdso/vdso32/note.o
+  CC      mm/truncate.o
+  CC      kernel/params.o
+  AS      arch/x86/entry/vdso/vdso32/system_call.o
+  CC      fs/read_write.o
+  AS      arch/x86/entry/vdso/vdso32/sigreturn.o
+  AS [M]  arch/x86/crypto/twofish-x86_64-asm_64.o
+  CC [M]  arch/x86/crypto/twofish_glue.o
+  AS [M]  arch/x86/crypto/twofish-x86_64-asm_64-3way.o
+  CC [M]  arch/x86/crypto/twofish_glue_3way.o
+  AS [M]  arch/x86/crypto/chacha20-ssse3-x86_64.o
+  CC [M]  arch/x86/crypto/chacha20_glue.o
+  AS [M]  arch/x86/crypto/chacha20-avx2-x86_64.o
+  AS [M]  arch/x86/crypto/serpent-sse2-x86_64-asm_64.o
+  CC      mm/vmscan.o
+  CC [M]  arch/x86/crypto/serpent_sse2_glue.o
+  VDSO    arch/x86/entry/vdso/vdso64.so.dbg
+  CC      kernel/kthread.o
+  AS [M]  arch/x86/crypto/aesni-intel_asm.o
   CC [M]  arch/x86/crypto/aesni-intel_glue.o
-  CC      arch/x86/platform/efi/efi_64.o
-  AS      arch/x86/realmode/rm/header.o
-  AS      arch/x86/realmode/rm/trampoline_64.o
-  CC      kernel/sysctl.o
-  AS      arch/x86/realmode/rm/stack.o
-  CC      fs/fcntl.o
-  CC      security/apparmor/policy.o
   CC [M]  arch/x86/crypto/fpu.o
-  AS      arch/x86/realmode/rm/reboot.o
-  CC      security/apparmor/policy_unpack.o
-  AS      arch/x86/realmode/rm/wakeup_asm.o
-  AS      arch/x86/platform/efi/efi_stub_64.o
-  CC      arch/x86/xen/multicalls.o
-  CC      arch/x86/realmode/rm/wakemain.o
-  CC      arch/x86/platform/efi/efi-bgrt.o
+  CC      kernel/sys_ni.o
+  CC      mm/shmem.o
+  CC      kernel/nsproxy.o
   AS [M]  arch/x86/crypto/aesni-intel_avx-x86_64.o
-  CC      arch/x86/kernel/ldt.o
-  CC      arch/x86/realmode/rm/video-mode.o
-  CC      arch/x86/kernel/setup.o
+  CC      mm/util.o
+  VDSO    arch/x86/entry/vdso/vdsox32.so.dbg
+  CC      mm/mmzone.o
   AS [M]  arch/x86/crypto/aes_ctrby8_avx-x86_64.o
-  CC      arch/x86/platform/efi/early_printk.o
-  AS      arch/x86/platform/efi/efi_thunk_64.o
-  AS      arch/x86/realmode/rm/copy.o
-  CC      security/apparmor/procattr.o
-  CC      security/apparmor/lsm.o
+  CC      fs/file_table.o
   AS [M]  arch/x86/crypto/ghash-clmulni-intel_asm.o
-  AS      arch/x86/realmode/rm/bioscall.o
   CC [M]  arch/x86/crypto/ghash-clmulni-intel_glue.o
   CC [M]  arch/x86/crypto/crc32c-intel_glue.o
-  CC      arch/x86/realmode/rm/regs.o
-  CC      kernel/sysctl_binary.o
-  GEN     security/apparmor/rlim_names.h
-  CC      security/apparmor/sid.o
-  LD      arch/x86/platform/efi/built-in.o
-  CC      arch/x86/realmode/rm/video-vga.o
-  LD      arch/x86/platform/geode/built-in.o
-  CC      arch/x86/realmode/rm/video-vesa.o
-  LD      arch/x86/platform/goldfish/built-in.o
-  CC      arch/x86/kernel/x86_init.o
-  CC      arch/x86/platform/intel/iosf_mbi.o
-  CC      fs/ioctl.o
-  CC      arch/x86/realmode/rm/video-bios.o
-  CC      security/apparmor/file.o
   AS [M]  arch/x86/crypto/crc32c-pcl-intel-asm_64.o
+  CC      mm/vmstat.o
   AS [M]  arch/x86/crypto/sha1_ssse3_asm.o
-  CC      arch/x86/xen/mmu.o
-  CC      fs/readdir.o
+  CC      mm/backing-dev.o
   CC [M]  arch/x86/crypto/sha1_ssse3_glue.o
+  CC      kernel/notifier.o
   AS [M]  arch/x86/crypto/sha1_avx2_x86_64_asm.o
-  PASYMS  arch/x86/realmode/rm/pasyms.h
-  LDS     arch/x86/realmode/rm/realmode.lds
-  CC      kernel/capability.o
-  LD      arch/x86/realmode/rm/realmode.elf
-  CC      mm/readahead.o
-  CC      kernel/ptrace.o
-  CC      security/apparmor/crypto.o
-  RELOCS  arch/x86/realmode/rm/realmode.relocs
-  OBJCOPY arch/x86/realmode/rm/realmode.bin
+  CC      kernel/ksysfs.o
   AS [M]  arch/x86/crypto/sha1_ni_asm.o
-  AS      arch/x86/realmode/rmpiggy.o
+  VDSO    arch/x86/entry/vdso/vdso32.so.dbg
   AS [M]  arch/x86/crypto/crc32-pclmul_asm.o
-  LD      arch/x86/realmode/built-in.o
-  CC      arch/x86/kernel/i8259.o
   CC [M]  arch/x86/crypto/crc32-pclmul_glue.o
-  CC      security/apparmor/capability.o
+  OBJCOPY arch/x86/entry/vdso/vdso64.so
+  OBJCOPY arch/x86/entry/vdso/vdsox32.so
+  CC      kernel/cred.o
+  OBJCOPY arch/x86/entry/vdso/vdso32.so
+  VDSO2C  arch/x86/entry/vdso/vdso-image-64.c
+  VDSO2C  arch/x86/entry/vdso/vdso-image-x32.c
   AS [M]  arch/x86/crypto/sha256-ssse3-asm.o
-  CC      security/apparmor/resource.o
+  VDSO2C  arch/x86/entry/vdso/vdso-image-32.c
   AS [M]  arch/x86/crypto/sha256-avx-asm.o
-  LD      arch/x86/platform/intel/built-in.o
-  LD      arch/x86/platform/intel-mid/built-in.o
-  CC      arch/x86/kernel/irqinit.o
-  CC      fs/select.o
+  CC      arch/x86/entry/vdso/vdso-image-64.o
   AS [M]  arch/x86/crypto/sha256-avx2-asm.o
-  LD      arch/x86/platform/intel-quark/built-in.o
-  CC      fs/dcache.o
-  CC      mm/swap.o
-  LD      arch/x86/platform/iris/built-in.o
   CC [M]  arch/x86/crypto/sha256_ssse3_glue.o
-  LD      arch/x86/platform/mellanox/built-in.o
+  CC      mm/mm_init.o
   AS [M]  arch/x86/crypto/sha256_ni_asm.o
-  LD      arch/x86/platform/scx200/built-in.o
-  LD      security/apparmor/apparmor.o
-  LD      arch/x86/platform/olpc/built-in.o
-  CC      arch/x86/kernel/jump_label.o
-  LD      security/apparmor/built-in.o
-  CC      arch/x86/platform/sfi/sfi.o
-  LD      arch/x86/platform/ts5500/built-in.o
+  CC      fs/super.o
+  CC      fs/char_dev.o
   AS [M]  arch/x86/crypto/sha512-ssse3-asm.o
   AS [M]  arch/x86/crypto/sha512-avx-asm.o
-  CC      security/integrity/iint.o
-  CC      kernel/user.o
-  LD      arch/x86/platform/uv/built-in.o
-  CC      security/integrity/integrity_audit.o
-  CC      kernel/signal.o
+  CC      arch/x86/entry/vdso/vdso-image-x32.o
+  CC      kernel/reboot.o
   AS [M]  arch/x86/crypto/sha512-avx2-asm.o
-  CC      security/integrity/ima/ima_fs.o
-  CC      security/integrity/ima/ima_queue.o
   CC [M]  arch/x86/crypto/sha512_ssse3_glue.o
-  CC      arch/x86/kernel/irq_work.o
-  CC [M]  arch/x86/kvm/mmu.o
-  LD      arch/x86/platform/sfi/built-in.o
-  LD      arch/x86/platform/built-in.o
-  CC [M]  arch/x86/kvm/emulate.o
-  LD      security/integrity/integrity.o
-  CC [M]  arch/x86/kvm/i8259.o
-  CC      kernel/sys.o
-  CC      kernel/kmod.o
-  CC      arch/x86/kernel/probe_roms.o
-  CC      arch/x86/kernel/sys_x86_64.o
-  AS      arch/x86/kernel/mcount_64.o
-  CC      security/integrity/ima/ima_init.o
-  CC      arch/x86/kernel/espfix_64.o
   AS [M]  arch/x86/crypto/crct10dif-pcl-asm_64.o
+  CC      kernel/async.o
   CC [M]  arch/x86/crypto/crct10dif-pclmul_glue.o
   AS [M]  arch/x86/crypto/poly1305-sse2-x86_64.o
+  CC      arch/x86/entry/vdso/vdso-image-32.o
+  CC      mm/mmu_context.o
   CC [M]  arch/x86/crypto/poly1305_glue.o
-  CC      security/integrity/ima/ima_main.o
-  CC      arch/x86/kernel/ksysfs.o
-  CC [M]  arch/x86/kvm/irq.o
-  CC      fs/inode.o
-  CC      arch/x86/kernel/bootflag.o
-  CC      arch/x86/xen/irq.o
-  CC      mm/truncate.o
+  CC      mm/percpu.o
+  CC      mm/slab_common.o
+  LD      arch/x86/entry/vdso/built-in.o
   AS [M]  arch/x86/crypto/poly1305-avx2-x86_64.o
+  CC      kernel/range.o
+  LD      arch/x86/entry/built-in.o
+  CC      kernel/smpboot.o
+  CC      arch/x86/events/core.o
+  CC      arch/x86/ia32/sys_ia32.o
+  CC      arch/x86/events/amd/core.o
+  CC      mm/compaction.o
+  CC      arch/x86/ia32/ia32_signal.o
+  CC      arch/x86/ia32/ia32_aout.o
+  CC      arch/x86/events/amd/uncore.o
+  CC      kernel/ucount.o
   AS [M]  arch/x86/crypto/camellia-aesni-avx-asm_64.o
   CC [M]  arch/x86/crypto/camellia_aesni_avx_glue.o
-  CC      arch/x86/kernel/e820.o
+  CC      kernel/groups.o
+  CC      fs/stat.o
+  CC      mm/vmacache.o
+  CC      arch/x86/ia32/audit.o
+  CC      mm/interval_tree.o
+  CC      mm/list_lru.o
+  CC      mm/workingset.o
+  LD      arch/x86/ia32/built-in.o
+  CC      arch/x86/kernel/process_64.o
+  CC      mm/debug.o
+  CC      arch/x86/events/amd/ibs.o
+  CC      mm/gup.o
+  CC      kernel/bpf/core.o
+  CC      kernel/bpf/syscall.o
+  CC      mm/highmem.o
+  CC      kernel/events/core.o
   AS [M]  arch/x86/crypto/cast5-avx-x86_64-asm_64.o
+  CC      fs/exec.o
   CC [M]  arch/x86/crypto/cast5_avx_glue.o
-  CC      kernel/workqueue.o
   AS [M]  arch/x86/crypto/cast6-avx-x86_64-asm_64.o
-  CC      security/integrity/ima/ima_crypto.o
-  CC      arch/x86/kernel/pci-dma.o
+  CC      mm/memory.o
+  CC      mm/mincore.o
+  CC      mm/mlock.o
   CC [M]  arch/x86/crypto/cast6_avx_glue.o
-  CC      kernel/pid.o
+  CC      mm/mmap.o
+  CC      arch/x86/kernel/signal.o
+  CC      arch/x86/events/msr.o
   AS [M]  arch/x86/crypto/twofish-avx-x86_64-asm_64.o
-  CC      arch/x86/xen/time.o
-  CC [M]  arch/x86/kvm/lapic.o
-  CC      kernel/task_work.o
+  CC      arch/x86/events/amd/iommu.o
   CC [M]  arch/x86/crypto/twofish_avx_glue.o
-  CC      mm/vmscan.o
   AS [M]  arch/x86/crypto/serpent-avx-x86_64-asm_64.o
-  CC [M]  arch/x86/kvm/i8254.o
+  CC      mm/mprotect.o
+  CC      arch/x86/events/intel/core.o
+  CC      arch/x86/events/intel/bts.o
+  CC      arch/x86/events/intel/cqm.o
+  CC      mm/mremap.o
+  CC      arch/x86/kernel/signal_compat.o
+  CC      mm/msync.o
+  CC [M]  arch/x86/events/amd/power.o
   CC [M]  arch/x86/crypto/serpent_avx_glue.o
-  CC      security/integrity/ima/ima_api.o
   AS [M]  arch/x86/crypto/camellia-aesni-avx2-asm_64.o
-  AS      arch/x86/xen/xen-asm.o
+  CC      kernel/bpf/verifier.o
+  CC      mm/rmap.o
   CC [M]  arch/x86/crypto/camellia_aesni_avx2_glue.o
-  CC      kernel/extable.o
-  AS      arch/x86/xen/xen-asm_64.o
+  CC      fs/pipe.o
+  CC      arch/x86/kernel/traps.o
+  CC      mm/vmalloc.o
+  CC      arch/x86/events/intel/ds.o
+  CC      arch/x86/events/intel/knc.o
+  CC      arch/x86/events/intel/lbr.o
+  CC      mm/pagewalk.o
+  CC      mm/pgtable-generic.o
   AS [M]  arch/x86/crypto/serpent-avx2-asm_64.o
-  CC      arch/x86/kernel/quirks.o
-  CC      fs/attr.o
-  CC      arch/x86/xen/grant-table.o
+  CC      arch/x86/events/intel/p4.o
   CC [M]  arch/x86/crypto/serpent_avx2_glue.o
-  CC      kernel/params.o
-  CC      arch/x86/kernel/topology.o
-  CC      security/integrity/ima/ima_policy.o
-  CC      security/integrity/ima/ima_template.o
-  CC      kernel/kthread.o
+  CC      arch/x86/events/intel/p6.o
+  CC      arch/x86/events/intel/pt.o
   LD [M]  arch/x86/crypto/aes-x86_64.o
   LD [M]  arch/x86/crypto/des3_ede-x86_64.o
-  CC      arch/x86/xen/suspend.o
+  CC      mm/process_vm_access.o
   LD [M]  arch/x86/crypto/camellia-x86_64.o
   LD [M]  arch/x86/crypto/blowfish-x86_64.o
+  CC [M]  arch/x86/events/intel/rapl.o
+  CC [M]  arch/x86/events/intel/uncore.o
+  CC      mm/init-mm.o
+  CC      mm/nobootmem.o
+  CC      arch/x86/kernel/irq.o
+  CC [M]  arch/x86/events/intel/uncore_nhmex.o
+  CC      fs/namei.o
   LD [M]  arch/x86/crypto/twofish-x86_64.o
-  CC [M]  arch/x86/kvm/ioapic.o
-kernel/workqueue.c: In function ‘create_worker’:
-kernel/workqueue.c:1772:40: warning: ‘%d’ directive output may be truncated writing between 1 and 10 bytes into a region of size between 5 and 14 [-Wformat-truncation=]
-   snprintf(id_buf, sizeof(id_buf), "%d:%d%s", pool->cpu, id,
-                                        ^~
-kernel/workqueue.c:1772:36: note: directive argument in the range [0, 2147483647]
-   snprintf(id_buf, sizeof(id_buf), "%d:%d%s", pool->cpu, id,
-                                    ^~~~~~~~~
-kernel/workqueue.c:1772:3: note: ‘snprintf’ output between 4 and 23 bytes into a destination of size 16
-   snprintf(id_buf, sizeof(id_buf), "%d:%d%s", pool->cpu, id,
-   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     pool->attrs->nice < 0  ? "H" : "");
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   LD [M]  arch/x86/crypto/twofish-x86_64-3way.o
+  CC [M]  arch/x86/events/intel/uncore_snb.o
   LD [M]  arch/x86/crypto/chacha20-x86_64.o
   LD [M]  arch/x86/crypto/serpent-sse2-x86_64.o
-  CC [M]  arch/x86/kvm/irq_comm.o
-  CC      security/integrity/ima/ima_template_lib.o
-  CC [M]  arch/x86/kvm/cpuid.o
   LD [M]  arch/x86/crypto/aesni-intel.o
-  CC      arch/x86/kernel/kdebugfs.o
+  CC      mm/fadvise.o
   LD [M]  arch/x86/crypto/ghash-clmulni-intel.o
+  CC      kernel/bpf/inode.o
   LD [M]  arch/x86/crypto/crc32c-intel.o
   LD [M]  arch/x86/crypto/sha1-ssse3.o
   LD [M]  arch/x86/crypto/crc32-pclmul.o
-  CC      arch/x86/kernel/alternative.o
   LD [M]  arch/x86/crypto/sha256-ssse3.o
-  CC      arch/x86/xen/platform-pci-unplug.o
   LD [M]  arch/x86/crypto/sha512-ssse3.o
-  CC      fs/bad_inode.o
   LD [M]  arch/x86/crypto/crct10dif-pclmul.o
+  CC      mm/madvise.o
   LD [M]  arch/x86/crypto/poly1305-x86_64.o
+  CC      mm/memblock.o
+  CC      mm/page_io.o
   LD [M]  arch/x86/crypto/camellia-aesni-avx-x86_64.o
-  CC      fs/file.o
   LD [M]  arch/x86/crypto/cast5-avx-x86_64.o
+  CC      mm/swap_state.o
+  CC [M]  arch/x86/events/intel/uncore_snbep.o
   LD [M]  arch/x86/crypto/cast6-avx-x86_64.o
+  CC [M]  arch/x86/events/intel/cstate.o
   LD [M]  arch/x86/crypto/twofish-avx-x86_64.o
-  CC      kernel/sys_ni.o
+  CC      mm/swapfile.o
   LD [M]  arch/x86/crypto/serpent-avx-x86_64.o
   LD [M]  arch/x86/crypto/camellia-aesni-avx2.o
   LD [M]  arch/x86/crypto/serpent-avx2.o
-  CC      security/integrity/ima/ima_appraise.o
-  CC      kernel/nsproxy.o
-  CC      kernel/notifier.o
-  CC      arch/x86/kernel/i8253.o
-  CC [M]  arch/x86/kvm/pmu.o
-  CC      kernel/ksysfs.o
-  CC      fs/filesystems.o
-  CC      kernel/cred.o
-  CC      arch/x86/xen/p2m.o
-  CC [M]  arch/x86/kvm/mtrr.o
-  CC      arch/x86/kernel/pci-nommu.o
-  CC      mm/shmem.o
-  CC      arch/x86/kernel/hw_breakpoint.o
-  CC      kernel/reboot.o
-  LD      security/integrity/ima/ima.o
-  LD      security/integrity/ima/built-in.o
-  LD      security/integrity/built-in.o
-  CC [M]  arch/x86/kvm/hyperv.o
-  CC      security/keys/gc.o
-  CC      arch/x86/kernel/tsc.o
-  CC      security/keys/key.o
-  CC      security/keys/keyring.o
-  CC      kernel/async.o
-  CC      fs/namespace.o
-  CC      fs/seq_file.o
-  CC      security/keys/keyctl.o
-  CC [M]  arch/x86/kvm/page_track.o
-  CC      arch/x86/kernel/tsc_msr.o
-  CC      kernel/range.o
-  CC      kernel/smpboot.o
-  CC      kernel/ucount.o
-  CC [M]  arch/x86/kvm/debugfs.o
-  CC      arch/x86/kernel/io_delay.o
-  CC      kernel/groups.o
-  CC      arch/x86/kernel/rtc.o
-  CC      kernel/bpf/core.o
-  CC      kernel/events/core.o
-  CC      kernel/bpf/syscall.o
-  CC      arch/x86/xen/apic.o
-  CC      kernel/bpf/verifier.o
-  CC      kernel/irq/irqdesc.o
-  CC      fs/xattr.o
-  CC      kernel/livepatch/core.o
-  CC      arch/x86/kernel/pci-iommu_table.o
-  CC      security/keys/permission.o
-  CC [M]  arch/x86/kvm/vmx.o
-  CC      arch/x86/kernel/resource.o
-  CC      kernel/locking/mutex.o
-  CC      arch/x86/xen/pmu.o
-  CC      kernel/locking/semaphore.o
-  CC      mm/util.o
-  CC      arch/x86/xen/trace.o
-  CC      security/keys/process_keys.o
-  CC      arch/x86/kernel/process.o
-  CC      kernel/irq/handle.o
-  LD      kernel/livepatch/livepatch.o
-  LD      kernel/livepatch/built-in.o
-  CC      kernel/power/qos.o
-  CC      kernel/bpf/inode.o
-  CC      arch/x86/xen/smp.o
-  CC      kernel/bpf/helpers.o
-  CC      fs/libfs.o
-  CC      security/keys/request_key.o
-  CC      security/keys/request_key_auth.o
-  CC      kernel/locking/rwsem.o
-  CC      kernel/locking/percpu-rwsem.o
-  CC      kernel/irq/manage.o
-  CC      mm/mmzone.o
-  CC      arch/x86/xen/spinlock.o
-  CC      kernel/locking/spinlock.o
-  CC      kernel/bpf/hashtab.o
-  CC      security/keys/user_defined.o
-  CC      kernel/power/main.o
-  CC      mm/vmstat.o
-  CC      kernel/locking/osq_lock.o
-  CC      arch/x86/kernel/acpi/boot.o
-  CC      arch/x86/kernel/apic/apic.o
-  CC      kernel/locking/qspinlock.o
-  CC      arch/x86/kernel/apic/apic_noop.o
-  CC      kernel/locking/rtmutex.o
-  CC      kernel/locking/rwsem-xadd.o
-  CC      arch/x86/xen/vga.o
-  CC      arch/x86/kernel/apic/ipi.o
-  CC      fs/fs-writeback.o
-  CC      security/keys/compat.o
-  CC      arch/x86/xen/pci-swiotlb-xen.o
-  CC      kernel/power/console.o
-  CC      kernel/irq/spurious.o
-  CC      kernel/locking/qrwlock.o
-  CC      arch/x86/kernel/apic/vector.o
-  CC      security/keys/proc.o
-  CC      mm/backing-dev.o
-  CC      kernel/bpf/arraymap.o
-  CC      arch/x86/kernel/apic/hw_nmi.o
-  CC      kernel/irq/resend.o
-  CC      security/keys/sysctl.o
-  CC      kernel/irq/chip.o
-  CC      arch/x86/xen/efi.o
-  CC      arch/x86/kernel/acpi/sleep.o
-  LD      kernel/locking/built-in.o
-  CC      kernel/power/process.o
-  CC      kernel/irq/dummychip.o
-  CC      arch/x86/kernel/apic/io_apic.o
-  CC      kernel/irq/devres.o
-  CC      arch/x86/kernel/apic/msi.o
-  LD      security/keys/encrypted-keys/built-in.o
-  CC [M]  security/keys/encrypted-keys/encrypted.o
-  CC      kernel/events/ring_buffer.o
-  AS      arch/x86/kernel/acpi/wakeup_64.o
-  LD      arch/x86/xen/built-in.o
-  CC      arch/x86/kernel/apic/htirq.o
-  CC [M]  security/keys/encrypted-keys/ecryptfs_format.o
-  CC      arch/x86/kernel/acpi/apei.o
-  CC      kernel/bpf/percpu_freelist.o
-  CC      kernel/power/suspend.o
-  CC      kernel/irq/generic-chip.o
-  CC      kernel/irq/autoprobe.o
-  CC      arch/x86/kernel/acpi/cstate.o
-  CC      mm/mm_init.o
-  CC      arch/x86/kernel/apic/x2apic_phys.o
-  CC      arch/x86/kernel/apic/x2apic_cluster.o
-  CC      kernel/bpf/stackmap.o
-  LD [M]  security/keys/encrypted-keys/encrypted-keys.o
-  CC      kernel/irq/irqdomain.o
-  CC      kernel/irq/proc.o
-  LD      security/keys/built-in.o
-  CC      kernel/events/callchain.o
-  GEN     security/selinux/flask.h security/selinux/av_permissions.h
-  CC      security/selinux/avc.o
-  CC      arch/x86/kernel/apic/apic_flat_64.o
-  CC      fs/pnode.o
-  CC      fs/splice.o
-  LD      arch/x86/kernel/acpi/built-in.o
-  CC      arch/x86/kernel/apic/probe_64.o
-  CC [M]  arch/x86/kvm/pmu_intel.o
-  CC      arch/x86/kernel/fpu/init.o
-  CC      arch/x86/kernel/cpu/intel_cacheinfo.o
-  CC      arch/x86/kernel/cpu/scattered.o
-  CC      kernel/irq/migration.o
-  CC      mm/mmu_context.o
-  CC      kernel/events/hw_breakpoint.o
-  CC      kernel/power/hibernate.o
-  LD      kernel/bpf/built-in.o
-  CC      kernel/printk/printk.o
-  CC      kernel/printk/nmi.o
-  CC      kernel/printk/braille.o
-  CC      security/selinux/hooks.o
-  CC      security/selinux/selinuxfs.o
-  CC      security/selinux/netlink.o
-  CC      kernel/irq/pm.o
-  CC      kernel/irq/msi.o
-  CC      arch/x86/kernel/cpu/topology.o
-  LD      arch/x86/kernel/apic/built-in.o
-  CC [M]  arch/x86/kvm/svm.o
-  CC      arch/x86/kernel/kprobes/core.o
-  CC      arch/x86/kernel/fpu/bugs.o
-  CC      arch/x86/kernel/cpu/common.o
-  CC      security/selinux/nlmsgtab.o
-  CC      mm/percpu.o
-  CC      arch/x86/kernel/cpu/rdrand.o
-  CC      kernel/irq/affinity.o
-  CC      fs/sync.o
-  CC      arch/x86/kernel/fpu/core.o
-  LD      kernel/events/built-in.o
-  CC      kernel/rcu/update.o
-  CC      arch/x86/kernel/cpu/match.o
-  CC      arch/x86/kernel/kprobes/opt.o
-  LD      kernel/printk/built-in.o
-  CC      kernel/sched/core.o
-  CC      kernel/sched/loadavg.o
-  CC      kernel/power/snapshot.o
-  CC      kernel/sched/clock.o
-  LD      kernel/irq/built-in.o
-  CC      security/selinux/netif.o
-  CC      kernel/sched/cputime.o
-  CC      arch/x86/kernel/kprobes/ftrace.o
-  CC      arch/x86/kernel/cpu/proc.o
-  MKCAP   arch/x86/kernel/cpu/capflags.c
-  CC      kernel/rcu/sync.o
-  CC      mm/slab_common.o
-  CC      mm/compaction.o
-kernel/sched/core.c: In function ‘__sched_setscheduler’:
-kernel/sched/core.c:4356:7: error: dereferencing pointer to incomplete type ‘struct sched_plugin’
-   fsac->task_new(p,queued,running);
-       ^~
-  CC [M]  arch/x86/kvm/pmu_amd.o
-  CC      fs/utimes.o
-  CC      arch/x86/kernel/fpu/regset.o
-  CC      mm/vmacache.o
-  CC      security/selinux/netnode.o
-  CC      kernel/sched/idle_task.o
-  CC      kernel/rcu/srcu.o
-At top level:
-kernel/sched/core.c:8699:12: warning: ‘cpu_cfs_period_read_u64’ defined but not used [-Wunused-function]
- static u64 cpu_cfs_period_read_u64(struct cgroup_subsys_state *css,
-            ^~~~~~~~~~~~~~~~~~~~~~~
-kernel/sched/core.c:8693:12: warning: ‘cpu_cfs_quota_write_s64’ defined but not used [-Wunused-function]
- static int cpu_cfs_quota_write_s64(struct cgroup_subsys_state *css,
-            ^~~~~~~~~~~~~~~~~~~~~~~
-make[4]: *** [scripts/Makefile.build:293: kernel/sched/core.o] Error 1
-make[4]: *** Waiting for unfinished jobs....
-  CC      kernel/rcu/tree.o
-  LD      arch/x86/kernel/kprobes/built-in.o
-  CC      arch/x86/kernel/ptrace.o
-  CC      security/selinux/netport.o
-  LD [M]  arch/x86/kvm/kvm.o
-  CC      kernel/power/swap.o
-  CC      fs/stack.o
-  CC      kernel/power/user.o
-  CC      mm/interval_tree.o
-  LD [M]  arch/x86/kvm/kvm-intel.o
-  LD [M]  arch/x86/kvm/kvm-amd.o
-  CC      mm/list_lru.o
-make[3]: *** [scripts/Makefile.build:544: kernel/sched] Error 2
-make[3]: *** Waiting for unfinished jobs....
-  CC      mm/workingset.o
-  CC      security/selinux/exports.o
-  CC      security/selinux/ss/ebitmap.o
-  CC      mm/debug.o
-  CC      arch/x86/kernel/fpu/signal.o
-  CC      fs/fs_struct.o
-  CC      fs/statfs.o
-  CC      security/selinux/ss/hashtab.o
-  CC      kernel/power/poweroff.o
-  CC      security/selinux/ss/symtab.o
-  CC      security/selinux/ss/sidtab.o
-  CC      mm/gup.o
-  LD      kernel/power/built-in.o
-  CC      mm/highmem.o
-  CC      security/selinux/ss/avtab.o
-  CC      mm/memory.o
-  CC      mm/mincore.o
-  CC      security/selinux/ss/policydb.o
-  CC      arch/x86/kernel/fpu/xstate.o
-  CC      security/selinux/ss/services.o
-  CC      fs/fs_pin.o
-  CC      fs/nsfs.o
-  CC      mm/mlock.o
-  CC      mm/mmap.o
-  CC      mm/mprotect.o
-  CC      mm/mremap.o
-  CC      mm/msync.o
-  CC      mm/rmap.o
-  CC      fs/buffer.o
-  LD      kernel/rcu/built-in.o
-make[2]: *** [Makefile:997: kernel] Error 2
-make[2]: *** Waiting for unfinished jobs....
-  CC      fs/block_dev.o
-  CC      mm/vmalloc.o
-  LD      arch/x86/kernel/fpu/built-in.o
-  CC      arch/x86/kernel/tls.o
-  CC      mm/pagewalk.o
-  CC      security/selinux/ss/conditional.o
-  CC      mm/pgtable-generic.o
-  CC      mm/process_vm_access.o
-  CC      security/selinux/ss/mls.o
-  CC      mm/init-mm.o
-  CC      security/selinux/ss/status.o
-  CC      mm/nobootmem.o
-  CC      arch/x86/kernel/step.o
-  CC      mm/fadvise.o
-  CC      mm/madvise.o
-  CC      mm/memblock.o
-  CC      security/selinux/xfrm.o
-  CC      mm/page_io.o
-  CC      mm/swap_state.o
-  CC      mm/swapfile.o
-  CC      arch/x86/kernel/i8237.o
-  CC      arch/x86/kernel/stacktrace.o
+  LD      arch/x86/kvm/built-in.o
+  CC      arch/x86/kernel/irq_64.o
+  CC [M]  arch/x86/kvm/../../../virt/kvm/kvm_main.o
   CC      mm/frontswap.o
-  CC      fs/direct-io.o
+  CC [M]  arch/x86/kvm/../../../virt/kvm/coalesced_mmio.o
   CC      mm/zswap.o
   CC      mm/dmapool.o
-  CC      arch/x86/kernel/reboot.o
-  CC      fs/mpage.o
+  CC      kernel/bpf/helpers.o
+  LD      arch/x86/events/intel/built-in.o
   CC      mm/hugetlb.o
   CC      mm/mempolicy.o
-  CC      arch/x86/kernel/early-quirks.o
   CC      mm/sparse.o
-  LD      security/selinux/selinux.o
   CC      mm/sparse-vmemmap.o
+  LD [M]  arch/x86/events/intel/intel-rapl-perf.o
+  CC      arch/x86/kernel/dumpstack_64.o
+  LD [M]  arch/x86/events/intel/intel-uncore.o
+  LD [M]  arch/x86/events/intel/intel-cstate.o
+  CC      kernel/events/ring_buffer.o
+  LD      arch/x86/events/built-in.o
+  CC      arch/x86/mm/init.o
   CC      mm/mmu_notifier.o
-  LD      security/selinux/built-in.o
+  CC      kernel/bpf/hashtab.o
+  CC      arch/x86/mm/init_64.o
+  CC      arch/x86/kernel/time.o
   CC      mm/ksm.o
-  CC      security/tomoyo/audit.o
   CC      mm/page_poison.o
+  CC      arch/x86/kernel/ioport.o
+  CC      kernel/events/callchain.o
   CC      mm/slab.o
-  CC      arch/x86/kernel/smp.o
+  CC      arch/x86/kernel/dumpstack.o
   CC      mm/memory_hotplug.o
   CC      mm/memtest.o
-  CC      arch/x86/kernel/smpboot.o
   CC      mm/migrate.o
   CC      mm/huge_memory.o
-  CC      fs/proc_namespace.o
+  CC      kernel/bpf/arraymap.o
+  CC      kernel/events/hw_breakpoint.o
   CC      mm/khugepaged.o
+  CC      arch/x86/mm/fault.o
   CC      mm/page_counter.o
   CC      mm/memcontrol.o
+  CC      kernel/bpf/percpu_freelist.o
+  CC      mm/vmpressure.o
+  CC      arch/x86/kernel/nmi.o
+  CC      arch/x86/mm/ioremap.o
+  CC      fs/fcntl.o
+  CC [M]  arch/x86/kvm/../../../virt/kvm/eventfd.o
+  CC      kernel/bpf/stackmap.o
+  CC      mm/swap_cgroup.o
+  LD      kernel/events/built-in.o
+  CC      mm/memory-failure.o
+  CC      kernel/irq/irqdesc.o
+  CC      kernel/irq/handle.o
+  CC      arch/x86/kernel/ldt.o
+  CC      arch/x86/mm/extable.o
+  CC      arch/x86/kernel/setup.o
+  CC      mm/page_isolation.o
+  CC      fs/ioctl.o
+  LD      kernel/bpf/built-in.o
+  CC      kernel/livepatch/core.o
+  CC      mm/zpool.o
+  CC [M]  arch/x86/kvm/../../../virt/kvm/irqchip.o
+  CC      arch/x86/kernel/x86_init.o
+  CC      mm/zbud.o
+  CC      mm/early_ioremap.o
+  CC      mm/balloon_compaction.o
+  CC      kernel/irq/manage.o
+  CC      mm/page_ext.o
+  CC      arch/x86/mm/pageattr.o
+  CC      fs/readdir.o
+  CC      mm/userfaultfd.o
+  CC [M]  arch/x86/kvm/../../../virt/kvm/vfio.o
+  CC      mm/frame_vector.o
+  CC [M]  arch/x86/kvm/../../../virt/kvm/async_pf.o
+  CC [M]  arch/x86/kvm/x86.o
+  CC      arch/x86/kernel/i8259.o
+  CC      arch/x86/kernel/irqinit.o
+  CC      arch/x86/kernel/jump_label.o
+  LD      kernel/livepatch/livepatch.o
+  LD      kernel/livepatch/built-in.o
+  CC      mm/usercopy.o
+  CC      kernel/locking/mutex.o
+  CC [M]  arch/x86/kvm/mmu.o
+  CC [M]  mm/hwpoison-inject.o
+  CC [M]  mm/zsmalloc.o
+  CC      kernel/irq/spurious.o
+  CC      arch/x86/kernel/irq_work.o
+  CC      arch/x86/kernel/probe_roms.o
+  CC      arch/x86/kernel/sys_x86_64.o
+  AS      arch/x86/net/bpf_jit.o
+  CC [M]  arch/x86/kvm/emulate.o
+  CC      arch/x86/platform/atom/pmc_atom.o
+  CC [M]  arch/x86/kvm/i8259.o
+  CC      arch/x86/net/bpf_jit_comp.o
+  CC      fs/select.o
+  CC      arch/x86/mm/mmap.o
+  CC      arch/x86/mm/pat.o
+  AS      arch/x86/kernel/mcount_64.o
+  CC      kernel/locking/semaphore.o
+  CC      arch/x86/kernel/espfix_64.o
+  CC      kernel/irq/resend.o
+  CC      arch/x86/mm/pgtable.o
+  CC      arch/x86/kernel/ksysfs.o
+  CC      arch/x86/kernel/bootflag.o
+  LD      mm/built-in.o
+  CC      kernel/irq/chip.o
+  CC [M]  arch/x86/kvm/irq.o
+  CC      arch/x86/kernel/e820.o
+  CC      arch/x86/mm/physaddr.o
+  LD      arch/x86/platform/atom/built-in.o
+  LD      arch/x86/platform/ce4100/built-in.o
+  LD      arch/x86/net/built-in.o
+  CC      arch/x86/kernel/pci-dma.o
+  CC      ipc/compat.o
+  CC      ipc/util.o
+  CC      arch/x86/platform/efi/quirks.o
+  CC      arch/x86/purgatory/kexec-purgatory.o
+  CC      kernel/locking/rwsem.o
+  CC      kernel/locking/percpu-rwsem.o
+  LD      arch/x86/purgatory/built-in.o
+  CC      arch/x86/realmode/init.o
+  CC      arch/x86/mm/gup.o
+  AS      arch/x86/realmode/rm/header.o
+  CC      kernel/irq/dummychip.o
+  CC      arch/x86/mm/setup_nx.o
+  AS      arch/x86/realmode/rm/trampoline_64.o
+  CC [M]  arch/x86/kvm/lapic.o
+  CC      kernel/locking/spinlock.o
+  CC      arch/x86/kernel/quirks.o
+  AS      arch/x86/realmode/rm/stack.o
+  CC      ipc/msgutil.o
+  CC      ipc/msg.o
+  CC      arch/x86/platform/efi/efi.o
+  CC [M]  arch/x86/kvm/i8254.o
+  AS      arch/x86/realmode/rm/reboot.o
+  CC      arch/x86/kernel/topology.o
+  CC      arch/x86/mm/tlb.o
+  AS      arch/x86/realmode/rm/wakeup_asm.o
+  CC      fs/dcache.o
+  CC      kernel/irq/devres.o
+  CC      arch/x86/mm/pat_rbtree.o
+  CC      arch/x86/mm/hugetlbpage.o
+  CC      arch/x86/realmode/rm/wakemain.o
+  CC      arch/x86/mm/dump_pagetables.o
+  CC      arch/x86/realmode/rm/video-mode.o
+  CC      kernel/locking/osq_lock.o
+  CC      arch/x86/platform/efi/efi_64.o
+  AS      arch/x86/realmode/rm/copy.o
+  AS      arch/x86/realmode/rm/bioscall.o
+  CC      arch/x86/kernel/kdebugfs.o
+  CC      kernel/locking/qspinlock.o
+  CC      arch/x86/mm/kmmio.o
+  CC      ipc/sem.o
+  CC      arch/x86/mm/pf_in.o
+  CC      kernel/irq/generic-chip.o
+  CC [M]  arch/x86/kvm/ioapic.o
+  CC      arch/x86/realmode/rm/regs.o
+  CC      arch/x86/realmode/rm/video-vga.o
+  CC      arch/x86/realmode/rm/video-vesa.o
+  CC      arch/x86/mm/mmio-mod.o
+  CC      arch/x86/mm/numa.o
+  CC      arch/x86/realmode/rm/video-bios.o
+  CC [M]  arch/x86/kvm/irq_comm.o
+  CC      arch/x86/kernel/alternative.o
+  PASYMS  arch/x86/realmode/rm/pasyms.h
+  LDS     arch/x86/realmode/rm/realmode.lds
+  CC      arch/x86/mm/numa_64.o
+  CC [M]  arch/x86/kvm/cpuid.o
+  LD      arch/x86/realmode/rm/realmode.elf
+  RELOCS  arch/x86/realmode/rm/realmode.relocs
+  OBJCOPY arch/x86/realmode/rm/realmode.bin
+  AS      arch/x86/realmode/rmpiggy.o
+  CC      kernel/locking/rtmutex.o
+  CC [M]  arch/x86/kvm/pmu.o
+  CC      arch/x86/mm/amdtopology.o
+  LD      arch/x86/realmode/built-in.o
+  CC      arch/x86/mm/srat.o
+  AS      arch/x86/platform/efi/efi_stub_64.o
+  CC      kernel/irq/autoprobe.o
+  CC      arch/x86/xen/enlighten.o
+  CC      arch/x86/platform/efi/efi-bgrt.o
+  CC      arch/x86/mm/numa_emulation.o
+  CC      arch/x86/mm/mpx.o
+  CC      ipc/shm.o
+  CC      arch/x86/mm/pkeys.o
+  CC [M]  arch/x86/kvm/mtrr.o
+  CC      kernel/locking/rwsem-xadd.o
+  CC      kernel/irq/irqdomain.o
+  CC      arch/x86/kernel/i8253.o
+  CC      arch/x86/kernel/pci-nommu.o
+  CC      fs/inode.o
+  CC      arch/x86/platform/efi/early_printk.o
+  CC      arch/x86/mm/kaslr.o
+  CC [M]  arch/x86/kvm/hyperv.o
+  CC [M]  arch/x86/kvm/page_track.o
+  CC      arch/x86/kernel/hw_breakpoint.o
+  LD      arch/x86/mm/mmiotrace.o
+  CC      arch/x86/kernel/tsc.o
+  CC      ipc/syscall.o
+  CC [M]  arch/x86/kvm/debugfs.o
+  CC      ipc/ipc_sysctl.o
+  CC      arch/x86/kernel/tsc_msr.o
+  AS      arch/x86/platform/efi/efi_thunk_64.o
+  LD      arch/x86/platform/geode/built-in.o
+  LD      arch/x86/platform/efi/built-in.o
+  CC [M]  arch/x86/kvm/vmx.o
+  CC      arch/x86/kernel/io_delay.o
+  CC [M]  arch/x86/kvm/pmu_intel.o
+  CC      ipc/mqueue.o
+  CC [M]  arch/x86/kvm/svm.o
+  LD      arch/x86/platform/goldfish/built-in.o
+  CC      ipc/compat_mq.o
+  CC      kernel/locking/qrwlock.o
+  CC [M]  arch/x86/kvm/pmu_amd.o
+  CC      arch/x86/platform/intel/iosf_mbi.o
+  LD [M]  arch/x86/kvm/kvm.o
+  CC      kernel/irq/proc.o
+  CC      arch/x86/kernel/rtc.o
+  LD      arch/x86/mm/built-in.o
+  CC      arch/x86/kernel/pci-iommu_table.o
+  CC      arch/x86/kernel/resource.o
+  CC      arch/x86/kernel/process.o
+  CC      arch/x86/kernel/acpi/boot.o
+  CC      arch/x86/kernel/apic/apic.o
+  LD      kernel/locking/built-in.o
+  CC      arch/x86/kernel/apic/apic_noop.o
+  CC      kernel/power/qos.o
+  CC      kernel/irq/migration.o
+  CC      kernel/irq/pm.o
+  CC      ipc/namespace.o
+  CC      arch/x86/xen/setup.o
+  CC      fs/attr.o
+  CC      fs/bad_inode.o
+  LD      arch/x86/platform/intel/built-in.o
+  LD      arch/x86/platform/intel-mid/built-in.o
+  CC      arch/x86/kernel/cpu/intel_cacheinfo.o
+  LD      arch/x86/platform/intel-quark/built-in.o
+  CC      ipc/mq_sysctl.o
+  LD      arch/x86/platform/iris/built-in.o
+  LD      arch/x86/platform/mellanox/built-in.o
+  CC      kernel/irq/msi.o
+  LD      arch/x86/platform/olpc/built-in.o
+  LD      arch/x86/platform/scx200/built-in.o
+  CC      arch/x86/platform/sfi/sfi.o
+  LD      arch/x86/platform/ts5500/built-in.o
+  CC      arch/x86/kernel/acpi/sleep.o
+  LD      arch/x86/platform/uv/built-in.o
+  LD      ipc/built-in.o
+  AS      arch/x86/kernel/acpi/wakeup_64.o
+  CC      arch/x86/kernel/acpi/apei.o
+  CC      arch/x86/kernel/cpu/scattered.o
+  CC      arch/x86/xen/multicalls.o
+  CC      security/apparmor/apparmorfs.o
+  CC      arch/x86/kernel/cpu/topology.o
+  CC      fs/file.o
+  CC      security/apparmor/audit.o
+  LD      arch/x86/platform/sfi/built-in.o
+  CC      arch/x86/kernel/fpu/init.o
+  LD      arch/x86/platform/built-in.o
+  CC      arch/x86/kernel/fpu/bugs.o
+  CC      arch/x86/kernel/acpi/cstate.o
+  CC      kernel/power/main.o
+  CC      kernel/power/console.o
+  CC      kernel/irq/affinity.o
+  CC      arch/x86/kernel/cpu/common.o
+  CC      arch/x86/kernel/cpu/rdrand.o
+  CC      arch/x86/kernel/apic/ipi.o
+  LD [M]  arch/x86/kvm/kvm-amd.o
+  CC      arch/x86/xen/mmu.o
+  CC      arch/x86/xen/irq.o
+  CC      arch/x86/kernel/fpu/core.o
+  GEN     security/apparmor/capability_names.h
+  CC      arch/x86/kernel/cpu/match.o
+  CC      security/apparmor/context.o
+  CC      arch/x86/kernel/fpu/regset.o
+  CC      arch/x86/kernel/apic/vector.o
+  CC      kernel/power/process.o
+  LD      kernel/irq/built-in.o
+  CC      kernel/power/suspend.o
+  CC      kernel/printk/printk.o
+  LD      arch/x86/kernel/acpi/built-in.o
+  CC      kernel/printk/nmi.o
+  CC      security/apparmor/ipc.o
+  CC      arch/x86/xen/time.o
+  CC      arch/x86/kernel/cpu/proc.o
+  CC      fs/filesystems.o
+  CC      security/apparmor/lib.o
+  CC      kernel/power/hibernate.o
+  CC      kernel/printk/braille.o
+  CC      arch/x86/kernel/apic/hw_nmi.o
+  CC      security/apparmor/match.o
+  MKCAP   arch/x86/kernel/cpu/capflags.c
+  CC      arch/x86/kernel/cpu/powerflags.o
+  CC      arch/x86/kernel/fpu/signal.o
+  CC      arch/x86/kernel/cpu/bugs_64.o
+  CC      kernel/power/snapshot.o
+  CC      arch/x86/kernel/fpu/xstate.o
+  CC      arch/x86/kernel/cpu/intel.o
+  AS      arch/x86/xen/xen-asm.o
+  CC      security/apparmor/path.o
+  CC      arch/x86/kernel/apic/io_apic.o
+  LD [M]  arch/x86/kvm/kvm-intel.o
+  CC      arch/x86/kernel/apic/msi.o
+  AS      arch/x86/xen/xen-asm_64.o
+  CC      fs/namespace.o
+  CC      arch/x86/xen/grant-table.o
+  CC      security/apparmor/domain.o
+  CC      arch/x86/kernel/cpu/amd.o
+  CC      arch/x86/kernel/cpu/centaur.o
+  CC      arch/x86/kernel/cpu/mcheck/mce.o
+  LD      kernel/printk/built-in.o
+  CC      kernel/rcu/update.o
+  CC      kernel/rcu/sync.o
+  CC      kernel/rcu/srcu.o
+  CC      kernel/power/swap.o
+  CC      arch/x86/kernel/cpu/microcode/core.o
+  CC      kernel/rcu/tree.o
+  LD      arch/x86/kernel/fpu/built-in.o
+  CC      arch/x86/kernel/cpu/microcode/intel.o
+  CC      arch/x86/xen/suspend.o
+  CC      security/apparmor/policy.o
+  CC      arch/x86/kernel/apic/htirq.o
+  CC      arch/x86/xen/platform-pci-unplug.o
+  CC      arch/x86/kernel/cpu/microcode/intel_lib.o
+  CC      arch/x86/kernel/apic/x2apic_phys.o
+  CC      arch/x86/kernel/cpu/mtrr/main.o
+  CC      arch/x86/kernel/cpu/mtrr/if.o
+  CC      arch/x86/kernel/cpu/perfctr-watchdog.o
+  CC      arch/x86/kernel/cpu/microcode/amd.o
+  CC      kernel/power/user.o
+  CC      kernel/power/poweroff.o
+  CC      arch/x86/xen/p2m.o
+  CC      arch/x86/kernel/apic/x2apic_cluster.o
+  CC      arch/x86/xen/apic.o
+  CC      fs/seq_file.o
+  CC      fs/xattr.o
+  CC      arch/x86/kernel/apic/apic_flat_64.o
+  CC      security/apparmor/policy_unpack.o
+  CC      arch/x86/kernel/cpu/mcheck/mce-severity.o
+  CC      arch/x86/kernel/cpu/vmware.o
+  CC      arch/x86/kernel/cpu/mtrr/generic.o
+  LD      arch/x86/kernel/cpu/microcode/microcode.o
+  LD      arch/x86/kernel/cpu/microcode/built-in.o
+  CC      arch/x86/kernel/cpu/hypervisor.o
+  LD      kernel/power/built-in.o
+  CC      kernel/sched/core.o
+  CC      arch/x86/kernel/cpu/mtrr/cleanup.o
+  CC      arch/x86/kernel/apic/probe_64.o
+  CC      security/apparmor/procattr.o
+  CC      arch/x86/xen/pmu.o
+  CC      arch/x86/kernel/cpu/mcheck/mce-genpool.o
+  CC      arch/x86/xen/trace.o
+  CC      arch/x86/kernel/cpu/mshyperv.o
+  CC      arch/x86/xen/smp.o
+  LD      arch/x86/kernel/apic/built-in.o
+  CC      arch/x86/kernel/kprobes/core.o
+  CC      arch/x86/kernel/kprobes/opt.o
+  CC      arch/x86/kernel/cpu/mcheck/mce_intel.o
+  CC      arch/x86/kernel/cpu/mcheck/mce_amd.o
+  CC      security/apparmor/lsm.o
+  LD      kernel/rcu/built-in.o
+  LD      arch/x86/kernel/cpu/mtrr/built-in.o
+  CC      kernel/time/time.o
+  CC      kernel/trace/trace_clock.o
+  CC      arch/x86/xen/spinlock.o
+  CC      fs/libfs.o
+  CC      arch/x86/kernel/kprobes/ftrace.o
+  CC      arch/x86/xen/vga.o
+  CC      arch/x86/xen/pci-swiotlb-xen.o
+  CC      arch/x86/kernel/cpu/mcheck/threshold.o
+  CC      arch/x86/xen/efi.o
+  CC      arch/x86/kernel/cpu/mcheck/therm_throt.o
+  CC      arch/x86/kernel/cpu/mcheck/mce-apei.o
+  CC      fs/fs-writeback.o
+  LD      arch/x86/kernel/kprobes/built-in.o
+  CC      kernel/trace/ftrace.o
+  CC      kernel/trace/ring_buffer.o
+  GEN     security/apparmor/rlim_names.h
+  CC      kernel/trace/trace.o
+  CC      security/apparmor/sid.o
+  CC [M]  arch/x86/kernel/cpu/mcheck/mce-inject.o
+  CC      security/apparmor/file.o
+  CC      kernel/time/timer.o
+  LD      arch/x86/xen/built-in.o
+  CC      kernel/time/hrtimer.o
+  CC      kernel/time/itimer.o
+  CC      kernel/time/posix-timers.o
+  CC      kernel/time/posix-cpu-timers.o
+  CC      security/apparmor/crypto.o
+  CC      kernel/time/timekeeping.o
+  LD      arch/x86/kernel/cpu/mcheck/built-in.o
+  CC      kernel/time/ntp.o
+  CC      kernel/time/clocksource.o
+  CC      kernel/time/jiffies.o
+  CC      security/apparmor/capability.o
+  CC      kernel/time/timer_list.o
+  CC      kernel/time/timeconv.o
+  CC      kernel/time/timecounter.o
+  CC      kernel/time/posix-clock.o
+  CC      kernel/trace/trace_output.o
+  CC      kernel/time/alarmtimer.o
+  CC      kernel/time/clockevents.o
+  CC      kernel/time/tick-common.o
+  CC      kernel/sched/loadavg.o
+  CC      kernel/time/tick-broadcast.o
+  CC      security/apparmor/resource.o
+  CC      kernel/time/tick-broadcast-hrtimer.o
+  CC      kernel/time/tick-oneshot.o
+  CC      fs/pnode.o
+  CC      fs/splice.o
+  CC      kernel/trace/trace_seq.o
+  CC      kernel/time/tick-sched.o
+  CC      kernel/time/timekeeping_debug.o
+  CC      kernel/sched/clock.o
+  LD      security/apparmor/apparmor.o
+  CC      kernel/sched/cputime.o
+  CC      kernel/sched/idle_task.o
+  LD      security/apparmor/built-in.o
+  CC      kernel/sched/fair.o
+  CC      kernel/sched/rt.o
+  CC      security/integrity/iint.o
+  CC      security/integrity/integrity_audit.o
+  CC      security/integrity/ima/ima_fs.o
+  CC      fs/sync.o
+  CC      kernel/trace/trace_stat.o
+  CC      kernel/sched/deadline.o
+  CC      kernel/sched/stop_task.o
+  LD      security/integrity/integrity.o
+  CC      kernel/sched/wait.o
+  CC      kernel/sched/swait.o
+  CC      kernel/trace/trace_printk.o
+  LD      kernel/time/built-in.o
+  CC      kernel/trace/trace_sched_switch.o
+  CC      kernel/kcmp.o
+  CC      kernel/sched/completion.o
+  CC      kernel/trace/trace_functions.o
+  CC      kernel/sched/idle.o
+  CC      kernel/trace/trace_nop.o
+  CC      security/integrity/ima/ima_queue.o
+  CC      fs/utimes.o
+  CC      kernel/sched/cpupri.o
+  CC      fs/stack.o
+  CC      kernel/trace/trace_stack.o
+  CC      kernel/freezer.o
+  CC      kernel/sched/cpudeadline.o
+  CC      kernel/sched/auto_group.o
+  CC      kernel/trace/trace_mmiotrace.o
+  CC      kernel/sched/stats.o
+  CC      fs/fs_struct.o
+  CC      kernel/trace/trace_functions_graph.o
+  CC      kernel/sched/debug.o
+  CC      fs/statfs.o
+  CC      security/integrity/ima/ima_init.o
+  CC      kernel/sched/cpuacct.o
+  CC      kernel/sched/cpufreq.o
+  CC      fs/fs_pin.o
+  CC      kernel/trace/blktrace.o
+make[4]: *** No rule to make target 'kernel/sched/fsac-class.o', needed by 'kernel/sched/built-in.o'.  Stop.
+make[4]: *** Waiting for unfinished jobs....
+  CC      kernel/sched/cpufreq_schedutil.o
+  CC      kernel/trace/trace_events.o
+  CC      security/integrity/ima/ima_main.o
+  CC      fs/nsfs.o
+  CC      fs/buffer.o
+  CC      fs/block_dev.o
+  CC      kernel/trace/trace_export.o
+  CC      kernel/profile.o
+  CC      kernel/stacktrace.o
+  CC      fs/direct-io.o
+  CC      crypto/api.o
+  CC      crypto/cipher.o
+  CC      security/integrity/ima/ima_crypto.o
+  CC      fs/mpage.o
+  CC      fs/proc_namespace.o
+  CC      crypto/compress.o
+  CC      kernel/trace/trace_syscalls.o
+  CC      kernel/futex.o
+make[3]: *** [scripts/Makefile.build:544: kernel/sched] Error 2
+make[3]: *** Waiting for unfinished jobs....
+  CC      kernel/trace/trace_event_perf.o
+  CC      kernel/trace/trace_events_filter.o
+  CC      crypto/memneq.o
+  CC      kernel/trace/trace_events_trigger.o
   LD      fs/9p/built-in.o
-  POLICY  security/tomoyo/builtin-policy.h
   CC [M]  fs/9p/vfs_super.o
-  CC [M]  fs/9p/vfs_inode.o
-  CC      security/tomoyo/condition.o
+  CC      security/integrity/ima/ima_api.o
+  CC      crypto/crypto_wq.o
+  CC      kernel/trace/bpf_trace.o
+  CC      kernel/trace/trace_kprobe.o
   LD      fs/adfs/built-in.o
   CC [M]  fs/adfs/dir.o
-  CC [M]  fs/adfs/dir_f.o
-  CC      mm/vmpressure.o
-  CC [M]  fs/9p/vfs_inode_dotl.o
-  CC      mm/swap_cgroup.o
-  CC      mm/memory-failure.o
-  CC [M]  fs/9p/vfs_addr.o
-  CC [M]  fs/adfs/dir_fplus.o
-  CC      security/tomoyo/domain.o
-  CC      arch/x86/kernel/tsc_sync.o
-  CC [M]  fs/adfs/file.o
-  CC [M]  fs/9p/vfs_file.o
-  CC      mm/page_isolation.o
-  CC [M]  fs/9p/vfs_dir.o
-  CC      mm/zpool.o
-  CC [M]  fs/adfs/inode.o
-  CC      mm/zbud.o
-  CC      arch/x86/kernel/setup_percpu.o
-  CC [M]  fs/9p/vfs_dentry.o
-  CC      mm/early_ioremap.o
-  CC      security/tomoyo/environ.o
-  CC      security/tomoyo/file.o
-  CC      mm/balloon_compaction.o
-  CC      mm/page_ext.o
-  CC      mm/userfaultfd.o
-  CC [M]  fs/adfs/map.o
-  CC      mm/frame_vector.o
-  CC      mm/usercopy.o
-  CC [M]  mm/hwpoison-inject.o
-  CC [M]  fs/9p/v9fs.o
-  CC [M]  fs/9p/fid.o
-  CC [M]  fs/adfs/super.o
-  CC [M]  mm/zsmalloc.o
-  CC      security/tomoyo/gc.o
-  CC      security/tomoyo/group.o
-  CC      arch/x86/kernel/mpparse.o
-  CC      arch/x86/kernel/ftrace.o
-  CC      arch/x86/kernel/livepatch.o
-  CC      security/tomoyo/load_policy.o
-  CC      security/tomoyo/memory.o
-  CC      security/tomoyo/mount.o
-  CC      security/tomoyo/network.o
-  LD      mm/built-in.o
-  CC [M]  fs/9p/xattr.o
-  CC      security/tomoyo/realpath.o
-  CC [M]  fs/9p/cache.o
-  CC      arch/x86/kernel/trace_clock.o
-  CC      arch/x86/kernel/machine_kexec_64.o
-  AS      arch/x86/kernel/relocate_kernel_64.o
-  CC      security/tomoyo/securityfs_if.o
-  CC      arch/x86/kernel/crash.o
-  LD [M]  fs/adfs/adfs.o
-  CC      arch/x86/kernel/kexec-bzimage64.o
-  CC      arch/x86/kernel/crash_dump_64.o
   LD      fs/affs/built-in.o
-  CC      security/tomoyo/tomoyo.o
   CC [M]  fs/affs/super.o
-  CC [M]  fs/9p/acl.o
-  CC      security/tomoyo/util.o
-  CC      security/tomoyo/common.o
-  CC      arch/x86/kernel/module.o
-  CC      arch/x86/kernel/doublefault.o
-  CC      security/yama/yama_lsm.o
-  CC      arch/x86/kernel/early_printk.o
-  CC      arch/x86/kernel/hpet.o
-  CC      arch/x86/kernel/amd_nb.o
-  CC      arch/x86/kernel/kvm.o
-  CC      arch/x86/kernel/kvmclock.o
-  LD [M]  fs/9p/9p.o
+  CC [M]  fs/adfs/dir_f.o
+  CC      security/integrity/ima/ima_policy.o
+  CC      kernel/trace/power-traces.o
+  CC [M]  fs/adfs/dir_fplus.o
+  CC [M]  fs/9p/vfs_inode.o
+  CC      crypto/algapi.o
+  CC [M]  fs/adfs/file.o
+  CC      kernel/trace/rpm-traces.o
+  CC      kernel/trace/trace_probe.o
   LD      fs/afs/built-in.o
-  LD      fs/autofs4/built-in.o
   CC [M]  fs/afs/cache.o
-  CC [M]  fs/autofs4/init.o
-  LD      fs/befs/built-in.o
-  CC [M]  fs/befs/datastream.o
-  CC [M]  fs/affs/namei.o
-  LD      security/yama/yama.o
-  CC      arch/x86/kernel/paravirt.o
-  LD      security/yama/built-in.o
-  CC      security/commoncap.o
-  CC      arch/x86/kernel/paravirt_patch_64.o
-  CC      arch/x86/kernel/paravirt-spinlocks.o
-  CC      arch/x86/kernel/pvclock.o
+  LD      kernel/trace/libftrace.o
+  CC      security/integrity/ima/ima_template.o
   CC [M]  fs/afs/callback.o
-  CC      arch/x86/kernel/pmem.o
-  CC [M]  fs/autofs4/inode.o
-  CC [M]  fs/autofs4/root.o
-  LD      security/tomoyo/built-in.o
-  CC      arch/x86/kernel/pcspeaker.o
-  CC      security/min_addr.o
-  CC      arch/x86/kernel/pci-swiotlb.o
-  CC [M]  fs/befs/btree.o
+  CC      crypto/scatterwalk.o
+  CC [M]  fs/affs/namei.o
   CC [M]  fs/affs/inode.o
-  CC      arch/x86/kernel/sysfb.o
-  CC      arch/x86/kernel/sysfb_efi.o
-  CC      arch/x86/kernel/perf_regs.o
-  CC      arch/x86/kernel/tracepoint.o
-  CC [M]  fs/autofs4/symlink.o
-  CC      arch/x86/kernel/unwind_frame.o
+  CC [M]  fs/adfs/inode.o
+  CC [M]  fs/adfs/map.o
   CC [M]  fs/afs/cell.o
-  CC      arch/x86/kernel/audit_64.o
-  CC      security/security.o
-  CC      security/inode.o
-  CC [M]  fs/autofs4/waitq.o
-  CC [M]  fs/befs/super.o
-  CC [M]  fs/befs/inode.o
-  CC      arch/x86/kernel/amd_gart_64.o
-  CC [M]  fs/befs/debug.o
-  CC [M]  fs/befs/io.o
-  CC [M]  fs/autofs4/expire.o
-  CC      arch/x86/kernel/aperture_64.o
-  CC [M]  fs/befs/linuxvfs.o
-  CC      arch/x86/kernel/pci-calgary_64.o
-  CC [M]  fs/autofs4/dev-ioctl.o
   CC [M]  fs/afs/cmservice.o
-  CC      arch/x86/kernel/tce_64.o
-  CC      arch/x86/kernel/mmconf-fam10h_64.o
-  CC      arch/x86/kernel/vsmp_64.o
-  CC [M]  fs/affs/file.o
-  AS      arch/x86/kernel/head_64.o
-  CC      arch/x86/kernel/head64.o
-  CC      arch/x86/kernel/ebda.o
-  CC      arch/x86/kernel/platform-quirks.o
-  CC      security/lsm_audit.o
-  LDS     arch/x86/kernel/vmlinux.lds
-  CC [M]  arch/x86/kernel/msr.o
-  CC [M]  arch/x86/kernel/cpuid.o
-  CC      security/device_cgroup.o
   CC [M]  fs/afs/dir.o
-  LD [M]  fs/befs/befs.o
+  CC [M]  fs/9p/vfs_inode_dotl.o
+  CC [M]  fs/affs/file.o
+  CC      security/integrity/ima/ima_template_lib.o
+  CC [M]  fs/adfs/super.o
   CC [M]  fs/afs/file.o
+  CC      crypto/proc.o
+  CC      crypto/aead.o
+  CC      crypto/ablkcipher.o
   CC [M]  fs/afs/flock.o
+  CC [M]  fs/afs/fsclient.o
+  CC [M]  fs/afs/inode.o
+  CC      security/integrity/ima/ima_appraise.o
+  CC [M]  fs/9p/vfs_addr.o
+  LD      kernel/trace/built-in.o
+  CC [M]  fs/affs/dir.o
+  CC [M]  fs/afs/main.o
+make[2]: *** [Makefile:1007: kernel] Error 2
+make[2]: *** Waiting for unfinished jobs....
+  CC [M]  fs/afs/misc.o
+  LD [M]  fs/adfs/adfs.o
+  CC [M]  fs/afs/mntpt.o
+  LD      fs/autofs4/built-in.o
+  CC [M]  fs/autofs4/init.o
+  CC [M]  fs/affs/amigaffs.o
+  LD      security/integrity/ima/ima.o
+  CC      crypto/blkcipher.o
+  LD      security/integrity/ima/built-in.o
+  LD      security/integrity/built-in.o
+  CC      crypto/skcipher.o
+  CC [M]  fs/9p/vfs_file.o
+  CC      security/keys/gc.o
+  CC [M]  fs/autofs4/inode.o
+  CC [M]  fs/afs/proc.o
+  CC      security/keys/key.o
+  CC [M]  fs/afs/rxrpc.o
+  CC [M]  fs/afs/security.o
+  CC [M]  fs/afs/server.o
+  CC [M]  fs/afs/super.o
+  CC      crypto/ahash.o
+  CC [M]  fs/affs/bitmap.o
+  CC [M]  fs/affs/symlink.o
+  CC [M]  fs/9p/vfs_dir.o
+  CC [M]  fs/afs/netdevices.o
+  CC [M]  fs/afs/vlclient.o
+  CC [M]  fs/autofs4/root.o
+  CC      crypto/shash.o
+  CC [M]  fs/afs/vlocation.o
+  CC      security/keys/keyring.o
+  CC      crypto/akcipher.o
+  CC [M]  fs/afs/vnode.o
+  CC [M]  fs/afs/volume.o
+  CC      crypto/kpp.o
+  LD [M]  fs/affs/affs.o
+  LD      fs/befs/built-in.o
+  CC [M]  fs/afs/write.o
+  CC [M]  fs/befs/datastream.o
+  CC [M]  fs/9p/vfs_dentry.o
+  CC [M]  fs/9p/v9fs.o
+  CC      crypto/algboss.o
+  CC [M]  fs/autofs4/symlink.o
+  CC [M]  fs/autofs4/waitq.o
+  CC      crypto/testmgr.o
+  CC      crypto/hmac.o
+  CC      security/keys/keyctl.o
+  CC      crypto/crypto_null.o
+  CC [M]  fs/autofs4/expire.o
+  CC [M]  fs/9p/fid.o
+  CC [M]  fs/9p/xattr.o
+  CC      crypto/md5.o
+  CC      crypto/sha1_generic.o
+  CC      crypto/sha256_generic.o
+  CC [M]  fs/befs/btree.o
+  LD [M]  fs/afs/kafs.o
+  CC      crypto/aes_generic.o
   LD      fs/bfs/built-in.o
   CC [M]  fs/bfs/inode.o
-  LD [M]  fs/autofs4/autofs4.o
-  LD      fs/cachefiles/built-in.o
-  LD      fs/btrfs/built-in.o
   CC [M]  fs/bfs/file.o
-  CC [M]  fs/cachefiles/bind.o
-  CC [M]  fs/btrfs/super.o
+  CC [M]  fs/autofs4/dev-ioctl.o
+  CC      crypto/crct10dif_common.o
+  CC [M]  fs/9p/cache.o
+  CC [M]  fs/befs/super.o
   CC [M]  fs/bfs/dir.o
+  CC [M]  fs/9p/acl.o
+  CC      security/keys/permission.o
+  CC      crypto/crct10dif_generic.o
+  LD [M]  fs/autofs4/autofs4.o
+  CC      crypto/lzo.o
+  CC      crypto/rng.o
+  LD      fs/btrfs/built-in.o
+  CC [M]  fs/befs/inode.o
+  LD      fs/cachefiles/built-in.o
+  CC [M]  fs/cachefiles/bind.o
+  CC      crypto/hash_info.o
+  CC [M]  fs/btrfs/super.o
   LD      fs/ceph/built-in.o
-  LD      fs/cifs/built-in.o
   CC [M]  fs/ceph/super.o
-  CC [M]  fs/btrfs/ctree.o
-  CC [M]  fs/affs/dir.o
-  CC [M]  fs/cifs/cifsfs.o
-  CC [M]  fs/btrfs/extent-tree.o
-  CC [M]  fs/cifs/cifssmb.o
-  CC [M]  fs/cifs/cifs_debug.o
-  CC [M]  fs/afs/fsclient.o
-  CC [M]  fs/cifs/connect.o
+  CC [M]  fs/ceph/inode.o
+  CC [M]  fs/ceph/dir.o
+  CC [M]  crypto/seqiv.o
   LD [M]  fs/bfs/bfs.o
-  CC [M]  fs/cifs/dir.o
-  LD      fs/coda/built-in.o
-  CC [M]  fs/coda/psdev.o
-  CC [M]  fs/affs/amigaffs.o
+  LD [M]  fs/9p/9p.o
+  CC [M]  crypto/echainiv.o
+  LD      fs/cifs/built-in.o
+  CC      security/keys/process_keys.o
   CC [M]  fs/cachefiles/daemon.o
-  LD      security/built-in.o
+  LD      fs/coda/built-in.o
+  CC [M]  fs/cifs/cifsfs.o
+  CC [M]  fs/befs/debug.o
+  CC [M]  fs/coda/psdev.o
+  CC [M]  fs/coda/cache.o
+  CC [M]  fs/ceph/file.o
+  CC [M]  crypto/dh.o
+  CC [M]  fs/befs/io.o
+  CC [M]  fs/befs/linuxvfs.o
+  CC [M]  crypto/dh_helper.o
+  CC [M]  crypto/ecc.o
+  CC [M]  fs/coda/cnode.o
+  CC [M]  fs/ceph/locks.o
+  CC [M]  fs/ceph/addr.o
+  CC      security/keys/request_key.o
+  CC [M]  fs/coda/inode.o
+  CC [M]  fs/cachefiles/interface.o
+  CC [M]  fs/cachefiles/key.o
+  CC [M]  fs/cifs/cifssmb.o
+  CC [M]  crypto/ecdh.o
+  CC [M]  fs/cifs/cifs_debug.o
+  CC [M]  fs/coda/dir.o
+  LD [M]  fs/befs/befs.o
+  LD      fs/configfs/built-in.o
+  CC [M]  fs/configfs/inode.o
+  CC [M]  fs/cachefiles/main.o
+  CC      security/keys/request_key_auth.o
+  CC [M]  crypto/ecdh_helper.o
+  ASN.1   crypto/rsapubkey-asn1.c
+  ASN.1   crypto/rsaprivkey-asn1.c
+  CC [M]  crypto/rsa.o
+  CC [M]  fs/coda/file.o
+  CC [M]  fs/ceph/ioctl.o
+  CC [M]  fs/coda/upcall.o
+  CC [M]  fs/coda/coda_linux.o
+  CC [M]  fs/btrfs/ctree.o
+  CC [M]  crypto/rsa_helper.o
+  CC [M]  fs/cachefiles/namei.o
+  CC [M]  fs/configfs/file.o
+  CC [M]  fs/ceph/export.o
+  CC      security/keys/user_defined.o
+  CC [M]  fs/ceph/caps.o
+  CC      security/keys/compat.o
+  CC [M]  fs/ceph/snap.o
+  CC [M]  crypto/rsa-pkcs1pad.o
+  CC [M]  crypto/cmac.o
+  CC [M]  fs/coda/symlink.o
+  CC [M]  fs/coda/pioctl.o
+  CC [M]  fs/coda/sysctl.o
+  CC [M]  fs/configfs/dir.o
+  CC [M]  fs/ceph/xattr.o
+  CC [M]  fs/cachefiles/rdwr.o
+  CC [M]  fs/cachefiles/security.o
+  CC [M]  fs/cachefiles/xattr.o
+  CC      security/keys/proc.o
+  CC [M]  crypto/vmac.o
+  LD [M]  fs/coda/coda.o
+  CC      security/keys/sysctl.o
+  LD      fs/crypto/built-in.o
+  CC [M]  fs/crypto/crypto.o
+  CC [M]  fs/crypto/fname.o
+  CC [M]  crypto/xcbc.o
+  CC [M]  crypto/md4.o
+  LD      security/keys/encrypted-keys/built-in.o
+  CC [M]  security/keys/encrypted-keys/encrypted.o
+  CC [M]  security/keys/encrypted-keys/ecryptfs_format.o
+  LD      security/keys/built-in.o
+  CC [M]  fs/ceph/mds_client.o
+  CC [M]  fs/ceph/mdsmap.o
+  CC [M]  fs/ceph/strings.o
+  LD [M]  fs/cachefiles/cachefiles.o
+  CC [M]  fs/ceph/ceph_frag.o
+  CC [M]  crypto/rmd128.o
+  CC [M]  crypto/rmd160.o
+  CC [M]  fs/crypto/policy.o
+  CC [M]  fs/ceph/debugfs.o
+  CC [M]  fs/ceph/cache.o
+  CC [M]  fs/cifs/connect.o
+  CC [M]  fs/ceph/acl.o
+  CC [M]  fs/configfs/symlink.o
+  CC [M]  fs/configfs/mount.o
+  CC [M]  crypto/rmd256.o
+  CC [M]  fs/crypto/keyinfo.o
+  CC [M]  crypto/rmd320.o
+  LD [M]  security/keys/encrypted-keys/encrypted-keys.o
+  CC [M]  fs/btrfs/extent-tree.o
+  GEN     security/selinux/flask.h security/selinux/av_permissions.h
+  CC      security/selinux/avc.o
+  CC      security/selinux/hooks.o
+  CC [M]  fs/btrfs/print-tree.o
+  CC [M]  fs/configfs/item.o
+  CC      security/selinux/selinuxfs.o
+  CC      security/selinux/netlink.o
+  CC      security/selinux/nlmsgtab.o
+  CC [M]  crypto/sha512_generic.o
+  CC [M]  crypto/wp512.o
+  LD [M]  fs/crypto/fscrypto.o
+  CC      fs/debugfs/inode.o
+  LD [M]  fs/ceph/ceph.o
+  CC      fs/devpts/inode.o
+  LD [M]  fs/configfs/configfs.o
+  LD      fs/dlm/built-in.o
+  CC [M]  fs/dlm/ast.o
+  CC [M]  crypto/tgr192.o
+  CC      security/selinux/netif.o
+  CC      security/selinux/netnode.o
+  CC      security/selinux/netport.o
+  CC      security/selinux/exports.o
+  CC [M]  fs/btrfs/root-tree.o
+  CC [M]  fs/dlm/config.o
+  CC [M]  crypto/gf128mul.o
+  CC      fs/debugfs/file.o
+  CC      security/selinux/ss/ebitmap.o
+  CC [M]  crypto/ecb.o
+  LD      fs/devpts/devpts.o
+  LD      fs/devpts/built-in.o
+  CC      security/selinux/ss/hashtab.o
+  CC      security/selinux/ss/symtab.o
+  LD      fs/ecryptfs/built-in.o
+  CC [M]  fs/ecryptfs/dentry.o
+  CC      security/selinux/ss/sidtab.o
+  CC [M]  fs/ecryptfs/file.o
+  CC      security/selinux/ss/avtab.o
+  CC      security/selinux/ss/policydb.o
+  CC [M]  fs/btrfs/dir-item.o
+  CC      arch/x86/kernel/cpu/capflags.o
+  CC [M]  fs/dlm/dir.o
+  CC [M]  fs/cifs/dir.o
+  LD      arch/x86/kernel/cpu/built-in.o
+  CC [M]  crypto/cbc.o
+  CC      arch/x86/kernel/ptrace.o
+  CC [M]  fs/ecryptfs/inode.o
+  CC [M]  fs/ecryptfs/main.o
+  CC      security/selinux/ss/services.o
+  CC      security/selinux/ss/conditional.o
+  CC [M]  crypto/pcbc.o
+  CC      security/selinux/ss/mls.o
+  CC      security/selinux/ss/status.o
+  CC [M]  fs/btrfs/file-item.o
+  LD      fs/debugfs/debugfs.o
+  CC [M]  fs/dlm/lock.o
+  LD      fs/debugfs/built-in.o
+  CC [M]  fs/ecryptfs/super.o
+  CC [M]  fs/dlm/lockspace.o
+  CC [M]  fs/dlm/main.o
+  CC      security/selinux/xfrm.o
+  CC [M]  crypto/cts.o
+  CC [M]  fs/ecryptfs/mmap.o
+  CC [M]  crypto/lrw.o
+  CC      arch/x86/kernel/tls.o
+  CC      arch/x86/kernel/step.o
   CC [M]  fs/cifs/file.o
   CC [M]  fs/cifs/inode.o
   CC [M]  fs/cifs/link.o
-  CC [M]  fs/ceph/inode.o
-  CC [M]  fs/cachefiles/interface.o
-  CC [M]  fs/affs/bitmap.o
-  CC [M]  fs/coda/cache.o
-  CC [M]  fs/afs/inode.o
-  CC [M]  fs/coda/cnode.o
-  CC [M]  fs/coda/inode.o
-  CC [M]  fs/cachefiles/key.o
-  CC [M]  fs/cachefiles/main.o
-  CC [M]  fs/afs/main.o
-  CC [M]  fs/affs/symlink.o
-  CC [M]  fs/cachefiles/namei.o
-  CC [M]  fs/coda/dir.o
-  CC [M]  fs/cachefiles/rdwr.o
-  CC [M]  fs/coda/file.o
-  CC [M]  fs/ceph/dir.o
-  CC [M]  fs/cachefiles/security.o
-  CC [M]  fs/btrfs/print-tree.o
-  CC [M]  fs/afs/misc.o
-  LD [M]  fs/affs/affs.o
-  LD      fs/configfs/built-in.o
-  CC [M]  fs/configfs/inode.o
-  CC [M]  fs/configfs/file.o
-fs/cifs/cifssmb.c: In function ‘CIFSSMBSetEA’:
-fs/cifs/cifssmb.c:6425:3: warning: ‘strncpy’ offset [8, 65543] is out of the bounds [0, 4] [-Warray-bounds]
-   strncpy(parm_data->list[0].name, ea_name, name_len);
-   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  CC [M]  fs/cifs/misc.o
-  CC [M]  fs/coda/upcall.o
-  CC [M]  fs/cachefiles/xattr.o
-  CC [M]  fs/coda/coda_linux.o
-  CC [M]  fs/afs/mntpt.o
-  CC [M]  fs/cifs/netmisc.o
-  CC [M]  fs/btrfs/root-tree.o
-  CC      arch/x86/kernel/cpu/powerflags.o
-  CC [M]  fs/configfs/dir.o
-  CC [M]  fs/configfs/symlink.o
-  LD [M]  fs/cachefiles/cachefiles.o
-  CC [M]  fs/coda/symlink.o
-  CC      arch/x86/kernel/cpu/bugs_64.o
-  LD      fs/crypto/built-in.o
-  CC [M]  fs/crypto/crypto.o
-In function ‘fill_item_path’,
-    inlined from ‘configfs_get_target_path’ at fs/configfs/symlink.c:251:2,
-    inlined from ‘configfs_getlink’ at fs/configfs/symlink.c:273:10,
-    inlined from ‘configfs_get_link.part.4’ at fs/configfs/symlink.c:296:10,
-    inlined from ‘configfs_get_link’ at fs/configfs/symlink.c:282:20:
-fs/configfs/symlink.c:67:3: warning: ‘strncpy’ specified bound depends on the length of the source argument [-Wstringop-overflow=]
-   strncpy(buffer + length,config_item_name(p),cur);
-   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-fs/configfs/symlink.c: In function ‘configfs_get_link’:
-fs/configfs/symlink.c:63:13: note: length computed here
-   int cur = strlen(config_item_name(p));
-             ^~~~~~~~~~~~~~~~~~~~~~~~~~~
-  CC [M]  fs/crypto/fname.o
-  CC      fs/debugfs/inode.o
-  CC [M]  fs/crypto/policy.o
-  CC      fs/debugfs/file.o
-  CC [M]  fs/configfs/mount.o
-  CC [M]  fs/afs/proc.o
-  CC [M]  fs/coda/pioctl.o
-  CC [M]  fs/cifs/smbencrypt.o
-  CC [M]  fs/coda/sysctl.o
-  CC [M]  fs/ceph/file.o
-  CC [M]  fs/btrfs/dir-item.o
-  CC [M]  fs/crypto/keyinfo.o
-  CC [M]  fs/configfs/item.o
-  LD [M]  fs/coda/coda.o
-  CC [M]  fs/btrfs/file-item.o
-  CC [M]  fs/btrfs/inode-item.o
-  CC [M]  fs/btrfs/inode-map.o
-  CC [M]  fs/btrfs/disk-io.o
-  CC      fs/devpts/inode.o
-  CC [M]  fs/btrfs/transaction.o
-  CC [M]  fs/afs/rxrpc.o
-  CC [M]  fs/cifs/transport.o
-  LD      fs/debugfs/debugfs.o
-  LD      fs/debugfs/built-in.o
-  LD      fs/dlm/built-in.o
-  LD      fs/devpts/devpts.o
-  LD [M]  fs/configfs/configfs.o
-  CC [M]  fs/dlm/ast.o
-  LD      fs/devpts/built-in.o
-  CC [M]  fs/dlm/config.o
-  LD      fs/ecryptfs/built-in.o
-  CC [M]  fs/btrfs/inode.o
-  CC [M]  fs/ecryptfs/dentry.o
-  CC [M]  fs/btrfs/file.o
-  CC [M]  fs/ceph/locks.o
-  CC [M]  fs/dlm/dir.o
-  LD [M]  fs/crypto/fscrypto.o
-  CC [M]  fs/btrfs/tree-defrag.o
-  LD      fs/efivarfs/built-in.o
-  CC [M]  fs/btrfs/extent_map.o
-  CC [M]  fs/efivarfs/inode.o
-  CC [M]  fs/cifs/asn1.o
-  CC [M]  fs/efivarfs/file.o
-  CC [M]  fs/btrfs/sysfs.o
-  CC [M]  fs/dlm/lock.o
-  CC [M]  fs/ecryptfs/file.o
-  CC [M]  fs/afs/security.o
-  CC [M]  fs/dlm/lockspace.o
-  CC [M]  fs/ceph/addr.o
-  CC [M]  fs/ceph/ioctl.o
-  CC [M]  fs/efivarfs/super.o
-  CC [M]  fs/ecryptfs/inode.o
-  CC [M]  fs/btrfs/struct-funcs.o
-  CC [M]  fs/btrfs/xattr.o
-  CC [M]  fs/cifs/cifs_unicode.o
-  CC [M]  fs/afs/server.o
-  CC [M]  fs/ceph/export.o
-  LD [M]  fs/efivarfs/efivarfs.o
-  CC [M]  fs/btrfs/ordered-data.o
-  LD      fs/efs/built-in.o
-  CC [M]  fs/efs/super.o
-  CC [M]  fs/dlm/main.o
-  CC [M]  fs/btrfs/extent_io.o
-  CC [M]  fs/btrfs/volumes.o
-  CC [M]  fs/ecryptfs/main.o
-  CC [M]  fs/ceph/caps.o
+  CC [M]  crypto/xts.o
   CC [M]  fs/dlm/member.o
-  CC [M]  fs/afs/super.o
-  CC [M]  fs/btrfs/async-thread.o
-  CC [M]  fs/btrfs/ioctl.o
-  CC [M]  fs/ceph/snap.o
-  CC [M]  fs/efs/inode.o
-  CC [M]  fs/cifs/nterr.o
-  CC [M]  fs/btrfs/locking.o
-  CC [M]  fs/cifs/cifsencrypt.o
-  CC [M]  fs/ecryptfs/super.o
-  CC [M]  fs/efs/namei.o
+  CC [M]  fs/btrfs/inode-item.o
   CC [M]  fs/dlm/memory.o
   CC [M]  fs/dlm/midcomms.o
-  CC [M]  fs/ceph/xattr.o
-  CC [M]  fs/afs/netdevices.o
-  CC [M]  fs/ecryptfs/mmap.o
-  CC [M]  fs/btrfs/orphan.o
+  LD      security/selinux/selinux.o
+  CC      arch/x86/kernel/i8237.o
+  LD      security/selinux/built-in.o
+  CC [M]  fs/ecryptfs/read_write.o
   CC [M]  fs/dlm/netlink.o
-  CC [M]  fs/btrfs/export.o
-  CC [M]  fs/efs/dir.o
+  CC [M]  fs/ecryptfs/crypto.o
+  CC [M]  fs/ecryptfs/keystore.o
+  CC      security/tomoyo/audit.o
+  CC [M]  fs/ecryptfs/kthread.o
+  CC [M]  fs/ecryptfs/debug.o
+  CC      arch/x86/kernel/stacktrace.o
+  CC [M]  fs/ecryptfs/messaging.o
+  CC [M]  crypto/ctr.o
+  CC [M]  fs/btrfs/inode-map.o
   CC [M]  fs/dlm/lowcomms.o
-  CC [M]  fs/afs/vlclient.o
+  CC [M]  fs/ecryptfs/miscdev.o
+  CC [M]  fs/cifs/misc.o
+  CC [M]  fs/btrfs/disk-io.o
+  CC [M]  fs/btrfs/transaction.o
+  CC [M]  fs/btrfs/inode.o
+  CC [M]  fs/btrfs/file.o
+  CC [M]  fs/btrfs/tree-defrag.o
+  CC [M]  crypto/gcm.o
+  CC [M]  fs/dlm/plock.o
+  CC [M]  fs/btrfs/extent_map.o
+  CC      arch/x86/kernel/reboot.o
+  CC      arch/x86/kernel/early-quirks.o
+  POLICY  security/tomoyo/builtin-policy.h
+  CC      security/tomoyo/condition.o
+  LD [M]  fs/ecryptfs/ecryptfs.o
+  LD      fs/efivarfs/built-in.o
+  CC [M]  fs/efivarfs/inode.o
+  CC [M]  fs/dlm/rcom.o
+  CC [M]  fs/efivarfs/file.o
+  CC [M]  fs/btrfs/sysfs.o
+  CC [M]  fs/btrfs/struct-funcs.o
+  CC      arch/x86/kernel/smp.o
+  CC [M]  fs/cifs/netmisc.o
+  CC [M]  crypto/ccm.o
+  CC [M]  fs/dlm/recover.o
+  CC [M]  fs/dlm/recoverd.o
+  CC      security/tomoyo/domain.o
+  CC [M]  fs/efivarfs/super.o
+  CC [M]  fs/dlm/requestqueue.o
+  CC [M]  fs/btrfs/xattr.o
+  CC [M]  fs/dlm/user.o
+  CC [M]  fs/cifs/smbencrypt.o
+  CC [M]  fs/cifs/transport.o
+  CC [M]  fs/btrfs/ordered-data.o
+  CC [M]  fs/dlm/util.o
+  CC [M]  fs/dlm/debug_fs.o
+  CC [M]  fs/btrfs/extent_io.o
+  LD [M]  fs/efivarfs/efivarfs.o
+  CC [M]  fs/cifs/asn1.o
+  CC      security/tomoyo/environ.o
+  LD      fs/efs/built-in.o
+  CC      security/tomoyo/file.o
+  CC [M]  fs/efs/super.o
+  CC      security/tomoyo/gc.o
+  CC [M]  crypto/chacha20poly1305.o
+  CC [M]  fs/efs/inode.o
+  CC      arch/x86/kernel/smpboot.o
+  CC [M]  fs/btrfs/volumes.o
+  CC [M]  fs/cifs/cifs_unicode.o
+  LD [M]  fs/dlm/dlm.o
+  CC [M]  fs/btrfs/async-thread.o
+  LD      fs/exofs/built-in.o
+  CC [M]  fs/exofs/ore.o
+  CC [M]  fs/cifs/nterr.o
+  CC [M]  fs/cifs/cifsencrypt.o
+  CC      security/tomoyo/group.o
+  CC [M]  fs/efs/namei.o
+  CC [M]  fs/efs/dir.o
+  CC      security/tomoyo/load_policy.o
   CC [M]  fs/cifs/readdir.o
+  CC [M]  crypto/pcrypt.o
   CC [M]  fs/cifs/ioctl.o
   CC [M]  fs/efs/file.o
-  CC [M]  fs/dlm/plock.o
-  CC [M]  fs/ceph/mds_client.o
-  CC [M]  fs/ecryptfs/read_write.o
-  CC [M]  fs/dlm/rcom.o
-  CC [M]  fs/afs/vlocation.o
-  CC [M]  fs/btrfs/tree-log.o
-  CC [M]  fs/cifs/sess.o
-  CC [M]  fs/btrfs/free-space-cache.o
   CC [M]  fs/efs/symlink.o
-  CC [M]  fs/ecryptfs/crypto.o
-  CC [M]  fs/cifs/export.o
-  CC [M]  fs/dlm/recover.o
-  CC [M]  fs/afs/vnode.o
-  CC [M]  fs/dlm/recoverd.o
-  CC [M]  fs/btrfs/zlib.o
-  CC [M]  fs/dlm/requestqueue.o
-  CC [M]  fs/ceph/mdsmap.o
+  CC      security/tomoyo/memory.o
+  CC [M]  fs/btrfs/ioctl.o
+  CC [M]  fs/btrfs/locking.o
+  CC      security/tomoyo/mount.o
+  CC [M]  crypto/cryptd.o
+  CC      security/tomoyo/network.o
+  CC [M]  fs/cifs/sess.o
   LD [M]  fs/efs/efs.o
-  LD      fs/exofs/built-in.o
-  CC [M]  fs/cifs/smb1ops.o
-  CC [M]  fs/exofs/ore.o
-  CC [M]  fs/dlm/user.o
-  CC [M]  fs/btrfs/lzo.o
-  CC [M]  fs/exofs/ore_raid.o
-  CC [M]  fs/dlm/util.o
-  CC [M]  fs/afs/volume.o
-  CC [M]  fs/btrfs/compression.o
-  CC [M]  fs/dlm/debug_fs.o
-  CC [M]  fs/btrfs/delayed-ref.o
-  CC [M]  fs/btrfs/relocation.o
-  CC [M]  fs/btrfs/delayed-inode.o
-  CC [M]  fs/ceph/strings.o
-  CC [M]  fs/ecryptfs/keystore.o
-  CC [M]  fs/exofs/inode.o
-  CC [M]  fs/cifs/winucase.o
-  CC      arch/x86/kernel/cpu/intel.o
-  CC [M]  fs/ceph/ceph_frag.o
-  CC [M]  fs/btrfs/scrub.o
-  CC [M]  fs/afs/write.o
-  CC [M]  fs/cifs/xattr.o
-  CC [M]  fs/btrfs/reada.o
-  LD [M]  fs/dlm/dlm.o
-  CC [M]  fs/ceph/debugfs.o
   CC      fs/exportfs/expfs.o
-  CC [M]  fs/ceph/cache.o
-  CC [M]  fs/btrfs/backref.o
-  CC [M]  fs/ecryptfs/kthread.o
-  CC      arch/x86/kernel/cpu/amd.o
-  CC [M]  fs/ceph/acl.o
+  CC      arch/x86/kernel/tsc_sync.o
+  CC [M]  fs/exofs/ore_raid.o
+  CC      security/tomoyo/realpath.o
+  CC [M]  fs/cifs/export.o
+  CC [M]  fs/btrfs/orphan.o
+  CC      security/tomoyo/securityfs_if.o
+  CC      arch/x86/kernel/setup_percpu.o
+  CC [M]  fs/cifs/smb1ops.o
+  CC [M]  fs/btrfs/export.o
+  CC [M]  fs/btrfs/tree-log.o
+  CC      security/tomoyo/tomoyo.o
   LD      fs/exportfs/exportfs.o
   LD      fs/exportfs/built-in.o
   LD      fs/ext4/built-in.o
-  CC [M]  fs/exofs/file.o
   CC [M]  fs/ext4/balloc.o
   CC [M]  fs/ext4/bitmap.o
+  CC      security/tomoyo/util.o
+  CC [M]  crypto/des_generic.o
+  CC      security/tomoyo/common.o
+  CC [M]  fs/exofs/inode.o
+  CC [M]  fs/cifs/winucase.o
+  CC [M]  fs/btrfs/free-space-cache.o
+  CC      arch/x86/kernel/mpparse.o
+  CC      arch/x86/kernel/ftrace.o
+  CC [M]  fs/btrfs/zlib.o
+  CC [M]  fs/ext4/dir.o
+  CC [M]  fs/ext4/file.o
+  CC [M]  crypto/fcrypt.o
+  CC [M]  crypto/blowfish_generic.o
+  CC [M]  fs/btrfs/lzo.o
+  CC [M]  fs/cifs/xattr.o
   CC [M]  fs/cifs/cifsacl.o
-  LD [M]  fs/afs/kafs.o
-  CC [M]  fs/ecryptfs/debug.o
-  CC [M]  fs/ecryptfs/messaging.o
-  CC [M]  fs/ecryptfs/miscdev.o
-  LD [M]  fs/ceph/ceph.o
-  CC      arch/x86/kernel/cpu/centaur.o
-  LD      fs/f2fs/built-in.o
-  LD      fs/fat/built-in.o
-  CC [M]  fs/f2fs/dir.o
-  CC [M]  fs/fat/cache.o
-  CC [M]  fs/f2fs/file.o
+  CC [M]  crypto/blowfish_common.o
+  CC      arch/x86/kernel/livepatch.o
+  CC [M]  fs/ext4/fsync.o
+  CC      arch/x86/kernel/trace_clock.o
+  CC [M]  crypto/twofish_generic.o
+  CC [M]  fs/cifs/cifs_spnego.o
+  CC      arch/x86/kernel/machine_kexec_64.o
+  AS      arch/x86/kernel/relocate_kernel_64.o
+  CC [M]  fs/btrfs/compression.o
+  CC [M]  fs/btrfs/delayed-ref.o
+  CC [M]  fs/ext4/ialloc.o
+  CC [M]  fs/ext4/inode.o
+  LD      security/tomoyo/built-in.o
+  CC      arch/x86/kernel/crash.o
+  CC      security/yama/yama_lsm.o
+  CC [M]  fs/exofs/file.o
+  CC [M]  fs/cifs/dns_resolve.o
+  CC [M]  fs/cifs/cifs_dfs_ref.o
+  CC [M]  fs/ext4/page-io.o
+  CC [M]  crypto/twofish_common.o
+  CC      arch/x86/kernel/kexec-bzimage64.o
+  CC [M]  fs/btrfs/relocation.o
+  CC [M]  fs/ext4/ioctl.o
+  LD      security/yama/yama.o
+  LD      security/yama/built-in.o
+  CC      security/commoncap.o
+  CC [M]  fs/cifs/fscache.o
+  CC [M]  fs/btrfs/delayed-inode.o
   CC [M]  fs/exofs/namei.o
   CC [M]  fs/exofs/dir.o
   CC [M]  fs/exofs/super.o
-  CC      arch/x86/kernel/cpu/mcheck/mce.o
-  CC [M]  fs/fat/dir.o
-  CC      arch/x86/kernel/cpu/microcode/core.o
-  CC      arch/x86/kernel/cpu/microcode/intel.o
-  LD [M]  fs/ecryptfs/ecryptfs.o
-  CC      arch/x86/kernel/cpu/microcode/intel_lib.o
   CC [M]  fs/exofs/sys.o
-  LD      fs/freevxfs/built-in.o
-  CC [M]  fs/freevxfs/vxfs_bmap.o
-  CC [M]  fs/btrfs/ulist.o
   LD [M]  fs/exofs/libore.o
-  CC [M]  fs/btrfs/qgroup.o
-  CC [M]  fs/ext4/dir.o
-  CC [M]  fs/f2fs/inode.o
-  CC [M]  fs/cifs/cifs_spnego.o
-  CC      arch/x86/kernel/cpu/microcode/amd.o
-  CC [M]  fs/cifs/dns_resolve.o
-  CC [M]  fs/cifs/cifs_dfs_ref.o
-  CC [M]  fs/cifs/fscache.o
-  CC [M]  fs/freevxfs/vxfs_fshead.o
-  LD [M]  fs/exofs/exofs.o
-  CC [M]  fs/f2fs/namei.o
-  CC [M]  fs/freevxfs/vxfs_immed.o
-arch/x86/kernel/cpu/microcode/amd.c: In function ‘load_ucode_amd_bsp’:
-arch/x86/kernel/cpu/microcode/amd.c:274:37: warning: ‘h.bin’ directive output may be truncated writing 5 bytes into a region of size between 1 and 7 [-Wformat-truncation=]
-     "amd-ucode/microcode_amd_fam%.2xh.bin", family);
-                                     ^~~~~
-arch/x86/kernel/cpu/microcode/amd.c:273:3: note: ‘snprintf’ output between 35 and 41 bytes into a destination of size 36
-   snprintf(fw_name, sizeof(fw_name),
-   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     "amd-ucode/microcode_amd_fam%.2xh.bin", family);
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  CC [M]  fs/ext4/file.o
-  CC [M]  fs/fat/fatent.o
-  LD      arch/x86/kernel/cpu/microcode/microcode.o
-  LD      arch/x86/kernel/cpu/microcode/built-in.o
+  CC [M]  fs/ext4/namei.o
   CC [M]  fs/cifs/cache.o
-  CC      arch/x86/kernel/cpu/mtrr/main.o
+  CC [M]  fs/ext4/super.o
+  CC      arch/x86/kernel/crash_dump_64.o
+  CC [M]  crypto/serpent_generic.o
+  CC      security/min_addr.o
+  CC [M]  fs/ext4/symlink.o
+  CC [M]  fs/ext4/hash.o
+  CC      arch/x86/kernel/module.o
+  CC      arch/x86/kernel/doublefault.o
+  CC      security/security.o
+  CC      security/inode.o
+  CC [M]  fs/ext4/resize.o
+  CC [M]  fs/ext4/extents.o
+  LD [M]  fs/exofs/exofs.o
+  LD [M]  fs/cifs/cifs.o
+  CC [M]  fs/btrfs/scrub.o
+  LD      fs/f2fs/built-in.o
+  CC [M]  fs/btrfs/reada.o
+  CC [M]  fs/f2fs/dir.o
+  CC      arch/x86/kernel/early_printk.o
+  CC      arch/x86/kernel/hpet.o
+  CC [M]  fs/ext4/ext4_jbd2.o
+  CC [M]  crypto/camellia_generic.o
+  CC [M]  crypto/cast_common.o
+  CC [M]  crypto/cast5_generic.o
+  CC [M]  fs/btrfs/backref.o
+  CC [M]  fs/ext4/migrate.o
+  CC      arch/x86/kernel/amd_nb.o
+  CC [M]  fs/ext4/mballoc.o
+  CC [M]  fs/f2fs/file.o
+  CC [M]  crypto/cast6_generic.o
+  CC [M]  crypto/arc4.o
+  CC [M]  fs/f2fs/inode.o
+  CC [M]  crypto/tea.o
+  CC [M]  crypto/khazad.o
+  CC [M]  fs/btrfs/ulist.o
+  CC      security/lsm_audit.o
+  CC [M]  crypto/anubis.o
+  CC [M]  fs/ext4/block_validity.o
+  CC [M]  crypto/seed.o
+  CC [M]  fs/btrfs/qgroup.o
+  CC [M]  crypto/salsa20_generic.o
+  CC [M]  crypto/chacha20_generic.o
+  CC      arch/x86/kernel/kvm.o
+  CC [M]  fs/ext4/move_extent.o
+  CC [M]  fs/f2fs/namei.o
+  CC [M]  fs/ext4/mmp.o
+  CC [M]  fs/ext4/indirect.o
+  CC [M]  crypto/poly1305_generic.o
   CC [M]  fs/btrfs/send.o
-  CC      arch/x86/kernel/cpu/mtrr/if.o
-  CC      arch/x86/kernel/cpu/mcheck/mce-severity.o
-  CC      arch/x86/kernel/cpu/mcheck/mce-genpool.o
-  CC [M]  fs/freevxfs/vxfs_inode.o
-  CC [M]  fs/freevxfs/vxfs_lookup.o
+  CC      security/device_cgroup.o
+  CC [M]  crypto/deflate.o
+  CC [M]  crypto/michael_mic.o
+  CC [M]  crypto/crc32c_generic.o
   CC [M]  fs/f2fs/hash.o
   CC [M]  fs/f2fs/super.o
-  CC [M]  fs/freevxfs/vxfs_olt.o
-  CC [M]  fs/freevxfs/vxfs_subr.o
-  CC [M]  fs/ext4/fsync.o
-  CC      arch/x86/kernel/cpu/mtrr/generic.o
-  CC [M]  fs/freevxfs/vxfs_super.o
+  CC [M]  fs/ext4/extents_status.o
+  CC [M]  fs/ext4/xattr.o
+  CC [M]  crypto/crc32_generic.o
+  CC      arch/x86/kernel/kvmclock.o
+  CC [M]  crypto/authenc.o
+  LD      security/built-in.o
   CC [M]  fs/f2fs/inline.o
-  CC      arch/x86/kernel/cpu/mcheck/mce_intel.o
+  CC [M]  fs/ext4/xattr_user.o
+  CC [M]  fs/ext4/xattr_trusted.o
   CC [M]  fs/f2fs/checkpoint.o
+  CC [M]  crypto/authencesn.o
+  CC      arch/x86/kernel/paravirt.o
   CC [M]  fs/f2fs/gc.o
+  CC [M]  fs/ext4/inline.o
+  CC      arch/x86/kernel/paravirt_patch_64.o
+  CC      arch/x86/kernel/paravirt-spinlocks.o
+  CC [M]  fs/ext4/readpage.o
+  CC [M]  fs/ext4/sysfs.o
+  CC [M]  fs/ext4/acl.o
+  CC [M]  crypto/lz4.o
+  CC [M]  crypto/lz4hc.o
+  CC      arch/x86/kernel/pvclock.o
+  CC [M]  fs/ext4/xattr_security.o
+  CC      arch/x86/kernel/pmem.o
+  CC [M]  fs/f2fs/data.o
+  CC [M]  fs/f2fs/node.o
+  CC [M]  fs/f2fs/segment.o
+  CC [M]  fs/f2fs/recovery.o
+  CC [M]  fs/btrfs/dev-replace.o
+  CC      arch/x86/kernel/pcspeaker.o
+  CC [M]  crypto/ansi_cprng.o
+  CC [M]  crypto/drbg.o
+  CC [M]  crypto/jitterentropy.o
+  CC [M]  crypto/jitterentropy-kcapi.o
+  CC      arch/x86/kernel/pci-swiotlb.o
+  CC [M]  fs/f2fs/shrinker.o
+  CC [M]  crypto/tcrypt.o
+  CC [M]  crypto/ghash-generic.o
+  CC [M]  crypto/af_alg.o
+  CC      arch/x86/kernel/sysfb.o
+  CC [M]  crypto/algif_hash.o
+  CC [M]  crypto/algif_skcipher.o
+  CC [M]  fs/f2fs/extent_cache.o
+  CC [M]  fs/f2fs/debug.o
+  CC      arch/x86/kernel/sysfb_efi.o
+  LD [M]  fs/ext4/ext4.o
+  CC      arch/x86/kernel/perf_regs.o
+  CC [M]  fs/f2fs/xattr.o
+  CC [M]  crypto/algif_aead.o
+  LD      fs/fat/built-in.o
+  CC [M]  fs/fat/cache.o
+  CC [M]  fs/btrfs/raid56.o
+  CC      arch/x86/kernel/tracepoint.o
+  CC [M]  crypto/xor.o
+  CC [M]  crypto/ablk_helper.o
+  CC      arch/x86/kernel/unwind_frame.o
+  CC [M]  fs/f2fs/acl.o
+  LD      crypto/async_tx/built-in.o
+  CC      arch/x86/kernel/audit_64.o
+  CC [M]  fs/fat/dir.o
+  LD      crypto/crypto.o
+  CC [M]  crypto/async_tx/async_tx.o
+  CC      arch/x86/kernel/amd_gart_64.o
+  CC      arch/x86/kernel/aperture_64.o
+  LD      crypto/crypto_algapi.o
+  LD      crypto/crypto_blkcipher.o
+  CC      arch/x86/kernel/pci-calgary_64.o
+  LD      crypto/crypto_hash.o
+  LD      crypto/cryptomgr.o
+  LD [M]  crypto/dh_generic.o
+  LD [M]  crypto/ecdh_generic.o
+  CC [M]  crypto/async_tx/async_memcpy.o
+  CC [M]  crypto/rsapubkey-asn1.o
+  CC      arch/x86/kernel/tce_64.o
+  CC      arch/x86/kernel/mmconf-fam10h_64.o
+  CC [M]  crypto/rsaprivkey-asn1.o
+  LD [M]  crypto/jitterentropy_rng.o
+  LD      crypto/built-in.o
+  CC      arch/x86/kernel/vsmp_64.o
+  CC [M]  fs/fat/fatent.o
+  LD [M]  fs/f2fs/f2fs.o
+  LD [M]  crypto/rsa_generic.o
   CC [M]  fs/fat/file.o
   CC [M]  fs/fat/inode.o
-  CC      arch/x86/kernel/cpu/mtrr/cleanup.o
-  LD [M]  fs/cifs/cifs.o
+  LD      fs/freevxfs/built-in.o
+  CC [M]  fs/freevxfs/vxfs_bmap.o
+  CC [M]  fs/freevxfs/vxfs_fshead.o
+  CC [M]  fs/freevxfs/vxfs_immed.o
+  CC [M]  fs/freevxfs/vxfs_inode.o
+  CC [M]  fs/btrfs/uuid-tree.o
+  CC [M]  fs/freevxfs/vxfs_lookup.o
+  CC [M]  fs/freevxfs/vxfs_olt.o
+  AS      arch/x86/kernel/head_64.o
+  CC      arch/x86/kernel/head64.o
+  CC [M]  crypto/async_tx/async_xor.o
+  CC [M]  fs/freevxfs/vxfs_subr.o
+  CC [M]  fs/freevxfs/vxfs_super.o
+  CC      arch/x86/kernel/ebda.o
+  CC      arch/x86/kernel/platform-quirks.o
   CC [M]  fs/fat/misc.o
+  LDS     arch/x86/kernel/vmlinux.lds
+  CC [M]  crypto/async_tx/async_pq.o
+  CC [M]  arch/x86/kernel/msr.o
+  CC [M]  fs/fat/nfs.o
+  CC [M]  arch/x86/kernel/cpuid.o
+  CC [M]  fs/fat/namei_vfat.o
+  CC [M]  fs/fat/namei_msdos.o
+  CC [M]  fs/btrfs/props.o
+  LD      arch/x86/kernel/built-in.o
+  CC [M]  fs/btrfs/hash.o
+  CC [M]  fs/btrfs/free-space-tree.o
+  CC [M]  fs/btrfs/acl.o
+  CC [M]  crypto/async_tx/async_raid6_recov.o
+  LD [M]  fs/freevxfs/freevxfs.o
   LD      fs/fscache/built-in.o
   CC [M]  fs/fscache/cache.o
   CC [M]  fs/fscache/cookie.o
-  LD [M]  fs/freevxfs/freevxfs.o
   LD      fs/fuse/built-in.o
-  CC [M]  fs/fuse/dev.o
-  CC      arch/x86/kernel/cpu/mcheck/mce_amd.o
-  CC [M]  fs/ext4/ialloc.o
-  CC [M]  fs/fuse/dir.o
-  LD      arch/x86/kernel/cpu/mtrr/built-in.o
-  CC [M]  fs/f2fs/data.o
-  CC      arch/x86/kernel/cpu/perfctr-watchdog.o
-  CC [M]  fs/fscache/fsdef.o
-  CC [M]  fs/f2fs/node.o
-  CC [M]  fs/fat/nfs.o
-  CC [M]  fs/fat/namei_vfat.o
-  CC [M]  fs/f2fs/segment.o
-  CC [M]  fs/btrfs/dev-replace.o
-  CC [M]  fs/fscache/main.o
-  CC [M]  fs/f2fs/recovery.o
-  CC [M]  fs/fscache/netfs.o
-  CC [M]  fs/fat/namei_msdos.o
-  CC      arch/x86/kernel/cpu/vmware.o
-  LD [M]  fs/fat/fat.o
-  CC [M]  fs/fscache/object.o
-  CC      arch/x86/kernel/cpu/hypervisor.o
-  CC [M]  fs/ext4/inode.o
-  CC      arch/x86/kernel/cpu/mcheck/threshold.o
-  CC      arch/x86/kernel/cpu/mcheck/therm_throt.o
-  CC [M]  fs/fuse/file.o
-  CC      arch/x86/kernel/cpu/mshyperv.o
-  CC [M]  fs/fuse/inode.o
-  CC [M]  fs/btrfs/raid56.o
-  CC      arch/x86/kernel/cpu/mcheck/mce-apei.o
-  LD [M]  fs/fat/vfat.o
-  CC [M]  fs/fuse/control.o
-  CC [M]  fs/fscache/operation.o
-  LD [M]  fs/fat/msdos.o
   LD      fs/gfs2/built-in.o
-  CC [M]  fs/gfs2/acl.o
-  CC [M]  fs/f2fs/shrinker.o
-  CC [M]  fs/f2fs/extent_cache.o
-  CC [M]  fs/fscache/page.o
-  CC [M]  arch/x86/kernel/cpu/mcheck/mce-inject.o
-  CC [M]  fs/f2fs/debug.o
-  CC [M]  fs/gfs2/bmap.o
-  CC [M]  fs/fuse/xattr.o
-  CC [M]  fs/fscache/proc.o
-  LD      arch/x86/kernel/cpu/mcheck/built-in.o
-  CC      arch/x86/kernel/cpu/capflags.o
-  CC [M]  fs/fscache/stats.o
-  CC [M]  fs/fuse/acl.o
-  LD      arch/x86/kernel/cpu/built-in.o
-  LD      arch/x86/kernel/built-in.o
-  CC [M]  fs/f2fs/xattr.o
-  CC [M]  fs/fuse/cuse.o
-  CC [M]  fs/gfs2/dir.o
-  CC [M]  fs/f2fs/acl.o
+  CC [M]  fs/fuse/dev.o
   LD      fs/hfs/built-in.o
+  CC [M]  fs/gfs2/acl.o
   LD      arch/x86/built-in.o
   CC [M]  fs/hfs/bitmap.o
-  CC [M]  fs/gfs2/xattr.o
-  CC [M]  fs/gfs2/glock.o
-  CC [M]  fs/gfs2/glops.o
-  CC [M]  fs/gfs2/log.o
+  CC [M]  fs/fuse/dir.o
+  CC [M]  fs/fuse/file.o
   CC [M]  fs/hfs/bfind.o
-  CC [M]  fs/gfs2/lops.o
-  CC [M]  fs/gfs2/main.o
-  LD [M]  fs/fuse/fuse.o
-  LD [M]  fs/fscache/fscache.o
+  CC [M]  fs/hfs/bnode.o
+  LD [M]  fs/fat/fat.o
+  LD [M]  fs/fat/vfat.o
+  CC [M]  fs/hfs/brec.o
+  LD [M]  fs/fat/msdos.o
   LD      fs/hfsplus/built-in.o
   CC [M]  fs/hfsplus/super.o
   CC      fs/hugetlbfs/inode.o
-  CC [M]  fs/hfs/bnode.o
-  LD      fs/isofs/built-in.o
-  CC [M]  fs/btrfs/uuid-tree.o
-  CC [M]  fs/isofs/namei.o
-  LD [M]  fs/f2fs/f2fs.o
   CC [M]  fs/hfsplus/options.o
-  CC [M]  fs/gfs2/meta_io.o
-  CC [M]  fs/hfs/brec.o
-  LD      fs/jbd2/built-in.o
-  CC [M]  fs/jbd2/transaction.o
-  CC [M]  fs/isofs/inode.o
-  CC [M]  fs/btrfs/props.o
-  CC [M]  fs/btrfs/hash.o
+  LD [M]  fs/btrfs/btrfs.o
   CC [M]  fs/hfs/btree.o
-  CC [M]  fs/hfsplus/inode.o
-  CC [M]  fs/gfs2/aops.o
-  CC [M]  fs/gfs2/dentry.o
-  CC [M]  fs/gfs2/export.o
-  CC [M]  fs/ext4/page-io.o
+  CC [M]  fs/gfs2/bmap.o
   CC [M]  fs/hfs/catalog.o
-  CC [M]  fs/btrfs/free-space-tree.o
-  CC [M]  fs/gfs2/file.o
-  CC [M]  fs/gfs2/ops_fstype.o
+  LD      fs/isofs/built-in.o
+  CC [M]  fs/isofs/namei.o
+  CC [M]  fs/hfs/dir.o
+  CC [M]  fs/fscache/fsdef.o
+  CC [M]  fs/isofs/inode.o
+  CC [M]  fs/isofs/dir.o
+  CC [M]  fs/fuse/inode.o
+  CC [M]  fs/hfs/extent.o
+  CC [M]  fs/hfsplus/inode.o
+  CC [M]  fs/hfs/inode.o
+  CC [M]  fs/fscache/main.o
+  CC [M]  fs/hfs/attr.o
+  CC [M]  fs/isofs/util.o
   LD      fs/hugetlbfs/hugetlbfs.o
   LD      fs/hugetlbfs/built-in.o
-  CC [M]  fs/btrfs/acl.o
+  LD      fs/jbd2/built-in.o
+  CC [M]  fs/jbd2/transaction.o
+  CC [M]  fs/hfs/mdb.o
+  CC [M]  fs/isofs/rock.o
+  CC [M]  fs/fscache/netfs.o
+  CC [M]  fs/fuse/control.o
+  CC [M]  fs/isofs/export.o
+  CC [M]  fs/fscache/object.o
+  CC [M]  fs/gfs2/dir.o
+  CC [M]  fs/isofs/joliet.o
+  CC [M]  fs/hfs/part_tbl.o
+  CC [M]  fs/hfs/string.o
+  CC [M]  fs/isofs/compress.o
+  CC [M]  fs/hfsplus/ioctl.o
+  CC [M]  fs/hfs/super.o
+  CC [M]  fs/hfs/sysdep.o
+  CC [M]  fs/fuse/xattr.o
+  CC [M]  fs/hfsplus/extents.o
+  CC [M]  fs/hfsplus/catalog.o
+  CC [M]  fs/hfsplus/dir.o
+  CC [M]  fs/fuse/acl.o
+  CC [M]  fs/hfsplus/btree.o
+  CC [M]  fs/hfs/trans.o
+  CC [M]  fs/fscache/operation.o
+  LD [M]  fs/isofs/isofs.o
   LD      fs/jffs2/built-in.o
   CC [M]  fs/jffs2/compr.o
   CC [M]  fs/jffs2/dir.o
-  CC [M]  fs/isofs/dir.o
-  CC [M]  fs/isofs/util.o
-  CC [M]  fs/jbd2/commit.o
-  CC [M]  fs/hfs/dir.o
-fs/gfs2/ops_fstype.c: In function ‘fill_super’:
-fs/gfs2/ops_fstype.c:1163:49: warning: ‘%u’ directive output may be truncated writing between 1 and 10 bytes into a region of size between 0 and 255 [-Wformat-truncation=]
-   snprintf(sdp->sd_fsname, GFS2_FSNAME_LEN, "%s.%u",
-                                                 ^~
-fs/gfs2/ops_fstype.c:1163:45: note: directive argument in the range [0, 2147483647]
-   snprintf(sdp->sd_fsname, GFS2_FSNAME_LEN, "%s.%u",
-                                             ^~~~~~~
-fs/gfs2/ops_fstype.c:1163:3: note: ‘snprintf’ output between 3 and 267 bytes into a destination of size 256
-   snprintf(sdp->sd_fsname, GFS2_FSNAME_LEN, "%s.%u",
-   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     sdp->sd_table_name, sdp->sd_lockstruct.ls_jid);
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-fs/gfs2/ops_fstype.c:1160:48: warning: ‘.s’ directive output may be truncated writing 2 bytes into a region of size between 1 and 256 [-Wformat-truncation=]
-   snprintf(sdp->sd_fsname, GFS2_FSNAME_LEN, "%s.s",
-                                                ^~
-fs/gfs2/ops_fstype.c:1160:3: note: ‘snprintf’ output between 3 and 258 bytes into a destination of size 256
-   snprintf(sdp->sd_fsname, GFS2_FSNAME_LEN, "%s.s",
-   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     sdp->sd_table_name);
-     ~~~~~~~~~~~~~~~~~~~
-  CC [M]  fs/hfs/extent.o
-  CC [M]  fs/hfsplus/ioctl.o
-  CC [M]  fs/hfsplus/extents.o
-  CC [M]  fs/gfs2/inode.o
-  CC [M]  fs/jffs2/file.o
-  CC [M]  fs/gfs2/quota.o
-  CC [M]  fs/gfs2/recovery.o
-  CC [M]  fs/isofs/rock.o
-  CC [M]  fs/ext4/ioctl.o
-  CC [M]  fs/isofs/export.o
-  CC [M]  fs/jffs2/ioctl.o
-  CC [M]  fs/hfs/inode.o
-  CC [M]  fs/gfs2/rgrp.o
-  CC [M]  fs/hfs/attr.o
-  LD [M]  fs/btrfs/btrfs.o
-  CC [M]  fs/jbd2/recovery.o
-  CC [M]  fs/hfsplus/catalog.o
   LD      fs/jfs/built-in.o
-  CC [M]  fs/jffs2/nodelist.o
   CC [M]  fs/jfs/super.o
-  CC [M]  fs/jfs/file.o
-  CC [M]  fs/jfs/inode.o
-  CC [M]  fs/isofs/joliet.o
-  CC [M]  fs/isofs/compress.o
-  CC [M]  fs/jfs/namei.o
-  CC [M]  fs/hfs/mdb.o
-  CC [M]  fs/ext4/namei.o
-  CC [M]  fs/hfs/part_tbl.o
-  CC [M]  fs/gfs2/super.o
-  CC [M]  fs/hfs/string.o
-  CC [M]  fs/hfs/super.o
-  CC [M]  fs/jbd2/checkpoint.o
-  CC [M]  fs/hfsplus/dir.o
-  CC [M]  fs/jfs/jfs_mount.o
-  CC [M]  fs/gfs2/sys.o
-  CC [M]  fs/jffs2/malloc.o
-  CC [M]  fs/hfs/sysdep.o
-  LD [M]  fs/isofs/isofs.o
-  CC [M]  fs/hfs/trans.o
   CC      fs/kernfs/mount.o
-  CC [M]  fs/jfs/jfs_umount.o
-  CC [M]  fs/gfs2/trans.o
-  CC [M]  fs/gfs2/util.o
-  CC [M]  fs/jfs/jfs_xtree.o
-  CC [M]  fs/gfs2/lock_dlm.o
-  CC [M]  fs/jfs/jfs_imap.o
   CC      fs/kernfs/inode.o
-  CC [M]  fs/jffs2/read.o
-  CC [M]  fs/jfs/jfs_debug.o
-  CC [M]  fs/jffs2/nodemgmt.o
-  CC [M]  fs/hfsplus/btree.o
+  CC [M]  fs/jbd2/commit.o
+  CC [M]  fs/fuse/cuse.o
   CC [M]  fs/hfsplus/bnode.o
+  LD [M]  fs/fuse/fuse.o
+  CC [M]  fs/hfsplus/brec.o
+  CC [M]  fs/jbd2/recovery.o
+  CC [M]  fs/hfsplus/bfind.o
   LD [M]  fs/hfs/hfs.o
-  CC [M]  fs/jbd2/revoke.o
+  CC      fs/kernfs/dir.o
   LD      fs/lockd/built-in.o
+  CC [M]  fs/fscache/page.o
   CC [M]  fs/lockd/clntlock.o
+  CC [M]  fs/jfs/file.o
+  CC [M]  fs/jffs2/file.o
+  CC [M]  fs/jffs2/ioctl.o
+  CC [M]  fs/hfsplus/tables.o
+  LD      fs/minix/built-in.o
+  CC [M]  fs/fscache/proc.o
+  CC      fs/kernfs/file.o
+  CC [M]  fs/minix/bitmap.o
+  CC [M]  fs/gfs2/xattr.o
+  CC [M]  fs/gfs2/glock.o
+  CC [M]  fs/jbd2/checkpoint.o
+  CC [M]  fs/jfs/inode.o
+  CC [M]  fs/hfsplus/unicode.o
+  CC [M]  fs/jffs2/nodelist.o
+  CC [M]  fs/jbd2/revoke.o
+  CC [M]  fs/hfsplus/wrapper.o
+  CC [M]  fs/fscache/stats.o
+  CC [M]  fs/jffs2/malloc.o
+  CC      fs/kernfs/symlink.o
+  CC [M]  fs/jfs/namei.o
+  CC [M]  fs/minix/itree_v1.o
+  CC [M]  fs/jffs2/read.o
+  CC [M]  fs/hfsplus/bitmap.o
+  CC [M]  fs/gfs2/glops.o
+  CC [M]  fs/gfs2/log.o
+  CC [M]  fs/jbd2/journal.o
   CC [M]  fs/lockd/clntproc.o
   CC [M]  fs/lockd/clntxdr.o
-  LD      fs/minix/built-in.o
-  LD      fs/ncpfs/built-in.o
-  CC [M]  fs/minix/bitmap.o
-  CC [M]  fs/ncpfs/dir.o
-  CC [M]  fs/minix/itree_v1.o
-  LD [M]  fs/gfs2/gfs2.o
-  CC      fs/kernfs/dir.o
-  LD      fs/nfs/built-in.o
-  CC [M]  fs/jbd2/journal.o
-  CC [M]  fs/nfs/client.o
+  CC [M]  fs/jffs2/nodemgmt.o
   CC [M]  fs/jffs2/readinode.o
-  CC [M]  fs/hfsplus/brec.o
-  CC [M]  fs/jffs2/write.o
-  CC [M]  fs/ext4/super.o
-  CC [M]  fs/ext4/symlink.o
-  CC [M]  fs/ext4/hash.o
+  LD      fs/kernfs/built-in.o
+  LD [M]  fs/fscache/fscache.o
+  LD      fs/ncpfs/built-in.o
+  CC [M]  fs/hfsplus/part_tbl.o
+  LD      fs/nfs/built-in.o
+  CC [M]  fs/ncpfs/dir.o
+  CC [M]  fs/nfs/client.o
+  CC [M]  fs/ncpfs/file.o
+  CC [M]  fs/nfs/dir.o
   CC [M]  fs/minix/itree_v2.o
   CC [M]  fs/lockd/host.o
-  CC [M]  fs/jfs/jfs_dmap.o
-  CC [M]  fs/jffs2/scan.o
-  CC [M]  fs/ncpfs/file.o
-  CC      fs/kernfs/file.o
-  CC [M]  fs/ext4/resize.o
-  CC [M]  fs/hfsplus/bfind.o
-  CC [M]  fs/lockd/svc.o
-  CC [M]  fs/jffs2/gc.o
-  CC [M]  fs/ext4/extents.o
-  CC [M]  fs/lockd/svclock.o
+  CC [M]  fs/jfs/jfs_mount.o
+  CC [M]  fs/gfs2/lops.o
+  CC [M]  fs/hfsplus/attributes.o
+  CC [M]  fs/jffs2/write.o
+  CC [M]  fs/gfs2/main.o
   CC [M]  fs/minix/namei.o
   CC [M]  fs/ncpfs/inode.o
-  CC [M]  fs/lockd/svcshare.o
-  CC      fs/kernfs/symlink.o
-  CC [M]  fs/hfsplus/tables.o
-  CC [M]  fs/jffs2/symlink.o
-  CC [M]  fs/nfs/dir.o
+  CC [M]  fs/gfs2/meta_io.o
+  CC [M]  fs/jffs2/scan.o
+  CC [M]  fs/jffs2/gc.o
+  CC [M]  fs/gfs2/aops.o
   CC [M]  fs/minix/inode.o
+  CC [M]  fs/jffs2/symlink.o
+  CC [M]  fs/gfs2/dentry.o
+  CC [M]  fs/jfs/jfs_umount.o
+  CC [M]  fs/hfsplus/xattr.o
   CC [M]  fs/jffs2/build.o
-  CC [M]  fs/jfs/jfs_unicode.o
-  CC [M]  fs/lockd/svcproc.o
-In function ‘kernfs_get_target_path’,
-    inlined from ‘kernfs_getlink.isra.2’ at fs/kernfs/symlink.c:109:10,
-    inlined from ‘kernfs_iop_get_link.part.3’ at fs/kernfs/symlink.c:127:10,
-    inlined from ‘kernfs_iop_get_link’ at fs/kernfs/symlink.c:115:20:
-fs/kernfs/symlink.c:91:3: warning: ‘strncpy’ specified bound depends on the length of the source argument [-Wstringop-overflow=]
-   strncpy(s + len, kn->name, slen);
-   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-fs/kernfs/symlink.c: In function ‘kernfs_iop_get_link’:
-fs/kernfs/symlink.c:88:14: note: length computed here
-   int slen = strlen(kn->name);
-              ^~~~~~~~~~~~~~~~
-  CC [M]  fs/jffs2/erase.o
-  CC [M]  fs/ext4/ext4_jbd2.o
-  LD      fs/kernfs/built-in.o
-  LD      fs/nfs_common/built-in.o
-  CC [M]  fs/jffs2/background.o
-  CC [M]  fs/nfs_common/nfsacl.o
-  CC [M]  fs/hfsplus/unicode.o
-  CC [M]  fs/minix/file.o
-  CC [M]  fs/lockd/svcsubs.o
-  CC [M]  fs/lockd/mon.o
-  CC [M]  fs/jfs/jfs_dtree.o
+  CC [M]  fs/lockd/svc.o
+  CC [M]  fs/lockd/svclock.o
   CC [M]  fs/ncpfs/ioctl.o
-  LD [M]  fs/jbd2/jbd2.o
+  CC [M]  fs/jfs/jfs_xtree.o
   CC [M]  fs/ncpfs/mmap.o
+  CC [M]  fs/ncpfs/ncplib_kernel.o
+  CC [M]  fs/jffs2/erase.o
+  CC [M]  fs/minix/file.o
+  CC [M]  fs/minix/dir.o
+  CC [M]  fs/ncpfs/sock.o
+  CC [M]  fs/jffs2/background.o
+  CC [M]  fs/ncpfs/ncpsign_kernel.o
+  CC [M]  fs/nfs/file.o
+  CC [M]  fs/hfsplus/xattr_user.o
+  CC [M]  fs/jffs2/fs.o
+  CC [M]  fs/gfs2/export.o
+  CC [M]  fs/jffs2/writev.o
+  CC [M]  fs/jffs2/super.o
+  CC [M]  fs/jffs2/debug.o
+  LD [M]  fs/minix/minix.o
+  CC [M]  fs/lockd/svcshare.o
+  CC [M]  fs/jffs2/wbuf.o
+  CC [M]  fs/gfs2/file.o
+  CC [M]  fs/lockd/svcproc.o
+  LD [M]  fs/jbd2/jbd2.o
+  CC [M]  fs/hfsplus/xattr_security.o
+  LD      fs/nfs_common/built-in.o
+  CC [M]  fs/hfsplus/xattr_trusted.o
+  CC [M]  fs/nfs_common/nfsacl.o
+  CC [M]  fs/nfs_common/grace.o
+  CC [M]  fs/jffs2/xattr.o
+  CC [M]  fs/gfs2/ops_fstype.o
+  CC [M]  fs/jfs/jfs_imap.o
+  CC [M]  fs/jfs/jfs_debug.o
+  CC [M]  fs/jffs2/xattr_trusted.o
+  CC [M]  fs/ncpfs/getopt.o
+  CC [M]  fs/lockd/svcsubs.o
+  CC [M]  fs/ncpfs/symlink.o
+  LD [M]  fs/hfsplus/hfsplus.o
+  CC [M]  fs/jffs2/xattr_user.o
+  CC [M]  fs/jffs2/security.o
+  CC [M]  fs/jffs2/acl.o
+  CC [M]  fs/lockd/mon.o
+  CC [M]  fs/jfs/jfs_dmap.o
+  CC [M]  fs/lockd/xdr.o
+  CC [M]  fs/nfs/getroot.o
+  CC [M]  fs/gfs2/inode.o
+  CC [M]  fs/nfs/inode.o
+  CC [M]  fs/gfs2/quota.o
+  CC [M]  fs/jffs2/compr_rtime.o
+  CC [M]  fs/jffs2/compr_zlib.o
+  LD [M]  fs/ncpfs/ncpfs.o
+  CC [M]  fs/jffs2/compr_lzo.o
+  LD [M]  fs/nfs_common/nfs_acl.o
   LD      fs/nfsd/built-in.o
   CC [M]  fs/nfsd/trace.o
-  CC [M]  fs/jffs2/fs.o
-  CC [M]  fs/minix/dir.o
-  CC [M]  fs/ncpfs/ncplib_kernel.o
-In function ‘ncp_get_charsets’,
-    inlined from ‘__ncp_ioctl’ at fs/ncpfs/ioctl.c:782:10:
-fs/ncpfs/ioctl.c:236:3: warning: ‘strncpy’ specified bound depends on the length of the source argument [-Wstringop-overflow=]
-   strncpy(user.codepage, server->nls_vol->charset, len);
-   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-fs/ncpfs/ioctl.c: In function ‘__ncp_ioctl’:
-fs/ncpfs/ioctl.c:233:9: note: length computed here
-   len = strlen(server->nls_vol->charset);
-         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-In function ‘ncp_get_charsets’,
-    inlined from ‘__ncp_ioctl’ at fs/ncpfs/ioctl.c:782:10:
-fs/ncpfs/ioctl.c:246:3: warning: ‘strncpy’ specified bound depends on the length of the source argument [-Wstringop-overflow=]
-   strncpy(user.iocharset, server->nls_io->charset, len);
-   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-fs/ncpfs/ioctl.c: In function ‘__ncp_ioctl’:
-fs/ncpfs/ioctl.c:243:9: note: length computed here
-   len = strlen(server->nls_io->charset);
-         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  CC [M]  fs/hfsplus/wrapper.o
-  CC [M]  fs/lockd/xdr.o
-  CC [M]  fs/ext4/migrate.o
-  CC [M]  fs/nfs_common/grace.o
-  CC [M]  fs/ext4/mballoc.o
-  CC [M]  fs/nfsd/nfssvc.o
-  CC [M]  fs/ncpfs/sock.o
-  LD [M]  fs/minix/minix.o
-  CC [M]  fs/lockd/clnt4xdr.o
   LD      fs/nilfs2/built-in.o
   CC [M]  fs/nilfs2/inode.o
-  CC [M]  fs/lockd/xdr4.o
-  CC [M]  fs/ext4/block_validity.o
-  CC [M]  fs/jffs2/writev.o
-  CC [M]  fs/hfsplus/bitmap.o
-  CC [M]  fs/jfs/jfs_inode.o
-  CC [M]  fs/ncpfs/ncpsign_kernel.o
-  CC [M]  fs/jffs2/super.o
-  LD [M]  fs/nfs_common/nfs_acl.o
   CC      fs/nls/nls_base.o
-  CC [M]  fs/jfs/jfs_discard.o
-  CC [M]  fs/nfsd/nfsctl.o
-  CC [M]  fs/lockd/svc4proc.o
-  CC [M]  fs/lockd/procfs.o
-  CC [M]  fs/ncpfs/getopt.o
-  CC [M]  fs/ext4/move_extent.o
-  CC [M]  fs/nfs/file.o
-  CC [M]  fs/hfsplus/part_tbl.o
-  CC [M]  fs/ncpfs/symlink.o
-  CC [M]  fs/hfsplus/attributes.o
-  CC [M]  fs/jffs2/debug.o
   CC [M]  fs/nls/nls_cp437.o
+  CC [M]  fs/jfs/jfs_unicode.o
+  CC [M]  fs/nfs/super.o
+  CC [M]  fs/jffs2/summary.o
+  CC [M]  fs/nfs/io.o
+  CC [M]  fs/lockd/clnt4xdr.o
+  CC [M]  fs/lockd/xdr4.o
   CC [M]  fs/nls/nls_cp737.o
-  CC [M]  fs/nilfs2/file.o
-  CC [M]  fs/jfs/jfs_extent.o
-  CC [M]  fs/jffs2/wbuf.o
-  CC [M]  fs/jffs2/xattr.o
   CC [M]  fs/nls/nls_cp775.o
-  LD [M]  fs/ncpfs/ncpfs.o
+  CC [M]  fs/jfs/jfs_dtree.o
+  CC [M]  fs/gfs2/recovery.o
   CC [M]  fs/nls/nls_cp850.o
-  CC [M]  fs/hfsplus/xattr.o
-  CC [M]  fs/ext4/mmp.o
-  CC [M]  fs/hfsplus/xattr_user.o
+  CC [M]  fs/gfs2/rgrp.o
+  CC [M]  fs/nilfs2/file.o
+  CC [M]  fs/nfsd/nfssvc.o
+  CC [M]  fs/gfs2/super.o
+  CC [M]  fs/nls/nls_cp852.o
+  CC [M]  fs/nfs/direct.o
+  CC [M]  fs/gfs2/sys.o
+  CC [M]  fs/nls/nls_cp855.o
+  CC [M]  fs/lockd/svc4proc.o
+  CC [M]  fs/nls/nls_cp857.o
+  LD [M]  fs/jffs2/jffs2.o
   CC      fs/notify/fsnotify.o
-  CC [M]  fs/jfs/symlink.o
-  LD [M]  fs/lockd/lockd.o
   CC      fs/notify/notification.o
   CC [M]  fs/nilfs2/dir.o
-  CC [M]  fs/nls/nls_cp852.o
-  CC [M]  fs/nilfs2/super.o
-  CC [M]  fs/nls/nls_cp855.o
-  CC [M]  fs/jfs/jfs_metapage.o
-  CC [M]  fs/nfsd/nfsproc.o
-  CC [M]  fs/hfsplus/xattr_security.o
-  CC [M]  fs/hfsplus/xattr_trusted.o
-  CC [M]  fs/nfs/getroot.o
-  CC [M]  fs/nls/nls_cp857.o
+  CC [M]  fs/nfs/pagelist.o
+  CC [M]  fs/lockd/procfs.o
   CC [M]  fs/nls/nls_cp860.o
-  CC [M]  fs/ext4/indirect.o
-  CC [M]  fs/jffs2/xattr_trusted.o
   CC [M]  fs/nls/nls_cp861.o
-  CC      fs/notify/group.o
-  CC [M]  fs/jfs/jfs_logmgr.o
-  CC      fs/notify/inode_mark.o
-  CC      fs/notify/mark.o
   CC [M]  fs/nls/nls_cp862.o
-  CC [M]  fs/ext4/extents_status.o
-  CC [M]  fs/nfsd/nfsfh.o
-  LD [M]  fs/hfsplus/hfsplus.o
-  CC [M]  fs/nfsd/vfs.o
+  CC [M]  fs/jfs/jfs_inode.o
   CC [M]  fs/nls/nls_cp863.o
-  LD      fs/ntfs/built-in.o
-  CC [M]  fs/ntfs/aops.o
-  CC [M]  fs/ntfs/attrib.o
-  CC [M]  fs/nilfs2/namei.o
-  CC [M]  fs/jffs2/xattr_user.o
-  CC [M]  fs/ntfs/collate.o
-  CC [M]  fs/jffs2/security.o
-  CC [M]  fs/nfs/inode.o
-  CC      fs/notify/vfsmount_mark.o
+  CC [M]  fs/jfs/jfs_discard.o
+  CC      fs/notify/group.o
+  CC [M]  fs/gfs2/trans.o
+  CC [M]  fs/gfs2/util.o
+  CC [M]  fs/nfsd/nfsctl.o
+  CC [M]  fs/jfs/jfs_extent.o
+  LD [M]  fs/lockd/lockd.o
   CC [M]  fs/nls/nls_cp864.o
-  CC      fs/notify/fdinfo.o
-  CC [M]  fs/ext4/xattr.o
-  CC [M]  fs/jffs2/acl.o
-  CC [M]  fs/nfsd/export.o
-  CC [M]  fs/nilfs2/page.o
-  CC [M]  fs/ntfs/compress.o
-  CC [M]  fs/ntfs/debug.o
-  CC      fs/notify/dnotify/dnotify.o
-  CC [M]  fs/jffs2/compr_rtime.o
   CC [M]  fs/nls/nls_cp865.o
-  CC      fs/notify/fanotify/fanotify.o
-  CC      fs/notify/fanotify/fanotify_user.o
-  CC [M]  fs/ext4/xattr_user.o
-  CC [M]  fs/ntfs/dir.o
-  CC [M]  fs/ntfs/file.o
-  CC [M]  fs/jfs/jfs_txnmgr.o
-  CC [M]  fs/jffs2/compr_zlib.o
-  CC [M]  fs/nilfs2/mdt.o
-  LD      fs/notify/dnotify/built-in.o
-  CC [M]  fs/nilfs2/btnode.o
-  CC [M]  fs/ntfs/index.o
+  LD      fs/ntfs/built-in.o
   CC [M]  fs/nls/nls_cp866.o
-  CC [M]  fs/ntfs/inode.o
-  CC [M]  fs/ext4/xattr_trusted.o
-  CC [M]  fs/ext4/inline.o
-  CC [M]  fs/nfsd/auth.o
+  CC [M]  fs/nilfs2/super.o
+  CC [M]  fs/gfs2/lock_dlm.o
+  CC [M]  fs/ntfs/aops.o
+  CC [M]  fs/jfs/symlink.o
+  CC      fs/notify/inode_mark.o
+  CC [M]  fs/jfs/jfs_metapage.o
+  CC      fs/notify/mark.o
   CC [M]  fs/nls/nls_cp869.o
-  CC [M]  fs/ext4/readpage.o
-  CC [M]  fs/ntfs/mft.o
-  CC [M]  fs/jffs2/compr_lzo.o
-  CC [M]  fs/ntfs/mst.o
-  CC [M]  fs/ext4/sysfs.o
-  LD      fs/notify/fanotify/built-in.o
-  CC      fs/notify/inotify/inotify_fsnotify.o
-  CC [M]  fs/nfsd/lockd.o
   CC [M]  fs/nls/nls_cp874.o
-  CC [M]  fs/nilfs2/bmap.o
-  CC [M]  fs/jffs2/summary.o
-  CC [M]  fs/ntfs/namei.o
-  CC [M]  fs/nilfs2/btree.o
-  CC [M]  fs/ntfs/runlist.o
-  CC [M]  fs/nfsd/nfscache.o
-  CC [M]  fs/ntfs/super.o
   CC [M]  fs/nls/nls_cp932.o
-  CC [M]  fs/jfs/jfs_uniupr.o
-  CC [M]  fs/ext4/acl.o
-  CC      fs/notify/inotify/inotify_user.o
-  CC [M]  fs/nfsd/nfsxdr.o
-  CC [M]  fs/ext4/xattr_security.o
-  CC [M]  fs/ntfs/sysctl.o
-  LD [M]  fs/jffs2/jffs2.o
-  CC [M]  fs/ntfs/unistr.o
-  LD      fs/ocfs2/built-in.o
-  CC [M]  fs/jfs/resize.o
-  CC [M]  fs/ocfs2/alloc.o
+  CC [M]  fs/nfs/read.o
+  CC [M]  fs/nfs/symlink.o
+  CC [M]  fs/jfs/jfs_logmgr.o
+  CC [M]  fs/nfs/unlink.o
+  CC      fs/notify/vfsmount_mark.o
   CC [M]  fs/nls/nls_euc-jp.o
-  CC [M]  fs/nilfs2/direct.o
+  CC [M]  fs/nfsd/nfsproc.o
+  CC [M]  fs/ntfs/attrib.o
+  CC [M]  fs/nfsd/nfsfh.o
+  CC [M]  fs/nfsd/vfs.o
+  CC      fs/notify/fdinfo.o
+  CC [M]  fs/nfs/write.o
+  CC      fs/notify/dnotify/dnotify.o
   CC [M]  fs/nls/nls_cp936.o
+  CC [M]  fs/jfs/jfs_txnmgr.o
+  LD [M]  fs/gfs2/gfs2.o
+  CC [M]  fs/nilfs2/namei.o
+  CC [M]  fs/nfs/namespace.o
+  CC [M]  fs/nfs/mount_clnt.o
+  CC      fs/notify/fanotify/fanotify.o
+  LD      fs/ocfs2/built-in.o
+  CC [M]  fs/ocfs2/alloc.o
+  CC      fs/notify/fanotify/fanotify_user.o
+  LD      fs/notify/dnotify/built-in.o
+  CC [M]  fs/nfsd/export.o
+  CC      fs/notify/inotify/inotify_fsnotify.o
+  CC [M]  fs/nfsd/auth.o
+  CC [M]  fs/nfsd/lockd.o
   CC [M]  fs/nls/nls_cp949.o
-  CC [M]  fs/nfsd/stats.o
-  CC [M]  fs/nfs/super.o
-  LD      fs/notify/inotify/built-in.o
-  LD [M]  fs/ext4/ext4.o
-  LD      fs/notify/built-in.o
-  CC [M]  fs/ntfs/upcase.o
+  CC [M]  fs/ntfs/collate.o
+  CC [M]  fs/ntfs/compress.o
+  CC [M]  fs/nilfs2/page.o
+  CC      fs/notify/inotify/inotify_user.o
+  CC [M]  fs/nfs/nfstrace.o
+  CC [M]  fs/nfsd/nfscache.o
+  CC [M]  fs/nfsd/nfsxdr.o
+  CC [M]  fs/nfs/sysctl.o
   CC [M]  fs/nls/nls_cp950.o
-  CC [M]  fs/nls/nls_cp1250.o
-  CC [M]  fs/nilfs2/dat.o
-  CC [M]  fs/nilfs2/recovery.o
+  CC [M]  fs/nilfs2/mdt.o
+  CC [M]  fs/ntfs/debug.o
+  LD      fs/notify/fanotify/built-in.o
+  CC [M]  fs/ntfs/dir.o
+  CC [M]  fs/nfsd/stats.o
+  LD      fs/notify/inotify/built-in.o
+  LD      fs/notify/built-in.o
+  CC [M]  fs/jfs/jfs_uniupr.o
   LD      fs/omfs/built-in.o
-  LD      fs/overlayfs/built-in.o
   CC [M]  fs/omfs/bitmap.o
-  CC [M]  fs/jfs/xattr.o
-  CC [M]  fs/nls/nls_cp1251.o
-  CC [M]  fs/overlayfs/super.o
-  CC [M]  fs/nilfs2/the_nilfs.o
-  CC [M]  fs/overlayfs/inode.o
-  CC [M]  fs/nls/nls_ascii.o
-  CC [M]  fs/nls/nls_iso8859-1.o
-  CC [M]  fs/nls/nls_iso8859-2.o
   CC [M]  fs/nfsd/nfs2acl.o
-  CC [M]  fs/overlayfs/dir.o
-  LD [M]  fs/ntfs/ntfs.o
-  CC [M]  fs/overlayfs/readdir.o
-  CC [M]  fs/nls/nls_iso8859-3.o
-  CC [M]  fs/nls/nls_iso8859-4.o
-  CC [M]  fs/nilfs2/segbuf.o
-  CC [M]  fs/nls/nls_iso8859-5.o
-  CC [M]  fs/nilfs2/segment.o
-  CC [M]  fs/overlayfs/copy_up.o
-  CC [M]  fs/omfs/dir.o
-  CC [M]  fs/omfs/file.o
-  CC [M]  fs/nls/nls_iso8859-6.o
-  CC [M]  fs/nls/nls_iso8859-7.o
-  CC [M]  fs/nls/nls_cp1255.o
-  CC [M]  fs/nilfs2/cpfile.o
+  CC [M]  fs/ntfs/file.o
+  CC [M]  fs/jfs/resize.o
+  CC [M]  fs/nls/nls_cp1250.o
+  CC [M]  fs/jfs/xattr.o
   CC [M]  fs/jfs/ioctl.o
   CC [M]  fs/nfsd/nfs3proc.o
-  CC [M]  fs/nilfs2/sufile.o
-  CC [M]  fs/omfs/inode.o
-  CC [M]  fs/nls/nls_iso8859-9.o
-  CC [M]  fs/nls/nls_iso8859-13.o
-  CC [M]  fs/nls/nls_iso8859-14.o
-  CC [M]  fs/nls/nls_iso8859-15.o
-  CC [M]  fs/nls/nls_koi8-r.o
-  CC [M]  fs/nilfs2/ifile.o
-  LD [M]  fs/overlayfs/overlay.o
+  CC [M]  fs/nfs/fscache.o
+  CC [M]  fs/nfs/fscache-index.o
+  CC [M]  fs/ntfs/index.o
+  CC [M]  fs/nfsd/nfs3xdr.o
+  CC [M]  fs/nls/nls_cp1251.o
+  CC [M]  fs/nfsd/nfs3acl.o
+  CC [M]  fs/nilfs2/btnode.o
+  CC [M]  fs/omfs/dir.o
   CC [M]  fs/jfs/acl.o
+  CC [M]  fs/omfs/file.o
+  CC [M]  fs/ntfs/inode.o
+  CC [M]  fs/nls/nls_ascii.o
+  CC [M]  fs/nilfs2/bmap.o
+  CC [M]  fs/ntfs/mft.o
+  CC [M]  fs/ntfs/mst.o
+  LD [M]  fs/jfs/jfs.o
+  CC [M]  fs/nls/nls_iso8859-1.o
+  CC [M]  fs/nfsd/nfs4proc.o
+  LD      fs/overlayfs/built-in.o
+  CC [M]  fs/overlayfs/super.o
+  CC [M]  fs/nfsd/nfs4xdr.o
+  CC [M]  fs/overlayfs/inode.o
+  CC [M]  fs/omfs/inode.o
+  CC [M]  fs/overlayfs/dir.o
+  CC [M]  fs/ntfs/namei.o
+  CC [M]  fs/nfs/nfs2super.o
+  CC [M]  fs/nls/nls_iso8859-2.o
+  CC [M]  fs/nfs/proc.o
+  CC [M]  fs/ntfs/runlist.o
+  CC [M]  fs/nfsd/nfs4state.o
+  CC [M]  fs/nilfs2/btree.o
+  CC [M]  fs/overlayfs/readdir.o
+  CC [M]  fs/ntfs/super.o
+  CC [M]  fs/nls/nls_iso8859-3.o
+  CC [M]  fs/nfs/nfs2xdr.o
+  CC [M]  fs/ntfs/sysctl.o
+  CC [M]  fs/overlayfs/copy_up.o
+  CC [M]  fs/nls/nls_iso8859-4.o
+  LD [M]  fs/omfs/omfs.o
+  CC [M]  fs/nls/nls_iso8859-5.o
+  CC [M]  fs/nls/nls_iso8859-6.o
+  CC [M]  fs/nls/nls_iso8859-7.o
+  CC [M]  fs/ntfs/unistr.o
+  CC [M]  fs/nls/nls_cp1255.o
+  CC [M]  fs/nls/nls_iso8859-9.o
+  CC [M]  fs/ocfs2/aops.o
+  CC [M]  fs/nls/nls_iso8859-13.o
+  CC [M]  fs/nfsd/nfs4idmap.o
+  CC [M]  fs/nls/nls_iso8859-14.o
+  CC [M]  fs/ntfs/upcase.o
+  CC [M]  fs/nls/nls_iso8859-15.o
+  LD [M]  fs/overlayfs/overlay.o
+  CC [M]  fs/nfs/nfs3super.o
+  CC      fs/pstore/inode.o
+  CC [M]  fs/nls/nls_koi8-r.o
+  LD      fs/qnx4/built-in.o
   CC [M]  fs/nls/nls_koi8-u.o
-  CC [M]  fs/nfs/io.o
+  CC [M]  fs/qnx4/inode.o
   CC [M]  fs/nls/nls_koi8-ru.o
   CC [M]  fs/nls/nls_utf8.o
-  CC [M]  fs/nfsd/nfs3xdr.o
-  CC [M]  fs/nls/mac-celtic.o
-  CC [M]  fs/nls/mac-centeuro.o
-  LD [M]  fs/omfs/omfs.o
-  LD [M]  fs/jfs/jfs.o
-  CC [M]  fs/nilfs2/alloc.o
-  CC [M]  fs/nls/mac-croatian.o
-  CC [M]  fs/nls/mac-cyrillic.o
-  CC      fs/pstore/inode.o
-  LD      fs/qnx4/built-in.o
-  CC      fs/pstore/platform.o
-  CC [M]  fs/qnx4/inode.o
-  CC [M]  fs/nilfs2/gcinode.o
-  CC [M]  fs/qnx4/dir.o
-  CC [M]  fs/pstore/ram.o
-  CC [M]  fs/nls/mac-gaelic.o
-  CC [M]  fs/nls/mac-greek.o
+  CC [M]  fs/nilfs2/direct.o
+  CC [M]  fs/nfs/nfs3client.o
   CC      fs/proc/task_mmu.o
-  CC [M]  fs/nilfs2/ioctl.o
-  CC [M]  fs/nfsd/nfs3acl.o
-  CC [M]  fs/nilfs2/sysfs.o
+  LD [M]  fs/ntfs/ntfs.o
+  LD      fs/qnx6/built-in.o
+  CC [M]  fs/nls/mac-celtic.o
+  CC [M]  fs/qnx6/inode.o
+  CC [M]  fs/nfsd/nfs4acl.o
+  CC [M]  fs/nls/mac-centeuro.o
+  CC [M]  fs/nls/mac-croatian.o
+  CC [M]  fs/nilfs2/dat.o
+  CC [M]  fs/qnx4/dir.o
+  CC [M]  fs/nls/mac-cyrillic.o
+  CC [M]  fs/nfs/nfs3proc.o
+  CC [M]  fs/nls/mac-gaelic.o
+  CC [M]  fs/nfsd/nfs4callback.o
+  CC [M]  fs/nls/mac-greek.o
+  CC      fs/pstore/platform.o
   CC [M]  fs/nls/mac-iceland.o
   CC [M]  fs/nls/mac-inuit.o
+  CC [M]  fs/nilfs2/recovery.o
   CC [M]  fs/nls/mac-romanian.o
-  CC [M]  fs/nfs/direct.o
   CC [M]  fs/qnx4/namei.o
+  CC [M]  fs/nls/mac-roman.o
+  CC [M]  fs/qnx6/dir.o
+  CC [M]  fs/nfsd/nfs4recover.o
+  CC [M]  fs/nls/mac-turkish.o
+  CC [M]  fs/nfsd/nfs4layouts.o
+  CC [M]  fs/ocfs2/blockcheck.o
+  CC [M]  fs/pstore/ram.o
+  CC [M]  fs/nfs/nfs3xdr.o
+  LD      fs/nls/built-in.o
+  CC [M]  fs/nfs/nfs3acl.o
   CC [M]  fs/pstore/ram_core.o
   CC [M]  fs/qnx4/bitmap.o
-  CC [M]  fs/nfs/pagelist.o
-  CC [M]  fs/nfs/read.o
   LD      fs/pstore/pstore.o
-  CC [M]  fs/nls/mac-roman.o
-  CC [M]  fs/nfsd/nfs4proc.o
   LD      fs/pstore/built-in.o
-  CC [M]  fs/nls/mac-turkish.o
-  CC [M]  fs/nfsd/nfs4xdr.o
-  CC [M]  fs/nfsd/nfs4state.o
-  LD      fs/nls/built-in.o
-  CC [M]  fs/nfsd/nfs4idmap.o
-  CC      fs/proc/inode.o
-  CC [M]  fs/ocfs2/aops.o
-  CC      fs/proc/root.o
-  CC      fs/proc/base.o
-  CC      fs/proc/generic.o
-  LD [M]  fs/qnx4/qnx4.o
-  CC      fs/proc/array.o
-  LD [M]  fs/pstore/ramoops.o
-  LD [M]  fs/nilfs2/nilfs2.o
-  LD      fs/qnx6/built-in.o
-  CC [M]  fs/qnx6/inode.o
   CC      fs/quota/dquot.o
-  CC [M]  fs/qnx6/dir.o
+  CC      fs/proc/inode.o
+  CC      fs/ramfs/inode.o
+  CC [M]  fs/nilfs2/the_nilfs.o
   CC [M]  fs/qnx6/namei.o
-  CC      fs/proc/fd.o
+  CC      fs/proc/root.o
+  CC [M]  fs/nfsd/blocklayout.o
+  CC [M]  fs/ocfs2/buffer_head_io.o
+  LD [M]  fs/qnx4/qnx4.o
+  CC [M]  fs/nfsd/blocklayoutxdr.o
+  CC      fs/proc/base.o
+  LD [M]  fs/pstore/ramoops.o
+  LD      fs/reiserfs/built-in.o
+  LD      fs/romfs/built-in.o
+  CC [M]  fs/reiserfs/bitmap.o
+  CC [M]  fs/romfs/storage.o
   CC [M]  fs/qnx6/super_mmi.o
+  CC      fs/proc/generic.o
+  CC      fs/ramfs/file-mmu.o
+  CC [M]  fs/nfs/nfs4proc.o
+  CC      fs/proc/array.o
+  CC      fs/proc/fd.o
   CC      fs/proc/proc_tty.o
+  CC [M]  fs/nfs/nfs4xdr.o
+  LD [M]  fs/nfsd/nfsd.o
+  CC [M]  fs/nilfs2/segbuf.o
+  LD      fs/squashfs/built-in.o
+  CC [M]  fs/squashfs/block.o
+  LD [M]  fs/qnx6/qnx6.o
+  CC [M]  fs/romfs/super.o
+  CC      fs/sysfs/file.o
+  LD      fs/ramfs/ramfs.o
+  LD      fs/ramfs/built-in.o
+  CC [M]  fs/reiserfs/do_balan.o
+  CC      fs/sysfs/dir.o
   CC      fs/proc/cmdline.o
   CC      fs/proc/consoles.o
   CC      fs/proc/cpuinfo.o
-  CC [M]  fs/nfs/symlink.o
-  LD [M]  fs/qnx6/qnx6.o
-  CC [M]  fs/nfsd/nfs4acl.o
-  CC [M]  fs/nfs/unlink.o
-  CC [M]  fs/nfsd/nfs4callback.o
   CC      fs/proc/devices.o
+  CC [M]  fs/ocfs2/dcache.o
+  CC [M]  fs/squashfs/cache.o
+  CC [M]  fs/nilfs2/segment.o
   CC      fs/proc/interrupts.o
   CC      fs/proc/loadavg.o
-  CC      fs/proc/meminfo.o
-  CC      fs/proc/stat.o
-  CC [M]  fs/nfs/write.o
-  CC      fs/proc/uptime.o
-  CC      fs/proc/version.o
-  CC [M]  fs/nfsd/nfs4recover.o
-  CC      fs/proc/softirqs.o
-  CC      fs/proc/namespaces.o
-  CC [M]  fs/nfs/namespace.o
-  CC      fs/proc/self.o
-  CC      fs/proc/thread_self.o
-  CC      fs/proc/proc_sysctl.o
-  CC [M]  fs/ocfs2/blockcheck.o
-  CC [M]  fs/ocfs2/buffer_head_io.o
-  CC [M]  fs/nfs/mount_clnt.o
-  CC [M]  fs/nfsd/nfs4layouts.o
-  CC [M]  fs/nfsd/blocklayout.o
-  CC      fs/proc/proc_net.o
-  CC      fs/quota/quota.o
-  CC      fs/proc/kcore.o
-  CC [M]  fs/ocfs2/dcache.o
-  CC      fs/proc/vmcore.o
-  CC      fs/proc/kmsg.o
-  CC [M]  fs/nfsd/blocklayoutxdr.o
-  CC [M]  fs/nfs/nfstrace.o
-  CC      fs/proc/page.o
-  CC [M]  fs/nfs/sysctl.o
-  CC [M]  fs/nfs/fscache.o
-  CC [M]  fs/nfs/fscache-index.o
-  CC [M]  fs/ocfs2/dir.o
-  CC [M]  fs/ocfs2/dlmglue.o
-  CC [M]  fs/ocfs2/export.o
-  CC [M]  fs/ocfs2/extent_map.o
-  CC [M]  fs/ocfs2/file.o
-  LD [M]  fs/nfsd/nfsd.o
-  CC [M]  fs/nfs/nfs2super.o
-  CC [M]  fs/nfs/proc.o
-  CC      fs/ramfs/inode.o
-  CC      fs/quota/kqid.o
-  LD      fs/proc/proc.o
-  LD      fs/proc/built-in.o
-  CC      fs/ramfs/file-mmu.o
-  LD      fs/reiserfs/built-in.o
-  CC [M]  fs/reiserfs/bitmap.o
-  CC [M]  fs/nfs/nfs2xdr.o
-  CC      fs/quota/compat.o
-  CC [M]  fs/nfs/nfs3super.o
-  CC      fs/quota/netlink.o
-  LD      fs/ramfs/ramfs.o
-  LD      fs/ramfs/built-in.o
-  CC [M]  fs/nfs/nfs3client.o
-  CC [M]  fs/ocfs2/heartbeat.o
-  LD      fs/romfs/built-in.o
-  CC [M]  fs/romfs/storage.o
-  CC [M]  fs/nfs/nfs3proc.o
-  CC [M]  fs/nfs/nfs3xdr.o
-  CC [M]  fs/quota/quota_v1.o
-  CC [M]  fs/nfs/nfs3acl.o
-  CC [M]  fs/reiserfs/do_balan.o
-  CC [M]  fs/romfs/super.o
-  CC [M]  fs/nfs/nfs4proc.o
-  CC [M]  fs/ocfs2/inode.o
-  CC [M]  fs/nfs/nfs4xdr.o
-  CC [M]  fs/quota/quota_v2.o
-  CC [M]  fs/nfs/nfs4state.o
-  CC [M]  fs/ocfs2/ioctl.o
-  CC [M]  fs/nfs/nfs4renewd.o
-  CC [M]  fs/ocfs2/journal.o
-  CC [M]  fs/ocfs2/localalloc.o
-  CC [M]  fs/nfs/nfs4super.o
-  CC [M]  fs/nfs/nfs4file.o
-  CC [M]  fs/reiserfs/namei.o
-  CC [M]  fs/nfs/delegation.o
-  CC [M]  fs/ocfs2/locks.o
-  LD [M]  fs/romfs/romfs.o
-  CC [M]  fs/quota/quota_tree.o
-  LD      fs/squashfs/built-in.o
-  CC [M]  fs/squashfs/block.o
-  CC [M]  fs/ocfs2/mmap.o
-  CC [M]  fs/ocfs2/namei.o
-  CC [M]  fs/nfs/nfs4idmap.o
-  CC [M]  fs/squashfs/cache.o
-  CC [M]  fs/ocfs2/refcounttree.o
-  CC [M]  fs/nfs/callback.o
-  CC [M]  fs/nfs/callback_xdr.o
-  CC [M]  fs/reiserfs/inode.o
-  CC [M]  fs/ocfs2/reservations.o
-  LD      fs/quota/built-in.o
-  CC      fs/sysfs/file.o
-  CC [M]  fs/squashfs/dir.o
-  CC      fs/sysfs/dir.o
-  CC [M]  fs/nfs/callback_proc.o
-  CC [M]  fs/squashfs/export.o
-  CC [M]  fs/squashfs/file.o
-  CC [M]  fs/nfs/nfs4namespace.o
-  CC [M]  fs/nfs/nfs4getroot.o
   CC      fs/sysfs/symlink.o
-  CC [M]  fs/nfs/nfs4client.o
-  CC [M]  fs/ocfs2/move_extents.o
-  CC [M]  fs/ocfs2/resize.o
+  CC      fs/proc/meminfo.o
   CC      fs/sysfs/mount.o
-  CC [M]  fs/ocfs2/slot_map.o
-  CC [M]  fs/nfs/nfs4session.o
-  CC [M]  fs/squashfs/fragment.o
-  CC [M]  fs/nfs/dns_resolve.o
-  CC [M]  fs/nfs/nfs4trace.o
-  CC      fs/sysfs/group.o
-  CC [M]  fs/squashfs/id.o
-  CC [M]  fs/reiserfs/file.o
-  CC [M]  fs/nfs/nfs4sysctl.o
-  CC [M]  fs/nfs/pnfs.o
-  CC [M]  fs/nfs/pnfs_dev.o
-  CC [M]  fs/squashfs/inode.o
-  CC [M]  fs/reiserfs/dir.o
-  CC [M]  fs/nfs/pnfs_nfs.o
-  LD      fs/sysfs/built-in.o
-  CC [M]  fs/ocfs2/suballoc.o
+  CC      fs/proc/stat.o
+  LD [M]  fs/romfs/romfs.o
+  CC      fs/proc/uptime.o
   LD      fs/sysv/built-in.o
   CC [M]  fs/sysv/ialloc.o
-  CC      fs/tracefs/inode.o
-  CC [M]  fs/squashfs/namei.o
-  CC [M]  fs/nfs/nfs42proc.o
-  CC [M]  fs/ocfs2/super.o
-  LD      fs/nfs/blocklayout/built-in.o
-  CC [M]  fs/reiserfs/fix_node.o
-  CC [M]  fs/nfs/blocklayout/blocklayout.o
-  CC [M]  fs/ocfs2/symlink.o
-  LD      fs/nfs/filelayout/built-in.o
-  CC [M]  fs/nfs/filelayout/filelayout.o
+  CC      fs/quota/quota.o
+  CC      fs/proc/version.o
+  CC      fs/proc/softirqs.o
+  CC [M]  fs/reiserfs/namei.o
+  CC      fs/proc/namespaces.o
+  CC      fs/sysfs/group.o
+  CC [M]  fs/squashfs/dir.o
+  CC      fs/proc/self.o
+  CC      fs/proc/thread_self.o
   CC [M]  fs/sysv/balloc.o
-  CC [M]  fs/ocfs2/sysfile.o
-  CC [M]  fs/squashfs/super.o
+  CC      fs/proc/proc_sysctl.o
+  CC [M]  fs/ocfs2/dir.o
+  CC      fs/proc/proc_net.o
+  CC [M]  fs/ocfs2/dlmglue.o
+  CC      fs/quota/kqid.o
+  LD      fs/sysfs/built-in.o
+  CC [M]  fs/squashfs/export.o
+  CC      fs/tracefs/inode.o
+  CC      fs/proc/kcore.o
+  CC      fs/proc/vmcore.o
+  CC      fs/proc/kmsg.o
+  CC [M]  fs/sysv/inode.o
+  CC [M]  fs/nilfs2/cpfile.o
+  CC [M]  fs/reiserfs/inode.o
+  CC      fs/quota/compat.o
+  CC [M]  fs/squashfs/file.o
+  CC [M]  fs/nfs/nfs4state.o
+  CC [M]  fs/squashfs/fragment.o
+  CC      fs/proc/page.o
+  CC [M]  fs/squashfs/id.o
   LD      fs/tracefs/tracefs.o
   LD      fs/tracefs/built-in.o
+  CC [M]  fs/squashfs/inode.o
   LD      fs/ubifs/built-in.o
   CC [M]  fs/ubifs/shrinker.o
-  LD      fs/nfs/flexfilelayout/built-in.o
-  CC [M]  fs/nfs/flexfilelayout/flexfilelayout.o
-  CC [M]  fs/nfs/flexfilelayout/flexfilelayoutdev.o
-  CC [M]  fs/sysv/inode.o
-  CC [M]  fs/squashfs/symlink.o
-  CC [M]  fs/ocfs2/uptodate.o
-  LD      fs/nfs/objlayout/built-in.o
-  CC [M]  fs/nfs/objlayout/objio_osd.o
-  LD [M]  fs/nfs/nfs.o
-  LD [M]  fs/nfs/nfsv2.o
-  CC [M]  fs/nfs/filelayout/filelayoutdev.o
-  LD [M]  fs/nfs/nfsv3.o
   CC [M]  fs/ubifs/journal.o
-  CC [M]  fs/squashfs/decompressor.o
-  CC [M]  fs/squashfs/file_cache.o
+  CC      fs/quota/netlink.o
+  CC [M]  fs/squashfs/namei.o
   CC [M]  fs/sysv/itree.o
-  CC [M]  fs/reiserfs/super.o
-  CC [M]  fs/sysv/file.o
-  CC [M]  fs/nfs/blocklayout/dev.o
-  CC [M]  fs/nfs/blocklayout/extent_tree.o
-  CC [M]  fs/sysv/dir.o
-  CC [M]  fs/nfs/blocklayout/rpc_pipefs.o
-  LD [M]  fs/nfs/nfsv4.o
-  CC [M]  fs/ocfs2/quota_local.o
-  CC [M]  fs/squashfs/decompressor_single.o
-  CC [M]  fs/nfs/objlayout/pnfs_osd_xdr_cli.o
-  CC [M]  fs/squashfs/xattr.o
-  CC [M]  fs/sysv/namei.o
-  CC [M]  fs/sysv/super.o
+  CC [M]  fs/squashfs/super.o
   CC [M]  fs/ubifs/file.o
-  LD [M]  fs/nfs/flexfilelayout/nfs_layout_flexfiles.o
+  LD      fs/proc/proc.o
   CC [M]  fs/ubifs/dir.o
-  CC [M]  fs/ubifs/super.o
-  CC [M]  fs/squashfs/xattr_id.o
-  LD [M]  fs/nfs/filelayout/nfs_layout_nfsv41_files.o
-  CC [M]  fs/squashfs/lzo_wrapper.o
-  CC [M]  fs/reiserfs/prints.o
-  CC [M]  fs/reiserfs/objectid.o
-  CC [M]  fs/reiserfs/lbalance.o
-  CC [M]  fs/squashfs/xz_wrapper.o
-  CC [M]  fs/squashfs/zlib_wrapper.o
-  CC [M]  fs/nfs/objlayout/objlayout.o
-  LD [M]  fs/nfs/blocklayout/blocklayoutdriver.o
-  CC [M]  fs/ocfs2/quota_global.o
-  CC [M]  fs/reiserfs/ibalance.o
-  CC [M]  fs/ocfs2/xattr.o
-  LD [M]  fs/sysv/sysv.o
+  CC [M]  fs/nilfs2/sufile.o
+  CC [M]  fs/ocfs2/export.o
+  LD      fs/proc/built-in.o
+  CC [M]  fs/squashfs/symlink.o
+  CC [M]  fs/squashfs/decompressor.o
   LD      fs/udf/built-in.o
   CC [M]  fs/udf/balloc.o
-  LD      fs/ufs/built-in.o
-  CC [M]  fs/ubifs/sb.o
-  CC [M]  fs/ufs/balloc.o
-  CC [M]  fs/ubifs/io.o
-  LD [M]  fs/squashfs/squashfs.o
-  CC [M]  fs/ufs/cylinder.o
-  CC [M]  fs/ubifs/tnc.o
-  CC [M]  fs/ubifs/master.o
-  CC [M]  fs/ocfs2/acl.o
-  CC [M]  fs/ocfs2/filecheck.o
-  CC [M]  fs/ocfs2/stackglue.o
-  CC [M]  fs/ubifs/scan.o
-  CC [M]  fs/ufs/dir.o
-  CC [M]  fs/reiserfs/stree.o
-  LD [M]  fs/nfs/objlayout/objlayoutdriver.o
+  CC [M]  fs/squashfs/file_cache.o
+  CC [M]  fs/sysv/file.o
+  CC [M]  fs/squashfs/decompressor_single.o
+  CC [M]  fs/quota/quota_v1.o
+  CC [M]  fs/squashfs/xattr.o
+  CC [M]  fs/reiserfs/file.o
+  CC [M]  fs/sysv/dir.o
+  CC [M]  fs/squashfs/xattr_id.o
+  CC [M]  fs/quota/quota_v2.o
   CC [M]  fs/udf/dir.o
-  CC [M]  fs/ubifs/replay.o
+  CC [M]  fs/ocfs2/extent_map.o
+  CC [M]  fs/squashfs/lzo_wrapper.o
+  CC [M]  fs/squashfs/xz_wrapper.o
+  CC [M]  fs/nilfs2/ifile.o
+  CC [M]  fs/squashfs/zlib_wrapper.o
+  CC [M]  fs/nilfs2/alloc.o
+  CC [M]  fs/nfs/nfs4renewd.o
+  CC [M]  fs/ubifs/super.o
+  CC [M]  fs/nfs/nfs4super.o
+  CC [M]  fs/quota/quota_tree.o
+  CC [M]  fs/ubifs/sb.o
+  CC [M]  fs/ocfs2/file.o
+  CC [M]  fs/nfs/nfs4file.o
+  CC [M]  fs/nilfs2/gcinode.o
+  CC [M]  fs/nilfs2/ioctl.o
+  CC [M]  fs/reiserfs/dir.o
+  LD [M]  fs/squashfs/squashfs.o
+  CC [M]  fs/sysv/namei.o
+  LD      fs/ufs/built-in.o
+  CC [M]  fs/udf/file.o
+  CC [M]  fs/ufs/balloc.o
+  CC [M]  fs/ufs/cylinder.o
+  CC [M]  fs/nfs/delegation.o
+  CC [M]  fs/nfs/nfs4idmap.o
+  CC [M]  fs/ubifs/io.o
+  CC [M]  fs/udf/ialloc.o
+  CC [M]  fs/reiserfs/fix_node.o
+  LD      fs/quota/built-in.o
+  CC [M]  fs/nilfs2/sysfs.o
   LD      fs/xfs/built-in.o
   CC [M]  fs/xfs/xfs_trace.o
-  CC [M]  fs/ocfs2/stack_o2cb.o
-  CC [M]  fs/ufs/file.o
-  CC [M]  fs/ocfs2/stack_user.o
-  CC [M]  fs/ufs/ialloc.o
-  CC [M]  fs/ubifs/log.o
-  LD      fs/ocfs2/cluster/built-in.o
-  CC [M]  fs/ubifs/commit.o
-  CC [M]  fs/ocfs2/cluster/heartbeat.o
-  LD      fs/ocfs2/dlm/built-in.o
-  CC [M]  fs/ocfs2/dlm/dlmdomain.o
-  CC [M]  fs/ufs/inode.o
-  CC [M]  fs/ubifs/gc.o
-  CC [M]  fs/udf/file.o
-  LD      fs/ocfs2/dlmfs/built-in.o
-  CC [M]  fs/ocfs2/dlmfs/userdlm.o
-  CC [M]  fs/reiserfs/hashes.o
-  CC [M]  fs/ocfs2/dlmfs/dlmfs.o
-  CC [M]  fs/ufs/namei.o
-  CC [M]  fs/ubifs/orphan.o
-  LD [M]  fs/ocfs2/ocfs2_stackglue.o
-  CC [M]  fs/ubifs/budget.o
-  CC [M]  fs/ubifs/find.o
-  CC [M]  fs/udf/ialloc.o
-  CC [M]  fs/reiserfs/tail_conversion.o
-  CC [M]  fs/ubifs/tnc_commit.o
-  LD [M]  fs/ocfs2/ocfs2_stack_o2cb.o
-  CC [M]  fs/ufs/super.o
-  LD [M]  fs/ocfs2/ocfs2_stack_user.o
-  CC [M]  fs/ufs/util.o
-  CC [M]  fs/ubifs/compress.o
-  CC [M]  fs/ubifs/lpt.o
-  LD [M]  fs/ocfs2/dlmfs/ocfs2_dlmfs.o
-  CC [M]  fs/udf/inode.o
-  CC [M]  fs/udf/lowlevel.o
-  CC [M]  fs/ubifs/lprops.o
-  CC [M]  fs/ubifs/recovery.o
-  CC [M]  fs/ubifs/ioctl.o
-  CC [M]  fs/ocfs2/cluster/masklog.o
-  CC [M]  fs/reiserfs/journal.o
-  CC [M]  fs/ocfs2/cluster/sys.o
-  CC [M]  fs/udf/namei.o
-  CC [M]  fs/udf/partition.o
-  CC [M]  fs/ubifs/lpt_commit.o
-  CC [M]  fs/ubifs/tnc_misc.o
-  CC [M]  fs/ocfs2/cluster/nodemanager.o
-  LD [M]  fs/ufs/ufs.o
-  CC [M]  fs/ubifs/xattr.o
-  CC [M]  fs/ubifs/debug.o
-  CC      fs/eventpoll.o
-  CC [M]  fs/ocfs2/dlm/dlmdebug.o
-  CC [M]  fs/ocfs2/cluster/quorum.o
-  CC [M]  fs/ubifs/misc.o
-  CC [M]  fs/udf/super.o
-  CC [M]  fs/udf/truncate.o
-  CC [M]  fs/ocfs2/cluster/tcp.o
-  CC [M]  fs/udf/symlink.o
-  CC [M]  fs/udf/directory.o
-  CC [M]  fs/udf/misc.o
-  CC [M]  fs/udf/udftime.o
-  CC [M]  fs/udf/unicode.o
-  CC [M]  fs/ocfs2/cluster/netdebug.o
-  LD [M]  fs/ocfs2/ocfs2.o
-  CC [M]  fs/ocfs2/dlm/dlmthread.o
-  CC [M]  fs/ocfs2/dlm/dlmrecovery.o
-  CC [M]  fs/ocfs2/dlm/dlmmaster.o
-  CC [M]  fs/ocfs2/dlm/dlmast.o
-  CC      fs/anon_inodes.o
-  CC [M]  fs/reiserfs/resize.o
-  CC      fs/signalfd.o
-  CC [M]  fs/reiserfs/item_ops.o
-  CC [M]  fs/ocfs2/dlm/dlmconvert.o
-  CC [M]  fs/reiserfs/ioctl.o
-  LD [M]  fs/udf/udf.o
-  CC      fs/timerfd.o
-  LD [M]  fs/ubifs/ubifs.o
-  CC [M]  fs/ocfs2/dlm/dlmlock.o
-  CC [M]  fs/ocfs2/dlm/dlmunlock.o
-  CC [M]  fs/reiserfs/xattr.o
-  CC [M]  fs/reiserfs/lock.o
-  CC [M]  fs/reiserfs/xattr_user.o
+  CC [M]  fs/sysv/super.o
+  CC [M]  fs/ufs/dir.o
   CC [M]  fs/xfs/libxfs/xfs_alloc.o
-  CC      fs/eventfd.o
-  CC [M]  fs/reiserfs/xattr_trusted.o
-  CC      fs/userfaultfd.o
-  CC [M]  fs/reiserfs/xattr_security.o
   CC [M]  fs/xfs/libxfs/xfs_alloc_btree.o
-  CC [M]  fs/reiserfs/xattr_acl.o
   CC [M]  fs/xfs/libxfs/xfs_attr.o
-  CC      fs/aio.o
-  CC      fs/dax.o
-  CC      fs/locks.o
-  LD [M]  fs/ocfs2/cluster/ocfs2_nodemanager.o
-  CC      fs/compat.o
-  CC      fs/compat_ioctl.o
+  CC [M]  fs/udf/inode.o
   CC [M]  fs/xfs/libxfs/xfs_attr_leaf.o
-  LD [M]  fs/reiserfs/reiserfs.o
-  CC      fs/binfmt_script.o
-  CC      fs/binfmt_elf.o
-  CC      fs/compat_binfmt_elf.o
   CC [M]  fs/xfs/libxfs/xfs_attr_remote.o
-  CC      fs/posix_acl.o
-  CC      fs/coredump.o
-  LD [M]  fs/ocfs2/dlm/ocfs2_dlm.o
-  CC      fs/drop_caches.o
-  CC      fs/fhandle.o
-  CC      fs/iomap.o
-  CC      fs/dcookies.o
-  CC [M]  fs/binfmt_misc.o
-  CC [M]  fs/mbcache.o
+  CC [M]  fs/ubifs/tnc.o
+  CC [M]  fs/ocfs2/heartbeat.o
+  LD [M]  fs/sysv/sysv.o
   CC [M]  fs/xfs/libxfs/xfs_bit.o
+  LD [M]  fs/nilfs2/nilfs2.o
+  CC      fs/eventpoll.o
+  CC [M]  fs/ufs/file.o
+  CC [M]  fs/nfs/callback.o
+  CC [M]  fs/udf/lowlevel.o
+  CC [M]  fs/nfs/callback_xdr.o
+  CC [M]  fs/reiserfs/super.o
+  CC [M]  fs/ocfs2/inode.o
+  CC [M]  fs/ufs/ialloc.o
+  CC [M]  fs/reiserfs/prints.o
+  CC [M]  fs/nfs/callback_proc.o
+  CC [M]  fs/udf/namei.o
+  CC [M]  fs/ufs/inode.o
   CC [M]  fs/xfs/libxfs/xfs_bmap.o
   CC [M]  fs/xfs/libxfs/xfs_bmap_btree.o
   CC [M]  fs/xfs/libxfs/xfs_btree.o
+  CC      fs/anon_inodes.o
+  CC [M]  fs/ubifs/master.o
+  CC [M]  fs/nfs/nfs4namespace.o
   CC [M]  fs/xfs/libxfs/xfs_da_btree.o
+  CC [M]  fs/reiserfs/objectid.o
+  CC [M]  fs/reiserfs/lbalance.o
+  CC [M]  fs/udf/partition.o
+  CC [M]  fs/reiserfs/ibalance.o
+  CC      fs/signalfd.o
+  CC [M]  fs/nfs/nfs4getroot.o
+  CC [M]  fs/ubifs/scan.o
+  CC [M]  fs/udf/super.o
+  CC [M]  fs/nfs/nfs4client.o
   CC [M]  fs/xfs/libxfs/xfs_da_format.o
+  CC [M]  fs/ubifs/replay.o
+  CC [M]  fs/ocfs2/ioctl.o
+  CC [M]  fs/nfs/nfs4session.o
+  CC [M]  fs/ufs/namei.o
+  CC      fs/timerfd.o
+  CC [M]  fs/reiserfs/stree.o
+  CC [M]  fs/reiserfs/hashes.o
   CC [M]  fs/xfs/libxfs/xfs_defer.o
+  CC [M]  fs/ubifs/log.o
+  CC      fs/eventfd.o
+  CC [M]  fs/ufs/super.o
   CC [M]  fs/xfs/libxfs/xfs_dir2.o
+  CC [M]  fs/udf/truncate.o
+  CC [M]  fs/ocfs2/journal.o
+  CC [M]  fs/reiserfs/tail_conversion.o
+  CC [M]  fs/ubifs/commit.o
+  CC      fs/userfaultfd.o
   CC [M]  fs/xfs/libxfs/xfs_dir2_block.o
+  CC [M]  fs/reiserfs/journal.o
+  CC [M]  fs/reiserfs/resize.o
+  CC      fs/aio.o
+  CC [M]  fs/udf/symlink.o
+  CC [M]  fs/udf/directory.o
+  CC [M]  fs/nfs/dns_resolve.o
+  CC [M]  fs/ubifs/gc.o
+  CC [M]  fs/udf/misc.o
+  CC [M]  fs/ufs/util.o
+  CC [M]  fs/udf/udftime.o
+  CC [M]  fs/udf/unicode.o
+  CC      fs/dax.o
+  CC      fs/locks.o
+  CC [M]  fs/nfs/nfs4trace.o
+  CC      fs/compat.o
   CC [M]  fs/xfs/libxfs/xfs_dir2_data.o
+  CC [M]  fs/nfs/nfs4sysctl.o
   CC [M]  fs/xfs/libxfs/xfs_dir2_leaf.o
+  CC [M]  fs/reiserfs/item_ops.o
+  LD [M]  fs/ufs/ufs.o
+  CC [M]  fs/ubifs/orphan.o
+  CC [M]  fs/reiserfs/ioctl.o
+  LD [M]  fs/udf/udf.o
+  CC      fs/compat_ioctl.o
   CC [M]  fs/xfs/libxfs/xfs_dir2_node.o
+  CC [M]  fs/ocfs2/localalloc.o
   CC [M]  fs/xfs/libxfs/xfs_dir2_sf.o
+  CC      fs/binfmt_script.o
+  CC [M]  fs/nfs/pnfs.o
   CC [M]  fs/xfs/libxfs/xfs_dquot_buf.o
+  CC      fs/binfmt_elf.o
+  CC [M]  fs/reiserfs/xattr.o
   CC [M]  fs/xfs/libxfs/xfs_ialloc.o
+  CC      fs/compat_binfmt_elf.o
+  CC [M]  fs/ubifs/budget.o
+  CC [M]  fs/ubifs/find.o
+  CC      fs/posix_acl.o
+  CC [M]  fs/ubifs/tnc_commit.o
   CC [M]  fs/xfs/libxfs/xfs_ialloc_btree.o
+  CC [M]  fs/reiserfs/lock.o
+  CC [M]  fs/ubifs/compress.o
   CC [M]  fs/xfs/libxfs/xfs_inode_fork.o
+  CC [M]  fs/nfs/pnfs_dev.o
+  CC [M]  fs/ubifs/lpt.o
+  CC      fs/coredump.o
+  CC      fs/drop_caches.o
+  CC [M]  fs/reiserfs/xattr_user.o
+  CC [M]  fs/ocfs2/locks.o
+  CC      fs/fhandle.o
+  CC      fs/iomap.o
+  CC      fs/dcookies.o
+  CC [M]  fs/ubifs/lprops.o
   CC [M]  fs/xfs/libxfs/xfs_inode_buf.o
+  CC [M]  fs/binfmt_misc.o
+  CC [M]  fs/reiserfs/xattr_trusted.o
+  CC [M]  fs/ocfs2/mmap.o
   CC [M]  fs/xfs/libxfs/xfs_log_rlimit.o
+  CC [M]  fs/reiserfs/xattr_security.o
+  CC [M]  fs/mbcache.o
+  CC [M]  fs/reiserfs/xattr_acl.o
   CC [M]  fs/xfs/libxfs/xfs_ag_resv.o
   CC [M]  fs/xfs/libxfs/xfs_rmap.o
+  CC [M]  fs/nfs/pnfs_nfs.o
+  CC [M]  fs/nfs/nfs42proc.o
+  LD      fs/nfs/blocklayout/built-in.o
+  CC [M]  fs/nfs/blocklayout/blocklayout.o
+  CC [M]  fs/nfs/blocklayout/dev.o
   CC [M]  fs/xfs/libxfs/xfs_rmap_btree.o
   CC [M]  fs/xfs/libxfs/xfs_refcount.o
   CC [M]  fs/xfs/libxfs/xfs_refcount_btree.o
+  CC [M]  fs/nfs/blocklayout/extent_tree.o
+  CC [M]  fs/ubifs/recovery.o
+  CC [M]  fs/ocfs2/namei.o
+  CC [M]  fs/ubifs/ioctl.o
+  LD [M]  fs/reiserfs/reiserfs.o
+  CC [M]  fs/ubifs/lpt_commit.o
   CC [M]  fs/xfs/libxfs/xfs_sb.o
+  LD      fs/nfs/filelayout/built-in.o
+  CC [M]  fs/nfs/filelayout/filelayout.o
+  CC [M]  fs/nfs/filelayout/filelayoutdev.o
   CC [M]  fs/xfs/libxfs/xfs_symlink_remote.o
+  CC [M]  fs/nfs/blocklayout/rpc_pipefs.o
+  LD      fs/nfs/flexfilelayout/built-in.o
+  CC [M]  fs/nfs/flexfilelayout/flexfilelayout.o
+  CC [M]  fs/ubifs/tnc_misc.o
+  CC [M]  fs/nfs/flexfilelayout/flexfilelayoutdev.o
+  CC [M]  fs/ocfs2/refcounttree.o
+  CC [M]  fs/ubifs/xattr.o
   CC [M]  fs/xfs/libxfs/xfs_trans_resv.o
   CC [M]  fs/xfs/libxfs/xfs_rtbitmap.o
+  LD [M]  fs/nfs/filelayout/nfs_layout_nfsv41_files.o
   CC [M]  fs/xfs/xfs_aops.o
+  LD      fs/nfs/objlayout/built-in.o
+  CC [M]  fs/nfs/objlayout/objio_osd.o
+  CC [M]  fs/nfs/objlayout/pnfs_osd_xdr_cli.o
+  CC [M]  fs/ubifs/debug.o
+  LD [M]  fs/nfs/blocklayout/blocklayoutdriver.o
   CC [M]  fs/xfs/xfs_attr_inactive.o
+  LD [M]  fs/nfs/nfs.o
+  LD [M]  fs/nfs/nfsv2.o
   CC [M]  fs/xfs/xfs_attr_list.o
   CC [M]  fs/xfs/xfs_bmap_util.o
+  LD [M]  fs/nfs/nfsv3.o
+  LD [M]  fs/nfs/nfsv4.o
   CC [M]  fs/xfs/xfs_buf.o
   CC [M]  fs/xfs/xfs_dir2_readdir.o
   CC [M]  fs/xfs/xfs_discard.o
+  LD [M]  fs/nfs/flexfilelayout/nfs_layout_flexfiles.o
   CC [M]  fs/xfs/xfs_error.o
+  CC [M]  fs/ocfs2/reservations.o
   CC [M]  fs/xfs/xfs_export.o
+  CC [M]  fs/nfs/objlayout/objlayout.o
   CC [M]  fs/xfs/xfs_extent_busy.o
   CC [M]  fs/xfs/xfs_file.o
+  CC [M]  fs/ocfs2/move_extents.o
   CC [M]  fs/xfs/xfs_filestream.o
   CC [M]  fs/xfs/xfs_fsops.o
+  CC [M]  fs/ubifs/misc.o
   CC [M]  fs/xfs/xfs_globals.o
   CC [M]  fs/xfs/xfs_icache.o
+  CC [M]  fs/ocfs2/resize.o
+  LD [M]  fs/ubifs/ubifs.o
   CC [M]  fs/xfs/xfs_ioctl.o
+  LD [M]  fs/nfs/objlayout/objlayoutdriver.o
+  CC [M]  fs/ocfs2/slot_map.o
+  CC [M]  fs/ocfs2/suballoc.o
   CC [M]  fs/xfs/xfs_iomap.o
+  CC [M]  fs/ocfs2/super.o
   CC [M]  fs/xfs/xfs_iops.o
-In file included from fs/xfs/xfs_inode.h:22,
-                 from fs/xfs/xfs_bmap_util.c:29:
-fs/xfs/xfs_bmap_util.c: In function ‘xfs_swap_extents_check_format’:
-fs/xfs/libxfs/xfs_inode_fork.h:90:30: warning: ‘<<’ in boolean context, did you mean ‘<’ ? [-Wint-in-bool-context]
- #define XFS_IFORK_BOFF(ip)  ((int)((ip)->i_d.di_forkoff << 3))
-                             ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-fs/xfs/xfs_bmap_util.c:1629:7: note: in expansion of macro ‘XFS_IFORK_BOFF’
-   if (XFS_IFORK_BOFF(ip) &&
-       ^~~~~~~~~~~~~~
-fs/xfs/libxfs/xfs_inode_fork.h:90:30: warning: ‘<<’ in boolean context, did you mean ‘<’ ? [-Wint-in-bool-context]
- #define XFS_IFORK_BOFF(ip)  ((int)((ip)->i_d.di_forkoff << 3))
-                             ~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-fs/xfs/xfs_bmap_util.c:1639:7: note: in expansion of macro ‘XFS_IFORK_BOFF’
-   if (XFS_IFORK_BOFF(tip) &&
-       ^~~~~~~~~~~~~~
   CC [M]  fs/xfs/xfs_inode.o
+  CC [M]  fs/ocfs2/symlink.o
   CC [M]  fs/xfs/xfs_itable.o
+  CC [M]  fs/ocfs2/sysfile.o
   CC [M]  fs/xfs/xfs_message.o
+  CC [M]  fs/ocfs2/uptodate.o
   CC [M]  fs/xfs/xfs_mount.o
+  CC [M]  fs/ocfs2/quota_local.o
+  CC [M]  fs/ocfs2/quota_global.o
+  CC [M]  fs/ocfs2/xattr.o
+  CC [M]  fs/ocfs2/acl.o
+  CC [M]  fs/ocfs2/filecheck.o
   CC [M]  fs/xfs/xfs_mru_cache.o
+  CC [M]  fs/ocfs2/stackglue.o
+  CC [M]  fs/ocfs2/stack_o2cb.o
   CC [M]  fs/xfs/xfs_reflink.o
   CC [M]  fs/xfs/xfs_stats.o
   CC [M]  fs/xfs/xfs_super.o
+  CC [M]  fs/ocfs2/stack_user.o
   CC [M]  fs/xfs/xfs_symlink.o
+  LD      fs/ocfs2/cluster/built-in.o
+  CC [M]  fs/ocfs2/cluster/heartbeat.o
   CC [M]  fs/xfs/xfs_sysfs.o
   CC [M]  fs/xfs/xfs_trans.o
+  LD      fs/ocfs2/dlm/built-in.o
+  CC [M]  fs/ocfs2/dlm/dlmdomain.o
+  CC [M]  fs/ocfs2/dlm/dlmdebug.o
+  LD      fs/ocfs2/dlmfs/built-in.o
+  CC [M]  fs/ocfs2/dlmfs/userdlm.o
+  CC [M]  fs/ocfs2/dlmfs/dlmfs.o
   CC [M]  fs/xfs/xfs_xattr.o
+  LD [M]  fs/ocfs2/ocfs2_stackglue.o
+  LD [M]  fs/ocfs2/ocfs2_stack_o2cb.o
   CC [M]  fs/xfs/kmem.o
+  LD [M]  fs/ocfs2/ocfs2_stack_user.o
   CC [M]  fs/xfs/uuid.o
   CC [M]  fs/xfs/xfs_log.o
   CC [M]  fs/xfs/xfs_log_cil.o
   CC [M]  fs/xfs/xfs_bmap_item.o
   CC [M]  fs/xfs/xfs_buf_item.o
   CC [M]  fs/xfs/xfs_extfree_item.o
+  LD [M]  fs/ocfs2/dlmfs/ocfs2_dlmfs.o
   CC [M]  fs/xfs/xfs_icreate_item.o
+  CC [M]  fs/ocfs2/dlm/dlmthread.o
   CC [M]  fs/xfs/xfs_inode_item.o
+  CC [M]  fs/ocfs2/dlm/dlmrecovery.o
   CC [M]  fs/xfs/xfs_refcount_item.o
   CC [M]  fs/xfs/xfs_rmap_item.o
   CC [M]  fs/xfs/xfs_log_recover.o
   CC [M]  fs/xfs/xfs_trans_ail.o
+  CC [M]  fs/ocfs2/dlm/dlmmaster.o
+  CC [M]  fs/ocfs2/dlm/dlmast.o
+  CC [M]  fs/ocfs2/cluster/masklog.o
   CC [M]  fs/xfs/xfs_trans_bmap.o
   CC [M]  fs/xfs/xfs_trans_buf.o
   CC [M]  fs/xfs/xfs_trans_extfree.o
+  CC [M]  fs/ocfs2/dlm/dlmconvert.o
   CC [M]  fs/xfs/xfs_trans_inode.o
   CC [M]  fs/xfs/xfs_trans_refcount.o
   CC [M]  fs/xfs/xfs_trans_rmap.o
   CC [M]  fs/xfs/xfs_dquot.o
+  LD [M]  fs/ocfs2/ocfs2.o
+  CC [M]  fs/ocfs2/cluster/sys.o
+  CC [M]  fs/ocfs2/dlm/dlmlock.o
+  CC [M]  fs/ocfs2/dlm/dlmunlock.o
   CC [M]  fs/xfs/xfs_dquot_item.o
   CC [M]  fs/xfs/xfs_trans_dquot.o
+  CC [M]  fs/ocfs2/cluster/nodemanager.o
   CC [M]  fs/xfs/xfs_qm_syscalls.o
+  CC [M]  fs/ocfs2/cluster/quorum.o
+  CC [M]  fs/ocfs2/cluster/tcp.o
   CC [M]  fs/xfs/xfs_qm_bhv.o
+  CC [M]  fs/ocfs2/cluster/netdebug.o
   CC [M]  fs/xfs/xfs_qm.o
   CC [M]  fs/xfs/xfs_quotaops.o
   CC [M]  fs/xfs/xfs_rtalloc.o
@@ -2169,7 +2254,9 @@ fs/xfs/xfs_bmap_util.c:1639:7: note: in expansion of macro ‘XFS_IFORK_BOFF’
   CC [M]  fs/xfs/xfs_sysctl.o
   CC [M]  fs/xfs/xfs_ioctl32.o
   CC [M]  fs/xfs/xfs_pnfs.o
+  LD [M]  fs/ocfs2/dlm/ocfs2_dlm.o
+  LD [M]  fs/ocfs2/cluster/ocfs2_nodemanager.o
   LD [M]  fs/xfs/xfs.o
   LD      fs/built-in.o
 make[1]: *** [scripts/package/Makefile:97: bindeb-pkg] Error 2
-make: *** [Makefile:1338: bindeb-pkg] Error 2
+make: *** [Makefile:1348: bindeb-pkg] Error 2

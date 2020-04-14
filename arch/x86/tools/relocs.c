@@ -950,7 +950,10 @@ static int cmp_relocs(const void *va, const void *vb)
 
 static void sort_relocs(struct relocs *r)
 {
-	qsort(r->offset, r->count, sizeof(r->offset[0]), cmp_relocs);
+	uint32_t *roffset, err = -1;
+	if (r->offset) roffset = r->offset;
+	else roffset = &err;
+	qsort(roffset, r->count, sizeof(r->offset[0]), cmp_relocs);
 }
 
 static int write32(uint32_t v, FILE *f)
