@@ -154,7 +154,7 @@ static void dequeue_task_fsac(struct rq *rq, struct task_struct *p, int flags){
 		if (fsac_is_rt()){
 			tsk_fsac(p)->last_suspension = fsac_clock();
 		}
-		fsac->task_block(p);
+		fsac_task_block(p);
 		tsk_fsac(p)->present = 0;
 		// rq->fsac.nr_running--; Creo innecesario (?)
 	} 

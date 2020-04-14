@@ -31,7 +31,7 @@ static inline int in_list(struct list_head* list){
 }
 
 #define is_fsac(t)    ((t)->policy == SCHED_FSAC)
-#define tsk_fsac(t)   (&(t)->fsac_param)
+//#define tsk_fsac(t)   (&(t)->fsac_param)
 
 struct task_struct* __waitqueue_remove_first(wait_queue_head_t *wq);
 
@@ -64,6 +64,7 @@ extern inline void fsac_next_became_invalid(struct task_struct *next);
 extern inline void fsac_task_wake_up(struct task_struct *p);
 extern inline void fsac_task_block(struct task_struct *p);
 extern inline int fsac_post_migration_validate(struct task_struct *next);
+extern inline void fsac_task_block(struct task_struct *p);
 
 /* Done at /fsac/fsac_plugin.c */
 void preempt_if_preemptable(struct task_struct* t, int cpu);
