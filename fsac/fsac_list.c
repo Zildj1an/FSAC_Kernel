@@ -6,6 +6,7 @@
 
 #include <fsac/fsac_list.h>
 #include <linux/vmalloc.h>
+#include <linux/uaccess.h>
 
 void fsac_remove_list(struct list_head* ghost_node){
 

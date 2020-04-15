@@ -105,7 +105,7 @@ struct list_item {
 extern int register_sched_plugin(struct fsac_plugin* plugin);
 extern int unregister_sched_plugin(struct fsac_plugin* plugin);
 struct fsac_plugin* find_sched_plugin(const char* name);
-void print_sched_plugins(struct seq_file *m);
+void print_sched_plugins(void);
 
 /* Plugin to the dummy default plugin */
 extern struct fsac_plugin fsac_sched_plugin;

@@ -85,14 +85,11 @@ void fsac_reschedule(int cpu) {
 			smp_send_reschedule(cpu);
 		}
 	}
-
-	printk(KERN_INFO "[CPU %d] picked-ok:%d sched-ok:%d\n",cpu,
-		picked_transition_ok, scheduled_transition_ok);
 }
 
 void fsac_reschedule_local(void) {
 
-	if (is_insched_state(TASK_PICKED)) {
+	if (is_in_sched_state(TASK_PICKED)) {
 		set_sched_state(PICKED_WRONG_TASK);
 	}
 	else if (is_in_sched_state(TASK_SCHEDULED | 
@@ -107,13 +104,15 @@ void fsac_reschedule_local(void) {
 
 void sched_state_plugin_check(void) {
 
-	if (!is_in_sched_state(TASK_PICKED | PICKED_WRONG_TASK)){
-		printk(KERN_ALERT
-		   "The plugin didn't call sched_state_task_pìcked()! That is mandatory, fix it.\n");
+	if (!(is_in_sched_state(TASK_PICKED | PICKED_WRONG_TASK)))
+	{
+		printk(KERN_ALERT 
+			"The plugin didn't call sched_state_task_picked()! That is mandatory, fix it.\n");
 		set_sched_state(TASK_PICKED);
 	}
 }
 EXPORT_SYMBOL(sched_state_plugin_check);
+
 #endif
 
 /* While '##' is the token-pasting operator, as in /fsac/fsac_plugin.c,
