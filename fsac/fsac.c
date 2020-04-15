@@ -270,10 +270,6 @@ inline int fsac_post_migration_validate(struct task_struct *next){
 	return fsac->post_migration_validate(next);
 }
 
-inline void fsac_task_block(struct task_struct *p){
-	fsac->task_block(p);
-}
-
 /* Wow, this function is important! */
 static int __init _init_fsac(void){
 

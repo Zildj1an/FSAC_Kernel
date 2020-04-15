@@ -186,7 +186,7 @@ int unregister_sched_plugin(struct fsac_plugin* plugin){
 	if (strcmp(fsac->plugin_name, plugin->plugin_name) != 0) {
 		unregister = 1;
 		raw_spin_lock(&proc_plugins_lock);
-		remove_plugin_proc(&plugin->plugin_name);
+		remove_plugin_proc(plugin->plugin_name);
 		raw_spin_unlock(&proc_plugins_lock);
 	}
 	else
@@ -205,7 +205,7 @@ void print_sched_plugins(void){
 	raw_spin_lock(&proc_plugins_lock);
 	list_for_each_safe(pos,n,&proc_loaded_plugins) {
 		plugin = list_entry(pos, struct fsac_plugin, list);
-		printkf(KERN_INFO, "%s\n", plugin->plugin_name);
+		printk(KERN_INFO, "%s\n", plugin->plugin_name);
 	}
 	raw_spin_unlock(&proc_plugins_lock);
 }

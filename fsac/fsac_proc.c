@@ -174,15 +174,12 @@ struct fsac_plugin* proc_find_node(int n, char *c, struct list_head* head){
 
 
 /* You have to adquire the lock in advance */
-void add_plugin_proc(char *name) {
+void add_plugin_proc(struct fsac_plugin* new_item) {
 
-	struct fsac_plugin *new_item = NULL;
+	struct fsac_plugin *aux;
 
-	if ((new_item = proc_find_node(1,name,&proc_loaded_plugins)) == NULL) {
+	if ((aux = proc_find_node(1,new_item->plugin_name,&proc_loaded_plugins)) == NULL) {
 
-		new_item = vmalloc(sizeof(struct fsac_plugin));
-		new_item->data = vmalloc(strlen(name) + 1);
-		strcpy(new_item->data,name);
         	list_add_tail(&new_item->list, &proc_loaded_plugins);
 	}
 }

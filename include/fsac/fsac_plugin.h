@@ -18,52 +18,38 @@ static LIST_HEAD(proc_loaded_plugins);
 __attribute__((used)) static DEFINE_RAW_SPINLOCK(proc_plugins_lock);
 
 typedef long (*activate_plugin_t) (void);
-
 typedef long (*deactivate_plugin_t) (void);
-
 typedef struct task_struct* (*schedule_t)(struct task_struct * prev);
-
 typedef long (*admit_task_t)(struct task_struct* tsk);
-
 typedef void (*task_new_t) (struct task_struct *task,
 			    int on_rq,
 			    int running);
-
 /* Called to re-introduce a task after blocking */
 typedef void (*task_wake_up_t) (struct task_struct *task);
-
 /* Called to notify the plugin of a blocking task */
 typedef void (*task_block_t)  (struct task_struct *task);
-
 typedef void (*task_exit_t)    (struct task_struct *);
-
 typedef ssize_t (*plugin_read_t) (char *buf);
-
 /* When waiting for the stack of the selected task to be 
 *  available, in fsac_schedule (with fsac_param.stack_in_use)
 *  this is invoked just in case the plugin wants to cancel the
 *  wait.
 *  */
 typedef int (*should_wait_for_stack_t)(struct task_struct *next);
-
 /* This is used by the FSAC scheduling class too. It is just a way
 *  to let the plugin validate that the task is still the one to
 *  choose (Which, unless the plugin is real-time, it will most
 *  likely be).
 */
 typedef int (*post_migration_validate_t)(struct task_struct *next);
-
 /* The tsk state might have changed, or perhaps the plugin chose a
  * tsk from another run-queue, which is a conceptual mistake.
 */
 typedef void (*next_became_invalid_t) (struct task_struct *next);
-
 /* Called after each task switch */
 typedef void (*finish_switch_t)(struct task_struct *prev);
-
 /* Called with no locks acquired */
 typedef void (*task_cleanup_t)	(struct task_struct *);
-
 /* return false to indicate that the plugin does not support forking */
 typedef int (*fork_task_t)(struct task_struct* tsk);
 
