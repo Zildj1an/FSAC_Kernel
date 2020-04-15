@@ -6,6 +6,7 @@
 
 #include <fsac/fsac_list.h>
 #include <linux/vmalloc.h>
+#include <linux/uaccess.h>
 
 /* Node */
 struct list_item {
@@ -23,10 +24,10 @@ void fsac_remove_list(struct list_head* ghost_node){
 
                 item = list_entry(cur_node, struct list_item, links);
                 list_del(&item->links);
-				/* Free extra memory if it had dynamic char arrays */
-				if (safe_char(item->data))
-					vfree(item->data);
-				vfree(item);
+		/* Free extra memory if it had dynamic char arrays */
+		if (safe_char(item->data))
+			vfree(item->data);
+		vfree(item);
         }
 }
 EXPORT_SYMBOL(fsac_remove_list);
@@ -53,8 +54,9 @@ int fsac_print_list(struct list_head* list, char* members){
 			else {
 				read += sprintf(&members[read],"%i\n",
 					item->data);
-                members[read++] = '\n';
+                		members[read++] = '\n';
 			}
+		}
 	}
 	return read;
 }
@@ -73,7 +75,7 @@ struct list_head* fsac_find_node(int n, char *c, struct list_head* head){
 		 if (safe_char(item->data)){
 			find = (strcmp(c,item->data) == 0);
 		} else {
-			find = (item->data == n);
+			find = (*item->data == n);
 		}
 		aux = pos;
 	}

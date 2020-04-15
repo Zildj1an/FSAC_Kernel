@@ -1,7 +1,7 @@
 /*
- *  To change or display the active FSAC plugin.   
+ *  To change or display the active FSAC plugin.
  *  To view the list of registered FSAC plugins.
- *  
+ *
  *  +- /proc/fsac
  *     |
  *     +- loaded (read operation)
@@ -10,13 +10,13 @@
  *     |
  *     +- stats_active (read, from module)
  *
- *  @author Carlos Bilbao Muñoz   
- *  GitHub: https://github.com/Zildj1an     
+ *  @author Carlos Bilbao Muñoz
+ *  GitHub: https://github.com/Zildj1an
  *  2020
  */
 
 #include <fsac/fsac_proc.h>
-#include <linux/uacces.h> 
+#include <linux/uacces.h>
 
 static struct proc_dir_entry *fsac_dir = NULL,
 	*loaded  = NULL,
@@ -59,13 +59,13 @@ static ssize_t active_read(struct file *filp,
 }
 
 /* In fsac/fsac.c */
-extern int switch_sched_plugin(struct sched_plugin* plugin);
+extern int switch_sched_plugin(struct fsac_plugin* plugin);
 
 static ssize_t active_write(struct file *filp, const char __user *buf,
 		size_t len, loff_t *off) {
 
 	char name[60];
-	struct sched_plugin* found;
+	struct fsac_plugin* found;
 	ssize ret = 0;
 	int err;
 
@@ -150,8 +150,8 @@ void exit_fsac_proc(void) {
 	raw_spin_lock(&proc_plugins_unlock);
 }
 
-/*  If you want as return value the sched_plugin n = 0, if the list_item n != 0 */
-struct sched_plugin* proc_find_node(int n, char *c, struct list_head* head){
+/*  If you want as return value the fsac_plugin n = 0, if the list_item n != 0 */
+struct fsac_plugin* proc_find_node(int n, char *c, struct list_head* head){
 
         struct list_head* pos = NULL;
         struct list_item* item = NULL;

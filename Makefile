@@ -647,6 +647,7 @@ KBUILD_CFLAGS   += $(call cc-disable-warning,array-bounds,)
 KBUILD_CFLAGS   += $(call cc-disable-warning,format,)
 KBUILD_CFLAGS   += $(call cc-disable-warning,format-extra-args,)
 KBUILD_CFLAGS   += $(call cc-disable-warning,unused-value,)
+KBUILD_CFLAGS   += $(call cc-disable-warning,discarded-qualifiers,)
 
 # This supresses all warnings. Not advisable.
 #KBUILD_CFLAGS   += -w

@@ -65,7 +65,7 @@ static void fsac_dummy_task_new(struct task_struct *t,int on_rq,int running){}
 static void fsac_dummy_task_wake_up(struct task_struct *task){}
 static void fsac_dummy_task_block(struct task_struct *task){}
 static void fsac_dummy_task_exit(struct task_struct *task){}
-static ssize_t fsac_dummy_read(char *buf){ return 0;}
+static ssize_t fsac_dummy_plugin_read(char *buf){ return 0;}
 
 static struct task_struct* fsac_dummy_schedule(struct task_struct * prev){
 	sched_state_task_picked(); 
@@ -99,7 +99,7 @@ struct fsac_plugin fsac_sched_plugin = {
 	.task_wake_up = fsac_dummy_task_wake_up,
 	.task_block = fsac_dummy_task_block,
 	.task_exit = fsac_dummy_task_exit,
-	.plugin_read = fsac_dummy_read,
+	.plugin_read = fsac_dummy_plugin_read,
 	/* For FSAC class:  */
 	.should_wait_for_stack = fsac_dummy_should_wait_for_stack,
 	.post_migration_validate = fsac_dummy_post_migration_validate,
@@ -109,7 +109,7 @@ struct fsac_plugin fsac_sched_plugin = {
 };
 
 /* The current plugin */
-struct sched_plugin *fsac = &fsac_sched_plugin;
+struct fsac_plugin *fsac = &fsac_sched_plugin;
 
 /* (2)  And now, manage the list of registered plugins. */
 
@@ -120,9 +120,9 @@ struct sched_plugin *fsac = &fsac_sched_plugin;
    if(!plugin->func) \
         plugin->func = fsac_dummy_ ## func; }
 
-struct sched_plugin* find_sched_plugin(const char* name) {
+struct fsac_plugin* find_sched_plugin(const char* name) {
 
-	struct sched_plugin *plugin = NULL;
+	struct fsac_plugin *plugin = NULL;
 
 	raw_spin_lock(&proc_plugins_lock);
 	plugin = proc_find_node(0,name,&proc_loaded_plugins);
@@ -132,7 +132,7 @@ struct sched_plugin* find_sched_plugin(const char* name) {
 }
 EXPORT_SYMBOL(find_sched_plugin);
 
-int register_sched_plugin(struct sched_plugin* plugin){
+int register_sched_plugin(struct fsac_plugin* plugin){
 
 	int err = 0;
 	struct fsac_plugin *aux;
@@ -171,7 +171,7 @@ int register_sched_plugin(struct sched_plugin* plugin){
 	CHECK(fork_task);
 
 	raw_spin_lock(&proc_plugins_lock);
-	add_plugin_proc(&plugin->plugin_name);
+	add_plugin_proc(plugin);
 	raw_spin_unlock(&proc_plugins_lock);
 
 out_reg:
@@ -179,15 +179,15 @@ out_reg:
 }
 EXPORT_SYMBOL(register_sched_plugin);
 
-int unregister_sched_plugin(struct sched_plugin* plugin){
+int unregister_sched_plugin(struct fsac_plugin* plugin){
 
 	int unregister = 0;
 
 	if (strcmp(fsac->plugin_name, plugin->plugin_name) != 0) {
 		unregister = 1;
-		raw_spin_lock(&sched_plugins_lock);
+		raw_spin_lock(&proc_plugins_lock);
 		remove_plugin_proc(&plugin->plugin_name);
-		raw_spin_unlock(&sched_plugins_lock);
+		raw_spin_unlock(&proc_plugins_lock);
 	}
 	else
 	    printk(KERN_ALERT "Currently active plugin %s can not be removed\n",
@@ -196,16 +196,16 @@ int unregister_sched_plugin(struct sched_plugin* plugin){
 }
 EXPORT_SYMBOL(unregister_sched_plugin);
 
-void print_sched_plugins(struct seq_file *m){
+void print_sched_plugins(void){
 
 	//TODO cambiar params?
-	struct list_head *pos;
-	struct sched_plugin *plugin;
+	struct list_head *pos, *n;
+	struct fsac_plugin *plugin;
 
 	raw_spin_lock(&proc_plugins_lock);
-	list_for_each(pos, &sched_plugins) {
-		plugin = list_entry(pos, struct sched_plugin, links);
-		seq_printf(m, "%s\n", plugin->plugin_name);
+	list_for_each_safe(pos,n,&proc_loaded_plugins) {
+		plugin = list_entry(pos, struct fsac_plugin, list);
+		printkf(KERN_INFO, "%s\n", plugin->plugin_name);
 	}
 	raw_spin_unlock(&proc_plugins_lock);
 }

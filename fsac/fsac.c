@@ -139,7 +139,7 @@ void fsac_exit_task(struct task_struct* tsk){
 
 static atomic_t ready_to_switch;
 
-static int __do_plugin_switch(struct sched_plugin* plugin){
+static int __do_plugin_switch(struct fsac_plugin* plugin){
 
 	int ret;
 
@@ -180,7 +180,7 @@ static int do_plugin_switch(void *_plugin){
 	hard_irq_disable();
 
 	if (atomic_dec_and_test(&ready_to_switch)) {
-		ret = __do_plugin_switch((struct sched_plugin*)_plugin);
+		ret = __do_plugin_switch((struct fsac_plugin*)_plugin);
 		atomic_set(&ready_to_switch, INT_MAX);
 	}
 
@@ -197,7 +197,7 @@ static int do_plugin_switch(void *_plugin){
 /* Important and tricky function.
  * Possible deadlocks need to be avoided.
  */
-int switch_sched_plugin(struct sched_plugin* plugin) {
+int switch_sched_plugin(struct fsac_plugin* plugin) {
 
 	int err;
 

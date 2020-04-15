@@ -108,21 +108,21 @@ struct fsac_plugin {
 } __attribute__ ((__aligned__(SMP_CACHE_BYTES)));
 
 /* Pointer to current scheduling plugin */
-extern struct sched_plugin *fsac;
+extern struct fsac_plugin *fsac;
 
 /* Linked list of loaded plugins */
 struct list_item {
-	struct sched_plugin *plugin;
+    struct fsac_plugin *plugin;
     struct list_head links;
 };
 
-int register_sched_plugin(struct sched_plugin* plugin);
-int unregister_sched_plugin(struct sched_plugin* plugin);
-struct sched_plugin* find_sched_plugin(const char* name);
+extern int register_sched_plugin(struct fsac_plugin* plugin);
+extern int unregister_sched_plugin(struct fsac_plugin* plugin);
+struct fsac_plugin* find_sched_plugin(const char* name);
 void print_sched_plugins(struct seq_file *m);
 
 /* Plugin to the dummy default plugin */
-extern struct sched_plugin fsac_sched_plugin;
+extern struct fsac_plugin fsac_sched_plugin;
 
 #endif
 
