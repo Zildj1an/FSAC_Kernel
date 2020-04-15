@@ -29,10 +29,11 @@ int fsac_print_list(struct list_head* list, char* members){
 
 	struct fsac_plugin* item = NULL;
 	struct list_head* cur_node = NULL;
+	struct list_head* aux = NULL;
 	int read = 0;
 	char* aux;
 
-	list_for_each(cur_node, list) { /* while cur_node != list*/
+	list_for_each_safe(cur_node,aux, list) { /* while cur_node != list*/
 
 		item = list_entry(cur_node, struct fsac_plugin, list);
 
@@ -57,7 +58,7 @@ struct list_head* fsac_find_node(int n, char *c, struct list_head* head){
 	struct fsac_plugin* item = NULL;
 	int find = 0;
 
-	 list_for_each_safe(item, aux, head) {
+	 list_for_each_safe(pos, aux, head) {
 
 		item = list_entry(pos, struct fsac_plugin, list);
 		if ((find = (strcmp(c,item->plugin_name) == 0))){

@@ -653,6 +653,7 @@ KBUILD_CFLAGS   += $(call cc-disable-warning,parentheses,)
 KBUILD_CFLAGS   += $(call cc-disable-warning,tautological-compare,)
 KBUILD_CFLAGS   += $(call cc-disable-warning,memset-elt-size,)
 KBUILD_CFLAGS   += $(call cc-disable-warning,uninitialized,)
+KBUILD_CFLAGS   += $(call cc-disable-warning,restrict,)
 
 # This supresses all warnings. Not advisable.
 #KBUILD_CFLAGS   += -w
