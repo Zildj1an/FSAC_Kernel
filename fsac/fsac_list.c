@@ -1,62 +1,48 @@
 /*
- *  Some aid for managing special linked lists.
+ *  Some aid for managing plugin special linked lists.
  *  @author Carlos Bilbao Muñoz
  *  GitHub: https://github.com/Zildj1an
  */
 
 #include <fsac/fsac_list.h>
 #include <linux/vmalloc.h>
-#include <linux/uaccess.h>
-
-/* Node */
-struct list_item {
-   void* data;
-   struct list_head links;
-};
 
 void fsac_remove_list(struct list_head* ghost_node){
 
         struct list_head* cur_node = NULL;
         struct list_head* aux = NULL;
-        struct list_item* item = NULL;
+        struct fsac_plugin* item = NULL;
 
         list_for_each_safe(cur_node, aux, ghost_node) {
 
-                item = list_entry(cur_node, struct list_item, links);
-                list_del(&item->links);
-		/* Free extra memory if it had dynamic char arrays */
-		if (safe_char(item->data))
-			vfree(item->data);
-		vfree(item);
+                item = list_entry(cur_node, struct fsac_plugin, list);
+                list_del(&item->list);
+				/* Free extra memory if it had dynamic char arrays */
+				vfree(item);
         }
 }
 EXPORT_SYMBOL(fsac_remove_list);
 
 int fsac_print_list(struct list_head* list, char* members){
 
-	struct list_item* item = NULL;
+	struct fsac_plugin* item = NULL;
 	struct list_head* cur_node = NULL;
 	int read = 0;
 	char* aux;
 
 	list_for_each(cur_node, list) { /* while cur_node != list*/
 
-		item = list_entry(cur_node, struct list_item, links);
+		item = list_entry(cur_node, struct fsac_plugin, list);
 
-		if(read < sizeof(members) - 1){
-			if (safe_char(item->data)){
-				aux = item->data;
-				while((members[read++] = *aux) != '\n' &&
-						read < sizeof(members) - 1){
-				    ++aux;
-				}
-			}
-			else {
-				read += sprintf(&members[read],"%i\n",
-					item->data);
-                		members[read++] = '\n';
+		if(read + sizeof(item->plugin_name) < sizeof(members) - 1){
+
+			aux = item->data;
+			while((members[read++] = *aux) != '\n' &&
+					read < sizeof(members) - 1){
+			    ++aux;
 			}
 		}
+
 	}
 	return read;
 }
@@ -66,22 +52,17 @@ struct list_head* fsac_find_node(int n, char *c, struct list_head* head){
 
 	struct list_head* pos = NULL;
 	struct list_head* aux = NULL;
-	struct list_item* item = NULL;
+	struct fsac_plugin* item = NULL;
 	int find = 0;
 
-	for (pos = (head)->next; pos != (head) && find == 0; pos = pos->next) {
+	 list_for_each_safe(item, aux, head) {
 
-		item = list_entry(pos, struct list_item, links);
-		 if (safe_char(item->data)){
-			find = (strcmp(c,item->data) == 0);
-		} else {
-			find = (*item->data == n);
+		item = list_entry(pos, struct fsac_plugin, list);
+		if ((find = (strcmp(c,item->data) == 0))){
+			return aux;
 		}
-		aux = pos;
 	}
 
-	if (find)
-		return aux;
 	return NULL;
 }
 EXPORT_SYMBOL(fsac_find_node);

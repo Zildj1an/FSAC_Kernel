@@ -154,12 +154,12 @@ void exit_fsac_proc(void) {
 struct fsac_plugin* proc_find_node(int n, char *c, struct list_head* head){
 
         struct list_head* pos = NULL;
-        struct list_item* item = NULL;
+        struct fsac_plugin* item = NULL;
         int find = 0;
 
         for (pos = (head)->next; pos != (head) && find == 0; pos = pos->next) {
 
-                item = list_entry(pos, struct list_item, links);
+                item = list_entry(pos, struct fsac_plugin, list);
                 if (safe_char(item->plugin->plugin_name)){
                         find = (strcmp(c,item->plugin->plugin_name) == 0);
                 }
@@ -176,24 +176,24 @@ struct fsac_plugin* proc_find_node(int n, char *c, struct list_head* head){
 /* You have to adquire the lock in advance */
 void add_plugin_proc(char *name) {
 
-	struct list_item *new_item = NULL;
+	struct fsac_plugin *new_item = NULL;
 
 	if ((new_item = proc_find_node(1,name,&proc_loaded_plugins)) == NULL) {
 
-		new_item = vmalloc(sizeof(struct list_item));
+		new_item = vmalloc(sizeof(struct fsac_plugin));
 		new_item->data = vmalloc(strlen(name) + 1);
 		strcpy(new_item->data,name);
-        	list_add_tail(&new_item->links, &proc_loaded_plugins);
+        	list_add_tail(&new_item->list, &proc_loaded_plugins);
 	}
 }
 
 /* Adquire the lock in advance */
 void remove_plugin_proc(char *name) {
 
-	struct list_item *new_item = NULL;
+	struct fsac_plugin *new_item = NULL;
 
 	if ((new_item = proc_find_node(1,name,&proc_loaded_plugins))) {
-                list_del(&new_item->links);
+                list_del(&new_item->list);
 	}
 }
 
