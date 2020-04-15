@@ -31,7 +31,7 @@ int fsac_print_list(struct list_head* list, char* members){
 	struct list_head* cur_node = NULL;
 	struct list_head* aux = NULL;
 	int read = 0;
-	char* aux;
+	char* aux_c;
 
 	list_for_each_safe(cur_node,aux, list) { /* while cur_node != list*/
 
@@ -39,10 +39,10 @@ int fsac_print_list(struct list_head* list, char* members){
 
 		if(read + sizeof(item->plugin_name) < sizeof(members) - 1){
 
-			aux = item->plugin_name;
-			while((members[read++] = *aux) != '\n' &&
+			aux_c = item->plugin_name;
+			while((members[read++] = *aux_c) != '\n' &&
 					read < sizeof(members) - 1){
-			    ++aux;
+			    ++aux_c;
 			}
 		}
 
