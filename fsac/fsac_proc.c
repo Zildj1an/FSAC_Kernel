@@ -16,6 +16,7 @@
  */
 
 #include <fsac/fsac_proc.h>
+#include <fsac/fsac_macros.h>
 #include <linux/uaccess.h>
 
 static struct proc_dir_entry *fsac_dir = NULL,
@@ -66,7 +67,7 @@ static ssize_t active_write(struct file *filp, const char __user *buf,
 
 	char name[60];
 	struct fsac_plugin* found;
-	ssize ret = 0;
+	ssize_t ret = 0;
 	int err;
 
 	if((ret = fsac_copy_safe(name,sizeof(name),buf,len) < 0))
@@ -138,7 +139,7 @@ mem_err:
 
 void exit_fsac_proc(void) {
 
-        if (stats_active)  remove_proc_entry("stats_active",fsac_dir);
+    if (stats_active)  remove_proc_entry("stats_active",fsac_dir);
 	if (active_plugin) remove_proc_entry("active_plugin",fsac_dir);
 	if (loaded)        remove_proc_entry("loaded",fsac_dir);
 	if (fsac_dir)      remove_proc_entry("fsac",NULL);
@@ -147,29 +148,29 @@ void exit_fsac_proc(void) {
 
 	/* Free the memory from the linked list */
 	fsac_remove_list(&proc_loaded_plugins);
-	raw_spin_lock(&proc_plugins_unlock);
+	raw_spin_lock(&proc_plugins_lock);
 }
 
 /*  If you want as return value the fsac_plugin n = 0, if the list_item n != 0 */
-struct fsac_plugin* proc_find_node(int n, char *c, struct list_head* head){
+void* proc_find_node(int n, char *c, struct list_head* head){
 
-        struct list_head* pos = NULL;
-        struct fsac_plugin* item = NULL;
-        int find = 0;
+    struct list_head* pos = NULL;
+    struct fsac_plugin* item = NULL;
+    int find = 0;
 
-        for (pos = (head)->next; pos != (head) && find == 0; pos = pos->next) {
+    for (pos = (head)->next; pos != (head) && find == 0; pos = pos->next) {
 
-                item = list_entry(pos, struct fsac_plugin, list);
-                if (safe_char(item->plugin->plugin_name)){
-                        find = (strcmp(c,item->plugin->plugin_name) == 0);
-                }
+        item = list_entry(pos, struct fsac_plugin, list);
+        if (safe_char(item->plugin_name)){
+                find = (strcmp(c,item->plugin_name) == 0);
+        }
 	}
 
 	if (find) {
 		if(n) return item;
-		else  return item->plugin;
+		else  return item->plugin_name;
 	}
- return NULL;
+ 	return NULL;
 }
 
 
@@ -181,7 +182,7 @@ void add_plugin_proc(void* new_item) {
 	if ((aux = proc_find_node(1,((struct fsac_plugin*)new_item)->plugin_name,
 		&proc_loaded_plugins)) == NULL) {
 
-        	list_add_tail(((struct fsac_plugin*)new_item)->list,
+        	list_add_tail(&((struct fsac_plugin*)new_item)->list,
         	 &proc_loaded_plugins);
 	}
 }
