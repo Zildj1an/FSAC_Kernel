@@ -5,6 +5,7 @@
  */
 
 #include <fsac/fsac_list.h>
+#include <fsac/fsac_plugin.h>
 #include <linux/vmalloc.h>
 #include <linux/uaccess.h>
 
@@ -26,7 +27,7 @@ EXPORT_SYMBOL(fsac_remove_list);
 
 int fsac_print_list(struct list_head* list, char* members){
 
-	struct list_head* item = NULL;
+	struct fsac_plugin* item = NULL;
 	struct list_head* cur_node = NULL;
 	int read = 0;
 	char* aux;
@@ -37,7 +38,7 @@ int fsac_print_list(struct list_head* list, char* members){
 
 		if(read + sizeof(item->plugin_name) < sizeof(members) - 1){
 
-			aux = item->data;
+			aux = item->plugin_name;
 			while((members[read++] = *aux) != '\n' &&
 					read < sizeof(members) - 1){
 			    ++aux;
@@ -59,7 +60,7 @@ struct list_head* fsac_find_node(int n, char *c, struct list_head* head){
 	 list_for_each_safe(item, aux, head) {
 
 		item = list_entry(pos, struct fsac_plugin, list);
-		if ((find = (strcmp(c,item->data) == 0))){
+		if ((find = (strcmp(c,item->plugin_name) == 0))){
 			return aux;
 		}
 	}
