@@ -174,7 +174,7 @@ struct fsac_plugin* proc_find_node(int n, char *c, struct list_head* head){
 
 
 /* You have to adquire the lock in advance */
-void add_plugin_proc(struct fsac_plugin* new_item) {
+void add_plugin_proc(struct fsac_plugin *new_item) {
 
 	struct fsac_plugin *aux;
 
@@ -183,6 +183,7 @@ void add_plugin_proc(struct fsac_plugin* new_item) {
         	list_add_tail(&new_item->list, &proc_loaded_plugins);
 	}
 }
+EXPORT_SYMBOL_GPL(add_plugin_proc);
 
 /* Adquire the lock in advance */
 void remove_plugin_proc(char *name) {
@@ -193,4 +194,5 @@ void remove_plugin_proc(char *name) {
                 list_del(&new_item->list);
 	}
 }
+EXPORT_SYMBOL_GPL(remove_plugin_proc);
 

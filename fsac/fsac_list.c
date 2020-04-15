@@ -25,7 +25,7 @@ EXPORT_SYMBOL(fsac_remove_list);
 
 int fsac_print_list(struct list_head* list, char* members){
 
-	struct fsac_plugin* item = NULL;
+	struct list_head* item = NULL;
 	struct list_head* cur_node = NULL;
 	int read = 0;
 	char* aux;

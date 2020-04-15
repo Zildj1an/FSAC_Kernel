@@ -108,8 +108,8 @@ void fsac_reschedule_local(void) {
 void sched_state_plugin_check(void) {
 
 	if (!is_in_sched_state(TASK_PICKED | PICKED_WRONG_TASK)){
-		printk(KERN_ALERT "The plugin didn't call sched_state_task_pìcked
-		   ()! That is mandatory, fix it.\n");
+		printk(KERN_ALERT
+		   "The plugin didn't call sched_state_task_pìcked()! That is mandatory, fix it.\n");
 		set_sched_state(TASK_PICKED);
 	}
 }
