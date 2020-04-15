@@ -1,9 +1,10 @@
 # FSAC KERNEL (Framework for Scheduling Algorithm Creation)
 
-**Author: Carlos Bilbao Muñoz**		
+**Author: Carlos Bilbao Muñoz (GitHub: https://github.com/Zildj1an, mail cbilbao@ucm.es)**		
 
-GitHub: https://github.com/Zildj1an                       					
-
+You can find a patch for the Linux kernel version 4.9.30 [here](https://github.com/Zildj1an/FSAC_Kernel/blob/master/FSAC_patch_4_9_30.patch). I compiled the kernel bindeb-pkg so you can find headers and image Debian-style packaged [here](https://github.com/Zildj1an/FSAC_Kernel/tree/master/FSAC_image_and_header).
+                 					
+## Files modified and created
 
 | #  | File created                 | Purpose                                                                                   |
 |----|------------------------------|-------------------------------------------------------------------------------------------|
@@ -34,10 +35,13 @@ GitHub: https://github.com/Zildj1an
 | 7  | /kernel/time/hrtimer.c       | Same idea as /kernel/locking/mutex.c but for the kernel timer.                                                                                                                                                                                                                                                                                     |
 | 8  | /mm/page-writeback.c         | FSAC RT tasks should get special treatment when it comes to writing back dirty pages at the address-space.                                                                                                                                                                                                                                         |
 | 9  | /mm/page_alloc.c             | Special amendments at page allocation when the FSAC plugin is intended to be real-time.                                                                                                                                                                                                                                                            |
-| 10 | /kernel/sched/core.c         | Make sure no Linux balancing, integrate FSAC scheduling class. Also, add hooks for the preemption state machine, like sched_state_entered_schedule() at __schedule(), which flags WILL_SCHEDULE. Per-cpu bool fsac_preemption_in_progress updated in   __schedule(). Also in fsac_fork I add if (is_fsac(p)){ p->sched_class = &fsac_sched_class;} |
+| 10 | /kernel/sched/core.c         | Make sure no Linux balancing, integrate FSAC scheduling class. Also, add hooks for the preemption state machine, like sched_state_entered_schedule() at \__schedule(), which flags WILL_SCHEDULE. Per-cpu bool fsac_preemption_in_progress updated in   \__schedule(). Also in fsac_fork I add if (is_fsac(p)){ p->sched_class = &fsac_sched_class;} |
 | 11 | /include/linux/sched.h       | Add handling of Inter-Processor Interrupt (IPI) for FSAC, with sched_state_ipi() at case IPI_RESCHEDULE.                                                                                                                                                                                                                                           |
 | 12 | /arch/arm/kernel/smp.c       | The IPI smp_reschedule_interrupt() might produce a transition in the FSAC sched_state machine.                                                                                                                                                                                                                                                     |
 | 13 | /arch/x86/kernel/smp.c       | Same idea as for /arch/x86/kernel/smp.c                                                                                                                                                                                                                                                                                                            |
 | 14 | /fs/exec.c                   | Added a hook for fsac_exec at do_execveat_common()                                                                                                                                                                                                                                                                                                 |
-| 15 | /kernel/fork.c               | Added a hook for exit_fsac at __put_task_struct()        |
+| 15 | /kernel/fork.c               | Added a hook for exit_fsac at \__put_task_struct()        |
 | 16 | /Makefile               | Added to top Makefile the fsac directory at core-y        |
+| 17 | /arch/x86/kernel/machine_kexec_64.c   | Compilation patch for R_X86_64_PLT32 error      |
+| 18 | /arch/x86/kernel/module.c               | Compilation patch for R_X86_64_PLT32 error          |
+| 19 | /arch/x86/tools/relocs.c               | Compilation patch for R_X86_64_PLT32 error          |
