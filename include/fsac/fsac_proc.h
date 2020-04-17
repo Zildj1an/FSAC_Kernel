@@ -14,13 +14,16 @@
 #include <fsac/fsac.h>
 
 int __init init_fsac_proc(void);
+
 void exit_fsac_proc(void);
 
 /* For the remaining functions, lock must be adquired prior invokation
    If you want as return value the fsac_plugin n = 0, else if the list_item n != 0
 */
 void* proc_find_node(int n,char *c, struct list_head* head);
+
 extern void add_plugin_proc(void* new_item);
+
 extern void remove_plugin_proc(char *name);
 
 

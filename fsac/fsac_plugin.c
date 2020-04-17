@@ -10,11 +10,13 @@
 //#include <fsac/np.h>
 //#include <linux/uacces.h>
 
+
 /* Triggers preemption in local or remote CPU for scheduler plugins.
  * This function is non-preemptive section aware and does NOT invoke the scheduler
  * or send IPIs (if executed at remote core) if the task to be preempted is non-preemptive.
  */
-void preempt_if_preemptable(struct task_struct* task, int cpu) {
+void preempt_if_preemptable(struct task_struct* task, int cpu) 
+{
 
 	/* task is a FSAC task executing on CPU cpu. If task is NULL, then cpu
 	 * is currently executing background work. */
@@ -57,35 +59,80 @@ void preempt_if_preemptable(struct task_struct* task, int cpu) {
 }
 EXPORT_SYMBOL(preempt_if_preemptable);
 
+
 /* (1) Dummy plugin functions */
 
-static long fsac_dummy_activate_plugin(void){ return 0;}
-static long fsac_dummy_deactivate_plugin(void){ return 0;}
-static void fsac_dummy_task_new(struct task_struct *t,int on_rq,int running){}
-static void fsac_dummy_task_wake_up(struct task_struct *task){}
-static void fsac_dummy_task_block(struct task_struct *task){}
-static void fsac_dummy_task_exit(struct task_struct *task){}
-static ssize_t fsac_dummy_plugin_read(char *buf){ return 0;}
+static long fsac_dummy_activate_plugin(void)
+{ 
+	return 0;
+}
 
-static struct task_struct* fsac_dummy_schedule(struct task_struct * prev){
+static long fsac_dummy_deactivate_plugin(void)
+{
+ return 0;
+}
+
+
+static void fsac_dummy_task_new(struct task_struct *t,int on_rq,int running)
+{}
+
+
+static void fsac_dummy_task_wake_up(struct task_struct *task)
+{}
+
+
+static void fsac_dummy_task_block(struct task_struct *task)
+{}
+
+
+static void fsac_dummy_task_exit(struct task_struct *task)
+{}
+
+
+static ssize_t fsac_dummy_plugin_read(char *buf)
+{ 
+	return 0;
+}
+
+
+static struct task_struct* fsac_dummy_schedule(struct task_struct * prev)
+{
 	sched_state_task_picked(); 
 	return NULL;
 }
 
-static long fsac_dummy_admit_task(struct task_struct* tsk){
+
+static long fsac_dummy_admit_task(struct task_struct* tsk)
+{
 	printk(KERN_INFO "Dummy FSAC plugin rejects %s/%d.\n",tsk->comm, tsk->pid);
 	return -EINVAL;
 }
-static int fsac_dummy_fork_task(struct task_struct* tsk){ return 0;}
 
-static int fsac_dummy_should_wait_for_stack(struct task_struct *next){
+
+static int fsac_dummy_fork_task(struct task_struct* tsk)
+{ 
+	return 0;
+}
+
+
+static int fsac_dummy_should_wait_for_stack(struct task_struct *next)
+{
 	return 1; /* Wait indefinitely */
 }
 
-static int fsac_dummy_post_migration_validate(struct task_struct *next){ return 1; }
-static void fsac_dummy_next_became_invalid(struct task_struct *next){}
-static void fsac_dummy_finish_switch(struct task_struct * prev){}
-static void fsac_dummy_task_cleanup(struct task_struct *task){}
+static int fsac_dummy_post_migration_validate(struct task_struct *next)
+{ 
+	return 1; 
+}
+
+static void fsac_dummy_next_became_invalid(struct task_struct *next)
+{}
+
+static void fsac_dummy_finish_switch(struct task_struct * prev)
+{}
+
+static void fsac_dummy_task_cleanup(struct task_struct *task)
+{}
 
 struct fsac_plugin fsac_sched_plugin = {
 	.plugin_name = "FSAC",
@@ -108,10 +155,13 @@ struct fsac_plugin fsac_sched_plugin = {
 	.task_cleanup = fsac_dummy_task_cleanup,
 };
 
+
 /* The current plugin */
 struct fsac_plugin *fsac = &fsac_sched_plugin;
 
+
 /* (2)  And now, manage the list of registered plugins. */
+
 
 /* Avoid NULL pointers on run-time
    ## = Concatenate args in macro
@@ -120,7 +170,9 @@ struct fsac_plugin *fsac = &fsac_sched_plugin;
    if(!plugin->func) \
         plugin->func = fsac_dummy_ ## func; }
 
-struct fsac_plugin* find_sched_plugin(const char* name) {
+
+struct fsac_plugin* find_sched_plugin(const char* name) 
+{
 
 	struct fsac_plugin *plugin = NULL;
 
@@ -132,7 +184,9 @@ struct fsac_plugin* find_sched_plugin(const char* name) {
 }
 EXPORT_SYMBOL(find_sched_plugin);
 
-int register_sched_plugin(struct fsac_plugin* plugin){
+
+int register_sched_plugin(struct fsac_plugin* plugin)
+{
 
 	int err = 0;
 	struct fsac_plugin *aux;
@@ -141,13 +195,15 @@ int register_sched_plugin(struct fsac_plugin* plugin){
 	aux = find_sched_plugin(plugin->plugin_name);
 
 	if (unlikely(aux != NULL)){
+
 		printk(KERN_ALERT "The FSAC plugin %s is already registered.\n",
 			plugin->plugin_name);
 		err = -EPERM;
 		goto out_reg;
-        }
+    }
 
 	if (plugin->is_real_time != 0 && plugin->is_real_time != 1) {
+
 		printk(KERN_ALERT "1/2 FSAC plugin not real-time(1) or other(0).\n");
         	printk(KERN_ALERT "2/2 Default assumed (NOT real-time)\n");
 		plugin->is_real_time = 0;
@@ -179,11 +235,13 @@ out_reg:
 }
 EXPORT_SYMBOL(register_sched_plugin);
 
-int unregister_sched_plugin(struct fsac_plugin* plugin){
+int unregister_sched_plugin(struct fsac_plugin* plugin)
+{
 
 	int unregister = 0;
 
 	if (strcmp(fsac->plugin_name, plugin->plugin_name) != 0) {
+
 		unregister = 1;
 		raw_spin_lock(&proc_plugins_lock);
 		remove_plugin_proc(plugin->plugin_name);
@@ -196,7 +254,9 @@ int unregister_sched_plugin(struct fsac_plugin* plugin){
 }
 EXPORT_SYMBOL(unregister_sched_plugin);
 
-void print_sched_plugins(void){
+
+void print_sched_plugins(void)
+{
 
 	//TODO cambiar params?
 	struct list_head *pos, *n;
@@ -204,6 +264,7 @@ void print_sched_plugins(void){
 
 	raw_spin_lock(&proc_plugins_lock);
 	list_for_each_safe(pos,n,&proc_loaded_plugins) {
+		
 		plugin = list_entry(pos, struct fsac_plugin, list);
 		printk(KERN_INFO, "%s\n", plugin->plugin_name);
 	}

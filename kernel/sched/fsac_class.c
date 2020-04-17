@@ -12,23 +12,30 @@
 #include <fsac/fsac_plugin.h>
 #include <fsac/fsac_np.h>
 
+
 static struct task_struct* fsac_schedule(struct rq *rq, struct task_struct *prev)
 {
 	struct task_struct *next;
 
 #ifdef CONFIG_SMP
+
 	struct rq* other_rq;
 	int from_cpu;
 	long was_running;
+
 #endif
+
 	/* The FSAC plugin schedules */
 	next = fsac_schedule_prev(prev); // THIS IS fsac->schedule(prev);
+	
 	/* Check if the plugin has updated the preemption state machine */
 	sched_state_plugin_check();
 
 #ifdef CONFIG_SMP
+	
 	/* Check if the global plugin took the task from a different RQ 
 	 * If so, I need to migrate the task. */
+	
 	if (next && task_rq(next) != rq){
 
 		other_rq = task_rq(next);
@@ -53,8 +60,9 @@ static struct task_struct* fsac_schedule(struct rq *rq, struct task_struct *prev
 			cpu_relax();
 			mb();
 
-			if (next->fsac_param.stack_in_use == NO_CPU)
+			if (next->fsac_param.stack_in_use == NO_CPU) {
 				printk(KERN_INFO,"Descheduled! Done.\n");
+			}
 
 			if (!fsac_should_wait_for_stack(next)){
 				/* The plugin does not want to wait for the stack !! */
@@ -68,6 +76,7 @@ static struct task_struct* fsac_schedule(struct rq *rq, struct task_struct *prev
 			}
 
 			if (from_cpu != task_rq(next)->cpu){
+
 				/* This should not happen, plugin is misbehaving */
 				printk(KERN_WARNING 
 					"[%llu]The next tsk chose by the plugin is from other RQ!\n",
@@ -87,6 +96,7 @@ static struct task_struct* fsac_schedule(struct rq *rq, struct task_struct *prev
 				raw_spin_unlock(&other_rq->lock);
 			}
 			else {
+
 				/* Two possible reasons: The tsk moved from his rq or the stack was in use.
 				 * In any case, migration has to be aborted. */
 				printk(KERN_INFO "[%llu] Migration for new tsk aborted.\n",fsac_clock());
@@ -97,6 +107,7 @@ static struct task_struct* fsac_schedule(struct rq *rq, struct task_struct *prev
 			}
 
 			if (!fsac_post_migration_validate(next)){
+
 				printk(KERN_INFO 
 					"[%llu] Plugin changed his mind about the next task!\n",
 					fsac_clock());
@@ -110,6 +121,7 @@ static struct task_struct* fsac_schedule(struct rq *rq, struct task_struct *prev
 	
 	/* Check if the task became invalid */
 	if (next && !is_fsac(next)) {
+
 		printk(KERN_INFO 
 			    "[%llu] The task (pid %d) became invalid.\n",
 				fsac_clock(),next->pid);
@@ -132,26 +144,33 @@ end:
  	return next;
 }
 
+
 static void enqueue_task_fsac(struct rq *rq, struct task_struct *p,
-		int flags){
+		int flags)
+{
 
 	tsk_fsac(p)->present = 1;
 
 	if (flags & ENQUEUE_WAKEUP){
+
 		p->state = TASK_RUNNING;
 		fsac_task_wake_up(p);
 	}
 	else {
+
 	     printk(KERN_INFO "[%llu] Ignoring an enqueue(task %d),not a wake up.\n",
 				fsac_clock(),p->pid);
 	     p->se.exec_start = rq->clock;
 	}
 }
 
-static void dequeue_task_fsac(struct rq *rq, struct task_struct *p, int flags){
+static void dequeue_task_fsac(struct rq *rq, struct task_struct *p, int flags)
+{
 
 	if (flags & DEQUEUE_SLEEP){
+
 		if (fsac_is_rt()){
+
 			tsk_fsac(p)->last_suspension = fsac_clock();
 		}
 		fsac_task_block(p);
@@ -159,14 +178,17 @@ static void dequeue_task_fsac(struct rq *rq, struct task_struct *p, int flags){
 		// rq->fsac.nr_running--; Creo innecesario (?)
 	} 
 	else {
+
 	   printk(KERN_INFO 
 		 "[%llu] Ignoring Denqueue(task %d),didn't go to sleep.\n",
 		  fsac_clock(),p->pid);
 	}
 }
 
+
 /* Yield task is used for delayed preemption. */
-static void yield_task_fsac(struct rq *rq){
+static void yield_task_fsac(struct rq *rq)
+{
 
 	// Flags (Creo innecesario)
 	BUG_ON(rq->curr != current);
@@ -175,15 +197,19 @@ static void yield_task_fsac(struct rq *rq){
 }
 
 /* These two functions are plugin-dependent */
-static void check_preempt_curr_fsac(struct rq *rq, struct task_struct *p, int flags){}
-static void put_prev_task_fsac(struct rq *rq, struct task_struct *p){}
+static void check_preempt_curr_fsac(struct rq *rq, struct task_struct *p, int flags)
+{}
+
+static void put_prev_task_fsac(struct rq *rq, struct task_struct *p)
+{}
 
 /* pick_next_task_fsac() -> fsac_schedule() function
 *
 *  returns the next task to be scheduled
 */
 static struct task_struct *pick_next_task_fsac(struct rq *rq,
-	struct task_struct *prev, struct pin_cookie cookie){
+	struct task_struct *prev, struct pin_cookie cookie)
+{
 
 	struct task_struct *next;
 
@@ -196,21 +222,34 @@ static struct task_struct *pick_next_task_fsac(struct rq *rq,
 	 * plugins, there is no easy way to tell and hence its easier just to
 	 * check if we have something next (backwards) */
 
-	if (next)
+	if (next){
 		put_prev_task(rq,prev);
+	}
 
 return next;
 }
 
-static void task_tick_fsac(struct rq *rq, struct task_struct *p, int queued){
+
+static void task_tick_fsac(struct rq *rq, struct task_struct *p, int queued)
+{
 	if (fsac_is_rt()){
+
 			tsk_fsac(p)->last_tick = fsac_clock();
 	}
 }
 
-static void switched_to_fsac(struct rq *rq, struct task_struct *p){}
-static void prio_changed_fsac(struct rq *rq, struct task_struct *p,int oldprio){}
-unsigned int get_rr_interval_fsac(struct rq *rq, struct task_struct *p){ return 0;}
+
+static void switched_to_fsac(struct rq *rq, struct task_struct *p)
+{}
+
+static void prio_changed_fsac(struct rq *rq, struct task_struct *p,int oldprio)
+{}
+
+unsigned int get_rr_interval_fsac(struct rq *rq, struct task_struct *p)
+{ 
+	return 0;
+}
+
 
 /* This is the function called when a task becomes FSAC, this can happen because:
    A. Somehow, there was a class transition to t->policy == SCHED_FSAC
@@ -218,22 +257,30 @@ unsigned int get_rr_interval_fsac(struct rq *rq, struct task_struct *p){ return 
    Prior work such as LITMUS-RT did not bother to check scenario B and FSAC is
    way less ambitious.
 */
-static void set_curr_task_fsac(struct rq *rq){
+static void set_curr_task_fsac(struct rq *rq)
+{
 	rq->curr->se.exec_start = rq->clock;
 }
 
 #ifdef CONFIG_SMP
+
 /* fSAC does not care about scheduling domains or rebalancing*/
-static int select_task_rq_fsac(struct task_struct *p, int cpu, int sd_flag, int flags){
+
+static int select_task_rq_fsac(struct task_struct *p, int cpu, int sd_flag, int flags)
+{
 	return task_cpu(p);
 }
+
 #endif
 
-static void update_curr_fsac(struct rq *rq){
+static void update_curr_fsac(struct rq *rq)
+{
 
 	struct task_struct *p = rq->curr;
 
-	if (!is_fsac(p)) return;
+	if (!is_fsac(p)) {
+		return;
+	}
 	/* In future versions, register something useful about this if plugin is RT */
 }
 
@@ -256,3 +303,4 @@ const struct sched_class fsac_sched_class = {
 #endif
 	.update_curr        = update_curr_fsac,
 };
+

@@ -4,13 +4,16 @@
 #include <fsac/fsac_preempt.h>
 #include <fsac/fsac.h>
 
+
 /* Already defined in the header */
 
 DEFINE_PER_CPU(bool, fsac_preemption_in_progress);
+
 /* The rescheduling state of each processor. */
 DEFINE_PER_CPU_SHARED_ALIGNED(atomic_t, resched_state);
 
-void sched_state_will_schedule(struct task_struct* tsk){
+void sched_state_will_schedule(struct task_struct* tsk)
+{
 
 	/* It is not safe to rely on non-local processor invocations of
 	 * set_tsk_need_resched() that set the flag remotely*/
@@ -25,18 +28,22 @@ void sched_state_will_schedule(struct task_struct* tsk){
 			set_sched_state(WILL_SCHEDULE);
 		}
 	}
-	else {
+	else 
+	{
 		BUG_ON(is_fsac(tsk));
 	}
 }
 
+
 /* Called by the IPI handler after another CPU called smp_send_resched(). */
-void sched_state_ipi(void) {
+void sched_state_ipi(void) 
+{
 
 	/* According to the LITMUS-RT project, if the IPI was slow, we might be in 
 	 * any state right now. The IPI is only meaningful if we are in 
 	 * SHOULD_SCHEDULE. */
 	if (is_in_sched_state(SHOULD_SCHEDULE)) {
+
 		/* This causes the scheduler to be invoked and a transition
 		 * to WILL_SCHEDULE state (view previous function).
 		 */
@@ -50,9 +57,11 @@ void sched_state_ipi(void) {
 	}
 }
 
+
 /* Called by plugins to cause a CPU to reschedule. The caller must hold the lock
  * used to serialize scheduling decisions. Also called by FSAC scheduling class */
-void fsac_reschedule(int cpu) {
+void fsac_reschedule(int cpu) 
+{
 
 	int to_picked_wrong = 0;
 	int to_should_schedule = 0;
@@ -63,12 +72,14 @@ void fsac_reschedule(int cpu) {
 
 	/* Also checks if there is a context switch in progress */
 	if (cpu_is_in_sched_state(cpu, TASK_PICKED)) {
+
 		/* Atomic CAS ~ Compare and Swap */
 		to_picked_wrong = sched_state_transition_on(cpu, TASK_PICKED,
 			       	PICKED_WRONG_TASK);
 	}
 
 	if (!to_picked_wrong && cpu_is_in_sched_state(cpu, TASK_SCHEDULED)) {
+
 		/* We either raced with the end of the context switch, or the
 		 * CPU was in TASK_SCHEDULED anyway. */
 		to_should_schedule = sched_state_transition_on(
@@ -77,35 +88,45 @@ void fsac_reschedule(int cpu) {
 
 	/* If the CPU had state TASK_SCHEDULED,the scheduler should be invoked.*/
 	if (to_should_schedule) {
+
 		/* If it is in this core */
-		if (smp_processor_id() == cpu) {
+		if (smp_processor_id() == cpu) 
+		{
 			set_tsk_need_resched(current);
 			preempt_set_need_resched();
-		} else {
+		} else 
+		{
 			smp_send_reschedule(cpu);
 		}
 	}
 }
 
-void fsac_reschedule_local(void) {
+
+void fsac_reschedule_local(void) 
+{
 
 	if (is_in_sched_state(TASK_PICKED)) {
+
 		set_sched_state(PICKED_WRONG_TASK);
 	}
 	else if (is_in_sched_state(TASK_SCHEDULED | 
 				SHOULD_SCHEDULE | PICKED_WRONG_TASK)) {
+
 		set_sched_state(WILL_SCHEDULE);
 		set_tsk_need_resched(current);
 		preempt_set_need_resched();
 	}
 }
 
+
 #ifdef CONFIG_DEBUG_KERNEL
 
-void sched_state_plugin_check(void) {
 
-	if (!(is_in_sched_state(TASK_PICKED | PICKED_WRONG_TASK)))
-	{
+void sched_state_plugin_check(void) 
+{
+
+	if (!(is_in_sched_state(TASK_PICKED | PICKED_WRONG_TASK))){
+
 		printk(KERN_ALERT 
 			"The plugin didn't call sched_state_task_picked()! That is mandatory, fix it.\n");
 		set_sched_state(TASK_PICKED);
@@ -115,6 +136,7 @@ EXPORT_SYMBOL(sched_state_plugin_check);
 
 #endif
 
+
 /* While '##' is the token-pasting operator, as in /fsac/fsac_plugin.c,
  * '#' operator is usually referred to as the stringizing operator.
  * */
@@ -122,6 +144,7 @@ EXPORT_SYMBOL(sched_state_plugin_check);
 const char* sched_state_name(int s){
 
 	switch(s) {
+		
 		NAME_CHECK(TASK_SCHEDULED);
 		NAME_CHECK(SHOULD_SCHEDULE);
 		NAME_CHECK(WILL_SCHEDULE);

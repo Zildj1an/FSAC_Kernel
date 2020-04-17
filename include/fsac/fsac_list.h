@@ -11,7 +11,8 @@
 #include <linux/list.h>
 #include <linux/compiler.h>
 
-static inline int safe_char(void *val){
+static inline int safe_char(void *val)
+{
     return (val != NULL && __builtin_types_compatible_p(typeof(val), char*));
 }
 

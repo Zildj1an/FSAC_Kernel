@@ -9,7 +9,8 @@
 
 typedef unsigned long long fsac_time;
 
-struct fsac_param {
+struct fsac_param 
+{
 
 	/* This is used by the FSAC class to check if the task's stack
 	 * is currently in use and avoid deadlocks. It is updated by the 
@@ -23,6 +24,7 @@ struct fsac_param {
 
 	/* Just in case it is real-time */
 	fsac_time last_suspension;
+	
 	fsac_time last_tick;
 
 	unsigned int kernel_np;

@@ -27,7 +27,8 @@ static struct proc_dir_entry *fsac_dir = NULL,
 /* PROC FUNCTIONS */
 
 static ssize_t loaded_read(struct file *filp,
-             char __user *buf, size_t len, loff_t *off) {
+             char __user *buf, size_t len, loff_t *off) 
+{
 
 	char kbuf[MAX_SIZE_LOADED];
 	int read = 0;
@@ -46,8 +47,10 @@ static ssize_t loaded_read(struct file *filp,
   return read;
 }
 
+
 static ssize_t active_read(struct file *filp,
-             char __user *buf, size_t len, loff_t *off) {
+             char __user *buf, size_t len, loff_t *off) 
+{
 
 	int read = 0;
 
@@ -59,11 +62,14 @@ static ssize_t active_read(struct file *filp,
  return read;
 }
 
+
 /* In fsac/fsac.c */
 extern int switch_sched_plugin(struct fsac_plugin* plugin);
 
+
 static ssize_t active_write(struct file *filp, const char __user *buf,
-		size_t len, loff_t *off) {
+		size_t len, loff_t *off) 
+{
 
 	char name[60];
 	struct fsac_plugin* found;
@@ -89,8 +95,10 @@ static ssize_t active_write(struct file *filp, const char __user *buf,
 	return ret;
 }
 
+
 static ssize_t stats_read(struct file *filp,
-             char __user *buf, size_t len, loff_t *off) {
+             char __user *buf, size_t len, loff_t *off) 
+{
 
 	char kbuf[MAX_PLUGIN_READ];
 	int read = 0;
@@ -102,6 +110,7 @@ static ssize_t stats_read(struct file *filp,
 
  return read;
 }
+
 
 /* PROC File Operations */
 static const struct file_operations fsac_loaded_fops = {
@@ -117,7 +126,8 @@ static const struct file_operations fsac_stats_fops = {
         .read = stats_read,
 };
 
-int __init init_fsac_proc(void) {
+int __init init_fsac_proc(void) 
+{
 
 	char fsac_name[] = "FSAC";
 
@@ -137,7 +147,9 @@ mem_err:
   return -ENOMEM;
 }
 
-void exit_fsac_proc(void) {
+
+void exit_fsac_proc(void) 
+{
 
     if (stats_active)  remove_proc_entry("stats_active",fsac_dir);
 	if (active_plugin) remove_proc_entry("active_plugin",fsac_dir);
@@ -151,8 +163,10 @@ void exit_fsac_proc(void) {
 	raw_spin_lock(&proc_plugins_lock);
 }
 
+
 /*  If you want as return value the fsac_plugin n = 0, if the list_item n != 0 */
-void* proc_find_node(int n, char *c, struct list_head* head){
+void* proc_find_node(int n, char *c, struct list_head* head)
+{
 
     struct list_head* pos = NULL;
     struct fsac_plugin* item = NULL;
@@ -175,7 +189,8 @@ void* proc_find_node(int n, char *c, struct list_head* head){
 
 
 /* You have to adquire the lock in advance */
-void add_plugin_proc(void* new_item) {
+void add_plugin_proc(void* new_item) 
+{
 
 	struct fsac_plugin *aux;
 
@@ -188,8 +203,10 @@ void add_plugin_proc(void* new_item) {
 }
 EXPORT_SYMBOL_GPL(add_plugin_proc);
 
+
 /* Adquire the lock in advance */
-void remove_plugin_proc(char *name) {
+void remove_plugin_proc(char *name) 
+{
 
 	struct fsac_plugin *new_item = NULL;
 

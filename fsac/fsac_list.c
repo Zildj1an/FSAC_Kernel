@@ -9,7 +9,9 @@
 #include <linux/vmalloc.h>
 #include <linux/uaccess.h>
 
-void fsac_remove_list(struct list_head* ghost_node){
+
+void fsac_remove_list(struct list_head* ghost_node)
+{
 
         struct list_head* cur_node = NULL;
         struct list_head* aux = NULL;
@@ -25,7 +27,9 @@ void fsac_remove_list(struct list_head* ghost_node){
 }
 EXPORT_SYMBOL(fsac_remove_list);
 
-int fsac_print_list(struct list_head* list, char* members){
+
+int fsac_print_list(struct list_head* list, char* members)
+{
 
 	struct fsac_plugin* item = NULL;
 	struct list_head* cur_node = NULL;
@@ -51,7 +55,9 @@ int fsac_print_list(struct list_head* list, char* members){
 }
 EXPORT_SYMBOL(fsac_print_list);
 
-struct list_head* fsac_find_node(int n, char *c, struct list_head* head){
+
+struct list_head* fsac_find_node(int n, char *c, struct list_head* head)
+{
 
 	struct list_head* pos = NULL;
 	struct list_head* aux = NULL;
@@ -70,9 +76,11 @@ struct list_head* fsac_find_node(int n, char *c, struct list_head* head){
 }
 EXPORT_SYMBOL(fsac_find_node);
 
+
 /* Safely copying contents to user array*/
 int fsac_copy_safe(char *kbuf, unsigned long ksize,
-                   __user const char* ubuf, unsigned long ulength){
+                   __user const char* ubuf, unsigned long ulength)
+{
 
         BUG_ON(!ksize);
 
