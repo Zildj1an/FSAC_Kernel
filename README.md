@@ -1,6 +1,6 @@
 # FSAC KERNEL (Framework for Scheduling Algorithm Creation)
 
-**Author: Carlos Bilbao Muñoz (GitHub: https://github.com/Zildj1an, mail cbilbao@ucm.es)**		
+**Author: Carlos Bilbao Muñoz (GitHub: https://github.com/Zildj1an, mail bilbao at vt.edu)**		
 
 You can find a patch for the Linux kernel version 4.9.30 [here](https://github.com/Zildj1an/FSAC_Kernel/blob/master/FSAC_patch_4_9_30.patch). I compiled the kernel bindeb-pkg so you can find headers and image Debian-style packaged [here](https://github.com/Zildj1an/FSAC_Kernel/tree/master/FSAC_image_and_header).
                  					
